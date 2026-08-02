@@ -13,7 +13,8 @@
     "verify:preview": "node scripts/verify-preview.mjs",
     "test:preview": "npm run build && npm run validate && npm run verify:preview",
     "test": "npm run check && npm run build && npm run validate && npm run verify:preview",
-    "add-pub": "node scripts/add-publication.mjs"
+    "add-pub": "node scripts/add-publication.mjs",
+    "test:template": "npm run check && npm run build"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
