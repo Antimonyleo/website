@@ -1,0 +1,148 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageIntro from "../../components/PageIntro.astro";
+import ResearchScaleRow from "../../components/ResearchScaleRow.astro";
+import SectionHeading from "../../components/SectionHeading.astro";
+import { researchScaleGroups } from "../../data/research";
+import { getPublicPerson } from "../../lib/person";
+
+const person = await getPublicPerson();
+const publications = await getCollection("publications");
+const publicationsById = new Map(
+  publications.map((publication) => [publication.id, publication]),
+);
+
+const publication = (id: string) => {
+  const record = publicationsById.get(id);
+  if (!record) {
+    throw new Error(`Missing publication record: ${id}`);
+  }
+  return record;
+};
+
+const rnaKinetics = publication("rna-strand-displacement-2021");
+const finiteStateMachine = publication("finite-state-machine-2022");
+---
+
+<BaseLayout
+  title={`Research — ${person.name}`}
+  description={`Research by ${person.name} in inverse design, molecular modeling, and programmable nucleic acid assembly.`}
+>
+  <PageIntro
+    eyebrow="Research"
+    title="Programmable nucleic acid assembly"
+    description="I design interaction rules, screen them across patchy-particle and nucleotide-level models, and carry the surviving designs into experiments. The work spans finite objects, extended arrays, and open three-dimensional lattices."
+  />
+
+  <nav class="research-jump shell" aria-label="Research sections">
+    <span>Research at a glance</span>
+    <a href="#finite-assemblies">Finite systems</a>
+    <a href="#two-dimensional-arrays">Extended arrays</a>
+    <a href="#open-crystal-lattices">Open crystal lattices</a>
+    <a href="#hexagonal-diamond-story">Field note</a>
+    <a href="#molecular-programming-foundations">Earlier work</a>
+    <a href="#research-directions">Directions</a>
+  </nav>
+
+  <section
+    class="section shell research-program"
+    id="programmable-assembly"
+    data-research-chapter="programmable-assembly"
+    aria-labelledby="assembly-scales-title"
+  >
+    <h2 class="sr-only" id="assembly-scales-title">
+      Assembly across structural scales
+    </h2>
+    <ol class="research-scale-list">
+      {
+        researchScaleGroups.map((group) => (
+          <ResearchScaleRow
+            group={group}
+            publicationsById={publicationsById}
+          />
+        ))
+      }
+    </ol>
+  </section>
+
+  <section
+    class="section shell research-foundations"
+    id="molecular-programming-foundations"
+    data-research-chapter="rna-strand-displacement"
+    aria-labelledby="foundations-title"
+  >
+    <SectionHeading
+      eyebrow="Earlier work"
+      title="Molecular programming foundations"
+      headingId="foundations-title"
+    />
+    <div class="research-foundations-copy">
+      <p>
+        Work on RNA and RNA:DNA strand displacement tested how toehold
+        length, substrate-end placement, and mismatch position affect reaction
+        kinetics. It established an experimental foundation for reasoning
+        about sequence, dynamics, and off-target behavior.
+      </p>
+      <p>
+        I also contributed to a localized DNA reaction network that implemented
+        state transitions with temporal resolution.
+      </p>
+    </div>
+    <div class="research-foundation-links">
+      <a
+        href={rnaKinetics.data.url}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {rnaKinetics.data.venue} {rnaKinetics.data.year} ·
+        doi:{rnaKinetics.data.doi} ↗
+      </a>
+      <a
+        data-collaborative-work="finite-state-machine-2022"
+        href={finiteStateMachine.data.url}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {finiteStateMachine.data.venue} {finiteStateMachine.data.year} ·
+        doi:{finiteStateMachine.data.doi} ↗
+      </a>
+    </div>
+  </section>
+
+  <section
+    class="section shell research-directions"
+    id="research-directions"
+    aria-labelledby="directions-title"
+  >
+    <SectionHeading
+      eyebrow="Directions"
+      title="Placing matter on purpose"
+      headingId="directions-title"
+    />
+    <div class="research-directions-copy">
+      <p>
+        Programmable self-assembly is a way to place matter deliberately. When
+        the interaction rules between components are designed rather than
+        discovered, a nanoscale building block can be told where to sit
+        relative to its neighbors, and the same block can be reprogrammed to
+        produce a different target. The work above moves from target-specific
+        constructions toward a reusable process: specify a structure, encode it
+        as interaction rules, screen those rules against the structures that
+        compete with them, and build what survives.
+      </p>
+      <p>
+        Two things follow from precise placement. Components positioned by
+        design — chromophores, proteins, inorganic particles — interact
+        according to where they sit, which is how a designed arrangement
+        becomes a designed function. And the arrangement itself can be
+        transferred: silica preservation turns a soft nucleic acid lattice into
+        a robust inorganic replica, a step toward using these structures as
+        templates for functional metamaterials, where geometry rather than
+        composition sets the optical or transport response. Making that route
+        more general and more predictable is the direction I want to keep
+        working in.
+      </p>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,197 @@
+---
+import type { CollectionEntry } from "astro:content";
+import {
+  researchFigures,
+  type ResearchFigureData,
+  type ResearchScaleGroup,
+} from "../data/research";
+import ResearchFigure from "./ResearchFigure.astro";
+
+interface Props {
+  group: ResearchScaleGroup;
+  publicationsById: Map<string, CollectionEntry<"publications">>;
+}
+
+const { group, publicationsById } = Astro.props;
+
+const publication = (id: string) => {
+  const record = publicationsById.get(id);
+  if (!record) {
+    throw new Error(`Missing publication record: ${id}`);
+  }
+  return record;
+};
+
+const reviewLabel = (record: CollectionEntry<"publications">) => {
+  if (record.data.recordStatus === "peer-reviewed") {
+    return "Peer reviewed";
+  }
+  if (record.data.recordStatus === "preprint-not-peer-reviewed") {
+    return "Not peer reviewed";
+  }
+  return "Editorial";
+};
+
+const sourcePublication = (figure: ResearchFigureData) =>
+  figure.source ? publication(figure.source.publicationId) : undefined;
+
+const groupFigure = group.figureId
+  ? researchFigures[group.figureId]
+  : undefined;
+---
+
+<li id={group.id} class:list={["research-scale-row", group.story && "has-story"]}>
+  <div class="research-scale-index" aria-hidden="true">{group.index}</div>
+
+  <div class:list={["research-scale-body", !groupFigure && "without-figure"]}>
+    <div class="research-scale-main">
+      <div class="research-scale-copy">
+        <p class="research-scale-label">{group.label}</p>
+        <h3>{group.title}</h3>
+        <p>{group.description}</p>
+      </div>
+
+      <div class="research-scale-evidence">
+        {
+          group.publications.map((reference) => {
+            const record = publication(reference.publicationId);
+            const meta = [
+              record.data.venue,
+              record.data.year,
+              record.data.manuscriptStatus
+                ? `Preprint, ${record.data.manuscriptStatus.toLowerCase()}`
+                : undefined,
+            ]
+              .filter(Boolean)
+              .join(" · ");
+
+            return (
+              <article data-assembly-work={reference.publicationId}>
+                <p class="research-paper-meta">{meta}</p>
+                <h4>
+                  <a
+                    href={record.data.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {record.data.title}
+                    <span class="external-arrow" aria-hidden="true">↗</span>
+                    <span class="sr-only"> (opens in a new tab)</span>
+                  </a>
+                </h4>
+                <p class="research-paper-role">
+                  {reference.role} · {reviewLabel(record)}
+                </p>
+              </article>
+            );
+          })
+        }
+
+        {
+          group.collaborations && group.collaborations.length > 0 && (
+            <p class="research-experience-note">
+              Additional collaborative experience:{" "}
+              {group.collaborations.map((reference, index) => {
+                const record = publication(reference.publicationId);
+                const separator =
+                  index === 0
+                    ? ""
+                    : index === group.collaborations!.length - 1
+                      ? " and "
+                      : ", ";
+
+                return (
+                  <>
+                    {separator}
+                    <a
+                      data-collaborative-work={reference.publicationId}
+                      href={record.data.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {reference.label}
+                    </a>
+                  </>
+                );
+              })}
+              .
+            </p>
+          )
+        }
+      </div>
+    </div>
+
+    {groupFigure && (
+      <div class="research-scale-figure">
+        <ResearchFigure
+          figure={groupFigure}
+          sourcePublication={sourcePublication(groupFigure)}
+        />
+      </div>
+    )}
+
+    {group.story && (
+      <section
+        class="research-story"
+        id={group.story.id}
+        aria-labelledby={`${group.story.id}-title`}
+      >
+        <header class="research-story-heading">
+          <p class="eyebrow">{group.story.eyebrow}</p>
+          <h4 id={`${group.story.id}-title`}>{group.story.title}</h4>
+          <p>{group.story.description}</p>
+        </header>
+
+        <div class="research-story-layout">
+          <div class="research-story-copy">
+            {group.story.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+            <p class="research-story-sources">
+              Historical context:{" "}
+              {
+                group.story.historicalSources.map((source, index, sources) => (
+                  <>
+                    {index > 0 &&
+                      (index === sources.length - 1 ? ", and " : ", ")}
+                    <a
+                      href={source.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {source.label}
+                    </a>
+                  </>
+                ))
+              }
+              .
+            </p>
+          </div>
+
+          <div class="research-story-visuals">
+            <div class="research-story-photos">
+              {
+                group.story.photoFigureIds.map((figureId) => {
+                  const figure = researchFigures[figureId];
+                  return (
+                    <ResearchFigure
+                      figure={figure}
+                      sourcePublication={sourcePublication(figure)}
+                    />
+                  );
+                })
+              }
+            </div>
+
+            <div class="research-story-paper-figure">
+              <ResearchFigure
+                figure={researchFigures[group.story.paperFigureId]}
+                sourcePublication={sourcePublication(
+                  researchFigures[group.story.paperFigureId],
+                )}
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+    )}
+  </div>
+</li>

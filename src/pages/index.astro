@@ -1,0 +1,165 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import SectionHeading from "../components/SectionHeading.astro";
+import SocialLinks from "../components/SocialLinks.astro";
+import { displayName, getPublicPerson, primaryOrganization } from "../lib/person";
+import { withBase } from "../lib/urls";
+
+const person = await getPublicPerson();
+const publicationCollection = await getCollection("publications");
+// Driven by `featured` + `selectedOrder` in publications.json so the data,
+// not this file, decides what appears here.
+const selectedPublications = publicationCollection
+  .filter((item) => item.data.featured)
+  .sort((a, b) => (a.data.selectedOrder ?? 0) - (b.data.selectedOrder ?? 0));
+if (selectedPublications.length === 0) {
+  throw new Error("No featured publications found");
+}
+const selectedPublicationNotes = {
+  "pyrochlore-2024": "First author · Peer reviewed",
+  "tetrahedral-lattices-2026":
+    "First and co-corresponding author · Preprint, submitted",
+  "polycubes-2025":
+    "Co-first and co-corresponding author · Preprint, in revision",
+} as const;
+const researchRoutes = [
+  {
+    label: "Finite systems",
+    title: "Programmable three-dimensional objects",
+    description:
+      "A compact set of interaction rules for finite, multicomponent DNA-origami assemblies.",
+    anchor: "finite-assemblies",
+  },
+  {
+    label: "Extended arrays",
+    title: "DNA origami tessellations",
+    description:
+      "Collaborative work on tile geometry and interhelical spacing for ordered arrays.",
+    anchor: "two-dimensional-arrays",
+  },
+  {
+    label: "Open crystal lattices",
+    title: "Three-dimensional topology",
+    description:
+      "Inverse design and experimental realization of complex crystal lattices.",
+    anchor: "open-crystal-lattices",
+  },
+];
+---
+
+<BaseLayout pageClass="home-page" pageType="ProfilePage">
+  <section class="home-hero">
+    <div class="shell home-hero-layout">
+      <div class="home-hero-copy">
+        <p class="eyebrow">Nucleic acid nanotechnology</p>
+        <h1>{displayName(person)}</h1>
+        <p class="home-role">
+          {person.role} · {primaryOrganization(person)} · {person.location}
+        </p>
+        <p class="home-hero-statement">
+          I am a molecular designer and programmer. I write the rules that make
+          molecules react, fold, and assemble themselves into the structures I
+          specify.
+        </p>
+        <div class="home-identity-links">
+          <SocialLinks />
+          <a class="text-link" href={withBase("contact/")}>Contact</a>
+        </div>
+      </div>
+
+      <figure class="home-hero-photo">
+        <img
+          src={withBase("images/hao-liu-boston.webp")}
+          alt="Hao Liu at a boat railing on Boston Harbor, with the city skyline behind him."
+          width="1800"
+          height="1350"
+          decoding="async"
+          loading="eager"
+        />
+      </figure>
+    </div>
+  </section>
+
+  <section
+    class="section shell home-profile"
+    aria-labelledby="home-profile-title"
+  >
+    <div class="home-profile-layout">
+      <div class="home-profile-copy" data-home-bio>
+        <SectionHeading
+          eyebrow="Profile"
+          title="Research profile"
+          headingId="home-profile-title"
+        />
+        {person.bio.map((paragraph) => <p>{paragraph}</p>)}
+      </div>
+
+      <nav class="home-research-nav" aria-label="Research overview">
+        <p class="eyebrow">Research</p>
+        <div class="home-research-route-list">
+          {
+            researchRoutes.map((route) => (
+              <a
+                class="home-research-route"
+                href={withBase(`research/#${route.anchor}`)}
+                data-home-research-route={route.anchor}
+              >
+                <span class="home-research-route-label">{route.label}</span>
+                <strong>{route.title}</strong>
+                <span>{route.description}</span>
+              </a>
+            ))
+          }
+        </div>
+      </nav>
+    </div>
+  </section>
+
+  <section
+    class="section shell home-publications"
+    aria-labelledby="home-publications-title"
+  >
+    <SectionHeading
+      eyebrow="Publications"
+      title="Selected publications"
+      headingId="home-publications-title"
+    />
+
+    <ol class="home-publication-list">
+      {
+        selectedPublications.map((publication) => (
+          <li data-home-selected-publication={publication.id}>
+            <p class="home-publication-meta">
+              {publication.data.venue} · {publication.data.year}
+            </p>
+            <div>
+              <h3>
+                <a
+                  href={publication.data.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {publication.data.title}
+                  <span class="external-arrow" aria-hidden="true">↗</span>
+                  <span class="sr-only"> (opens in a new tab)</span>
+                </a>
+              </h3>
+              <p class="home-publication-note">
+                {
+                  selectedPublicationNotes[
+                    publication.id as keyof typeof selectedPublicationNotes
+                  ]
+                }
+              </p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+
+    <a class="section-link" href={withBase("publications/")}>
+      Complete publication list
+    </a>
+  </section>
+</BaseLayout>

@@ -1,0 +1,120 @@
+---
+import SiteFooter from "../components/SiteFooter.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import { SITE } from "../config";
+import { getPublicPerson } from "../lib/person";
+import { withBase } from "../lib/urls";
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  pageClass?: string;
+  pageType?: "WebPage" | "ProfilePage" | "CollectionPage";
+  itemList?: Array<{ name: string; url: string }>;
+  noIndex?: boolean;
+  canonicalPath?: string;
+}
+
+const {
+  title = SITE.title,
+  description = SITE.description,
+  pageClass = "",
+  pageType = "WebPage",
+  itemList = [],
+  noIndex = false,
+  canonicalPath,
+} = Astro.props;
+
+const personData = await getPublicPerson();
+const canonical = canonicalPath
+  ? new URL(withBase(canonicalPath), Astro.site ?? Astro.url)
+  : Astro.site
+    ? new URL(Astro.url.pathname, Astro.site)
+    : Astro.url;
+const socialImageUrl = new URL(withBase("og-card.png"), Astro.site ?? Astro.url);
+const homeUrl = new URL(withBase(), Astro.site ?? Astro.url);
+
+const personSchema = {
+  "@type": "Person",
+  name: personData.name,
+  honorificSuffix: personData.degree,
+  url: homeUrl.href,
+  jobTitle: personData.role,
+  affiliation: personData.organizations.map((name) => ({
+    "@type": "ResearchOrganization",
+    name,
+  })),
+  sameAs: [personData.orcid, personData.scholar, SITE.github],
+  knowsAbout: [
+    "Nucleic acid nanotechnology",
+    "DNA origami",
+    "Molecular self-assembly",
+    "Coarse-grained molecular modeling",
+    "Inverse design",
+  ],
+};
+
+const pageSchema = {
+  "@context": "https://schema.org",
+  "@type": pageType,
+  name: title,
+  description,
+  url: canonical.href,
+  isPartOf: {
+    "@type": "WebSite",
+    name: `${personData.name} Research`,
+    url: homeUrl.href,
+  },
+  ...(pageType === "ProfilePage" ? { mainEntity: personSchema } : {}),
+  ...(pageType === "CollectionPage" && itemList.length
+    ? {
+        mainEntity: {
+          "@type": "ItemList",
+          numberOfItems: itemList.length,
+          itemListElement: itemList.map((item, index) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            name: item.name,
+            url: item.url,
+          })),
+        },
+      }
+    : {}),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    {noIndex && <meta name="robots" content="noindex, nofollow" />}
+    <meta name="theme-color" content="#f7f8f6" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={socialImageUrl} />
+    <meta
+      property="og:image:alt"
+      content={`${personData.name}, nucleic acid nanotechnology researcher — computational design and experimental nanotechnology.`}
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={socialImageUrl} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href={withBase("favicon.svg")} type="image/svg+xml" />
+    <title>{title}</title>
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(pageSchema)} />
+  </head>
+  <body class:list={["site-v2", pageClass]}>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <SiteHeader />
+    <main id="main-content">
+      <slot />
+    </main>
+    <SiteFooter />
+  </body>
+</html>

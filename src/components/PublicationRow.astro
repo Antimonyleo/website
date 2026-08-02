@@ -1,0 +1,163 @@
+---
+import type { CollectionEntry } from "astro:content";
+import AuthorList from "./AuthorList.astro";
+import {
+  formatCitation,
+  researchStoryAnchors,
+  researchStoryLabels,
+  type ResearchStoryId,
+} from "../lib/publications";
+import { withBase } from "../lib/urls";
+
+interface RelatedWork {
+  relation?: string;
+  title?: string;
+  url?: string;
+  doi?: string;
+  year?: number;
+  venue?: string;
+  counted?: boolean;
+}
+
+interface StructuredAuthor {
+  given?: string;
+  family?: string;
+  name?: string;
+  literal?: string;
+  memberId?: string;
+  contributions?: Array<{
+    role: "equal-contribution" | "corresponding-author";
+    basis: string;
+    sourceUrl: string;
+  }>;
+}
+
+interface ExtendedPublication {
+  authors: string | StructuredAuthor[];
+  recordStatus?: "peer-reviewed" | "editorial" | "preprint-not-peer-reviewed";
+  manuscriptStatus?: "Submitted" | "In revision";
+  relatedItems?: RelatedWork[];
+  researchStoryId?: ResearchStoryId;
+}
+
+interface Props {
+  publication: CollectionEntry<"publications">;
+}
+
+const { publication } = Astro.props;
+const data = publication.data as typeof publication.data & ExtendedPublication;
+const kindLabel =
+  data.recordStatus === "preprint-not-peer-reviewed"
+    ? `${data.venue} preprint`
+    : data.recordStatus === "editorial"
+      ? "Commentary"
+      : "Research article";
+const corrections = (data.relatedItems ?? []).filter(
+  (item) =>
+    item.relation.toLowerCase().includes("correction") && item.counted === false,
+);
+const researchStoryId = data.researchStoryId;
+const citation = Array.isArray(data.authors)
+  ? formatCitation({
+      authors: data.authors.map((author) => ({ name: author.name ?? "" })),
+      year: data.year,
+      title: data.title,
+      venue: data.venue,
+      volumePages: data.volumePages,
+      doi: data.doi,
+    })
+  : "";
+---
+
+<article
+  class="publication-row"
+  data-publication-record
+  data-publication-id={publication.id}
+>
+  <div class="publication-year">{data.year}</div>
+  <div class="publication-figure">
+    {
+      data.image && (
+        <img
+          class="publication-thumb"
+          src={withBase(data.image.src)}
+          alt={data.image.alt}
+          width="240"
+          height="180"
+          loading="lazy"
+          decoding="async"
+        />
+      )
+    }
+  </div>
+  <div class="publication-citation">
+    <div class="publication-meta">
+      <span>{kindLabel}</span>
+      {data.manuscriptStatus && <span>{data.manuscriptStatus}</span>}
+      {
+        data.recordStatus === "preprint-not-peer-reviewed" && (
+          <span>Not peer reviewed</span>
+        )
+      }
+      {data.kind !== "preprint" && <span>{data.venue}</span>}
+      {data.volumePages && <span>{data.volumePages}</span>}
+    </div>
+    <h3>
+      <a href={data.url} target="_blank" rel="noopener noreferrer">
+        {data.title}<span class="external-arrow" aria-hidden="true">↗</span>
+        <span class="sr-only"> (opens in a new tab)</span>
+      </a>
+    </h3>
+    <p class="publication-authors"><AuthorList authors={data.authors} /></p>
+    {data.summary && <p class="publication-summary">{data.summary}</p>}
+    {
+      corrections.map((correction) => (
+        <p class="related-correction" data-related-correction>
+          <span>Correction</span>
+          {correction.url ? (
+            <a href={correction.url} target="_blank" rel="noopener noreferrer">
+              {correction.title ?? correction.doi ?? "Publisher record"}
+              <span class="sr-only"> (opens in a new tab)</span>
+            </a>
+          ) : (
+            correction.title ?? correction.doi
+          )}
+        </p>
+      ))
+    }
+  </div>
+  <div class="publication-links publication-action-group">
+    {
+      researchStoryId && (
+        <a
+          class="research-story-link"
+          href={withBase(`research/#${researchStoryAnchors[researchStoryId]}`)}
+        >
+          Related research
+          <span class="sr-only">
+            : {researchStoryLabels[researchStoryId]}
+          </span>
+        </a>
+      )
+    }
+    <a href={data.url} target="_blank" rel="noopener noreferrer">
+      DOI
+      <span class="sr-only"> for {data.title} (opens in a new tab)</span>
+    </a>
+    {
+      citation && (
+        <>
+          <button
+            class="copy-citation"
+            type="button"
+            data-copy-citation={citation}
+            hidden
+          >
+            Copy citation
+          </button>
+          <span class="copy-citation-status sr-only" aria-live="polite"></span>
+        </>
+      )
+    }
+  </div>
+</article>

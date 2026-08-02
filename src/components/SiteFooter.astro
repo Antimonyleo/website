@@ -1,0 +1,37 @@
+---
+import EmailLink from "./EmailLink.astro";
+import SocialLinks from "./SocialLinks.astro";
+import { NAV_ITEMS } from "../config";
+import { displayName, getPublicPerson, primaryOrganization } from "../lib/person";
+import { withBase } from "../lib/urls";
+
+const person = await getPublicPerson();
+---
+
+<footer class="site-footer">
+  <div class="shell footer-grid">
+    <div>
+      <p class="footer-name">{displayName(person)}</p>
+      <p class="footer-role">
+        {person.role}<br />
+        {primaryOrganization(person)}
+      </p>
+    </div>
+
+    <nav class="footer-nav" aria-label="Footer navigation">
+      {
+        NAV_ITEMS.map((item) => (
+          <a href={withBase(item.path)}>{item.label}</a>
+        ))
+      }
+    </nav>
+
+    <div class="footer-contact">
+      <EmailLink label="Conversation welcome" />
+      <SocialLinks compact />
+    </div>
+  </div>
+  <div class="shell footer-meta">
+    <span>© {new Date().getFullYear()} {person.name}</span>
+  </div>
+</footer>

@@ -1,0 +1,30 @@
+node_modules/
+dist/
+.astro/
+.playwright-mcp/
+.DS_Store
+.env
+.env.*
+!.env.example
+
+# Local browser-review captures.
+/audit-*.png
+/final-*.png
+
+# Private source material. Public-safe assets must be copied deliberately into src/assets/.
+files/
+# Optional newline-delimited local input for the privacy validator; never commit it.
+files/site-private-guard-terms.txt
+
+# Local browser-review captures (any prefix).
+/*.png
+!/public/**/*.png
+
+# Editor/agent session state.
+.claude/
+
+# Internal working documents. Kept locally; not published on the public repo.
+# AGENTS.md, DECISIONS.md, CONTENT.md and README.md are intentionally tracked.
+AUDIT_AND_REDESIGN_PLAN.md
+WEBSITE_STRATEGY.md
+sources/

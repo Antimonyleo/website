@@ -1,0 +1,933 @@
+[
+  {
+    "id": "tetrahedral-lattices-2026",
+    "title": "Programmable selection of tetrahedral crystal lattices from a single nanoscale scaffold",
+    "authors": [
+      {
+        "name": "Hao Liu",
+        "memberId": "hao-liu",
+        "contributions": [
+          {
+            "role": "corresponding-author",
+            "basis": "explicit-corresponding-author-note",
+            "sourceUrl": "https://doi.org/10.26434/chemrxiv.15004426/v1"
+          }
+        ]
+      },
+      {
+        "name": "Camilla Beneduce"
+      },
+      {
+        "name": "Andreas Neophytou"
+      },
+      {
+        "name": "Daniel Podbielski"
+      },
+      {
+        "name": "Sneha Vaidyanathan"
+      },
+      {
+        "name": "Rachel Reyes De Los Santos"
+      },
+      {
+        "name": "Byeongdu Lee"
+      },
+      {
+        "name": "Rui Zhang"
+      },
+      {
+        "name": "Thong Diep"
+      },
+      {
+        "name": "Soyoung E. Seo"
+      },
+      {
+        "name": "Lorenzo Rovigatti"
+      },
+      {
+        "name": "Lukáš Kroc"
+      },
+      {
+        "name": "Flavio Romano"
+      },
+      {
+        "name": "Francesco Sciortino"
+      },
+      {
+        "name": "John Russo",
+        "contributions": [
+          {
+            "role": "corresponding-author",
+            "basis": "explicit-corresponding-author-note",
+            "sourceUrl": "https://doi.org/10.26434/chemrxiv.15004426/v1"
+          }
+        ]
+      },
+      {
+        "name": "Petr Šulc",
+        "contributions": [
+          {
+            "role": "corresponding-author",
+            "basis": "explicit-corresponding-author-note",
+            "sourceUrl": "https://doi.org/10.26434/chemrxiv.15004426/v1"
+          }
+        ]
+      }
+    ],
+    "memberIds": [
+      "hao-liu"
+    ],
+    "year": 2026,
+    "venue": "ChemRxiv",
+    "kind": "preprint",
+    "recordStatus": "preprint-not-peer-reviewed",
+    "manuscriptStatus": "Submitted",
+    "doi": "10.26434/chemrxiv.15004426/v1",
+    "url": "https://doi.org/10.26434/chemrxiv.15004426/v1",
+    "featured": true,
+    "selectedOrder": 2,
+    "researchStoryId": "programmable-assembly",
+    "summary": "One tetrahedron-shaped DNA origami, reprogrammed only at its four sticky ends, assembles selectively into cubic diamond, hexagonal diamond, and ice 0 lattices.",
+    "significance": "It shows that changing only the programmed vertex interactions of one DNA-origami tetrahedron can select distinct open crystal topologies without redesigning the scaffold itself.",
+    "topics": [
+      "inverse design",
+      "self-assembly",
+      "superlattices"
+    ],
+    "provenance": {
+      "canonicalSource": {
+        "label": "ChemRxiv DOI record",
+        "url": "https://doi.org/10.26434/chemrxiv.15004426/v1"
+      },
+      "sourceCheckedAt": "2026-07-29"
+    },
+    "image": {
+      "src": "images/publications/tetrahedral-lattices-2026.webp",
+      "alt": "The tetrahedral DNA origami, the cubic diamond, hexagonal diamond, and ice 0 lattices it can form, and the SAT-based positive and negative design workflow."
+    }
+  },
+  {
+    "id": "polycubes-2025",
+    "title": "Universal 3D Nanoscale Assembly with DNA Polycubes",
+    "authors": [
+      {
+        "name": "Thong Diep",
+        "contributions": [
+          {
+            "role": "equal-contribution",
+            "basis": "explicit-equal-contribution-note",
+            "sourceUrl": "https://doi.org/10.26434/chemrxiv-2025-qbk3f"
+          }
+        ]
+      },
+      {
+        "name": "Hao Liu",
+        "memberId": "hao-liu",
+        "contributions": [
+          {
+            "role": "equal-contribution",
+            "basis": "explicit-equal-contribution-note",
+            "sourceUrl": "https://doi.org/10.26434/chemrxiv-2025-qbk3f"
+          },
+          {
+            "role": "corresponding-author",
+            "basis": "explicit-corresponding-author-note",
+            "sourceUrl": "https://doi.org/10.26434/chemrxiv-2025-qbk3f"
+          }
+        ]
+      },
+      {
+        "name": "Joshua Evans"
+      },
+      {
+        "name": "Michael Matthies"
+      },
+      {
+        "name": "Matthew Sample"
+      },
+      {
+        "name": "Subhajit Roy"
+      },
+      {
+        "name": "Daniel Podbielski"
+      },
+      {
+        "name": "Sneha Vaidyanathan"
+      },
+      {
+        "name": "Dewight Williams"
+      },
+      {
+        "name": "Kyoungdu Kim"
+      },
+      {
+        "name": "Lukáš Kroc"
+      },
+      {
+        "name": "Haozhi Wang"
+      },
+      {
+        "name": "Yonggang Ke"
+      },
+      {
+        "name": "Joshua Hihath"
+      },
+      {
+        "name": "Hao Yan",
+        "contributions": [
+          {
+            "role": "corresponding-author",
+            "basis": "explicit-corresponding-author-note",
+            "sourceUrl": "https://doi.org/10.26434/chemrxiv-2025-qbk3f"
+          }
+        ]
+      },
+      {
+        "name": "Petr Šulc",
+        "contributions": [
+          {
+            "role": "corresponding-author",
+            "basis": "explicit-corresponding-author-note",
+            "sourceUrl": "https://doi.org/10.26434/chemrxiv-2025-qbk3f"
+          }
+        ]
+      }
+    ],
+    "memberIds": [
+      "hao-liu"
+    ],
+    "year": 2025,
+    "venue": "ChemRxiv",
+    "kind": "preprint",
+    "recordStatus": "preprint-not-peer-reviewed",
+    "manuscriptStatus": "In revision",
+    "doi": "10.26434/chemrxiv-2025-qbk3f",
+    "url": "https://doi.org/10.26434/chemrxiv-2025-qbk3f",
+    "featured": true,
+    "selectedOrder": 3,
+    "researchStoryId": "programmable-assembly",
+    "summary": "An inverse-design platform programs DNA-origami cubes to assemble into finite three-dimensional objects and extended lattices while designing against competing assemblies.",
+    "significance": "It provides an inverse-design route to finite objects and extended lattices using a minimal target-specific set of DNA-origami cube types while explicitly avoiding competing assemblies.",
+    "topics": [
+      "finite assembly",
+      "inverse design",
+      "DNA origami"
+    ],
+    "provenance": {
+      "canonicalSource": {
+        "label": "ChemRxiv DOI record",
+        "url": "https://doi.org/10.26434/chemrxiv-2025-qbk3f"
+      },
+      "sourceCheckedAt": "2026-07-29"
+    },
+    "image": {
+      "src": "images/publications/polycubes-2025.webp",
+      "alt": "Target geometry, interaction design, oxDNA model, and experimental reconstruction of DNA polycubes."
+    }
+  },
+  {
+    "id": "nanoparticle-patterns-2025",
+    "title": "Programming precise nanoparticle patterns",
+    "authors": [
+      {
+        "name": "Hao Liu",
+        "memberId": "hao-liu"
+      },
+      {
+        "name": "Na Liu"
+      },
+      {
+        "name": "Hao Yan"
+      }
+    ],
+    "memberIds": [
+      "hao-liu"
+    ],
+    "year": 2025,
+    "venue": "Nature Materials",
+    "volumePages": "24, 1166–1167",
+    "kind": "commentary",
+    "recordStatus": "editorial",
+    "doi": "10.1038/s41563-025-02262-2",
+    "url": "https://doi.org/10.1038/s41563-025-02262-2",
+    "featured": false,
+    "summary": "An invited News & Views on inverse design and experimental realization of programmed nanoparticle architectures.",
+    "topics": [
+      "nanoparticles",
+      "inverse design"
+    ],
+    "provenance": {
+      "canonicalSource": {
+        "label": "Publisher DOI record",
+        "url": "https://doi.org/10.1038/s41563-025-02262-2"
+      },
+      "sourceCheckedAt": "2026-07-29"
+    }
+  },
+  {
+    "id": "pyrochlore-2024",
+    "title": "Inverse design of a pyrochlore lattice of DNA origami through model-driven experiments",
+    "authors": [
+      {
+        "name": "Hao Liu",
+        "memberId": "hao-liu"
+      },
+      {
+        "name": "Michael Matthies"
+      },
+      {
+        "name": "John Russo"
+      },
+      {
+        "name": "Lorenzo Rovigatti"
+      },
+      {
+        "name": "Raghu Pradeep Narayanan"
+      },
+      {
+        "name": "Thong Diep"
+      },
+      {
+        "name": "Daniel McKeen"
+      },
+      {
+        "name": "Oleg Gang"
+      },
+      {
+        "name": "Nicholas Stephanopoulos"
+      },
+      {
+        "name": "Francesco Sciortino"
+      },
+      {
+        "name": "Hao Yan"
+      },
+      {
+        "name": "Flavio Romano"
+      },
+      {
+        "name": "Petr Šulc"
+      }
+    ],
+    "memberIds": [
+      "hao-liu"
+    ],
+    "year": 2024,
+    "venue": "Science",
+    "volumePages": "384, 776–781",
+    "kind": "article",
+    "recordStatus": "peer-reviewed",
+    "doi": "10.1126/science.adl5549",
+    "url": "https://doi.org/10.1126/science.adl5549",
+    "featured": true,
+    "selectedOrder": 1,
+    "researchStoryId": "programmable-assembly",
+    "summary": "Interaction rules found by constraint-based inverse design, screened by coarse-grained simulation, are used to build and verify a three-dimensional DNA-origami pyrochlore lattice.",
+    "significance": "It demonstrates a model-driven route for carrying designed particle-interaction rules into the experimental realization of a complex three-dimensional DNA-origami lattice.",
+    "topics": [
+      "inverse design",
+      "superlattices",
+      "DNA origami"
+    ],
+    "provenance": {
+      "canonicalSource": {
+        "label": "Publisher DOI record",
+        "url": "https://doi.org/10.1126/science.adl5549"
+      },
+      "sourceCheckedAt": "2026-07-29"
+    },
+    "image": {
+      "src": "images/publications/pyrochlore-2024.webp",
+      "alt": "Scanning electron micrograph of a silica-preserved DNA-origami pyrochlore crystal."
+    }
+  },
+  {
+    "id": "hairygami-2024",
+    "title": "Hairygami: Analysis of DNA Nanostructures’ Conformational Change Driven by Functionalizable Overhangs",
+    "authors": [
+      {
+        "name": "Matthew Sample"
+      },
+      {
+        "name": "Hao Liu",
+        "memberId": "hao-liu"
+      },
+      {
+        "name": "Thong Diep"
+      },
+      {
+        "name": "Michael Matthies"
+      },
+      {
+        "name": "Petr Šulc"
+      }
+    ],
+    "memberIds": [
+      "hao-liu"
+    ],
+    "year": 2024,
+    "venue": "ACS Nano",
+    "volumePages": "18, 30004–30016",
+    "kind": "article",
+    "recordStatus": "peer-reviewed",
+    "doi": "10.1021/acsnano.4c10796",
+    "url": "https://doi.org/10.1021/acsnano.4c10796",
+    "featured": false,
+    "summary": "Coarse-grained simulations show how functionalizable single-stranded overhangs drive conformational change in DNA nanostructures.",
+    "topics": [
+      "simulation",
+      "DNA nanostructures"
+    ],
+    "provenance": {
+      "canonicalSource": {
+        "label": "Publisher DOI record",
+        "url": "https://doi.org/10.1021/acsnano.4c10796"
+      },
+      "sourceCheckedAt": "2026-07-29"
+    },
+    "image": {
+      "src": "images/publications/hairygami-2024.webp",
+      "alt": "Free-energy profiles and simulated structures for DNA nanostructures at increasing overhang length."
+    }
+  },
+  {
+    "id": "dna-origami-tessellations-2023",
+    "title": "DNA Origami Tessellations",
+    "authors": [
+      {
+        "name": "Yue Tang"
+      },
+      {
+        "name": "Hao Liu",
+        "memberId": "hao-liu"
+      },
+      {
+        "name": "Qi Wang"
+      },
+      {
+        "name": "Xiaodong Qi"
+      },
+      {
+        "name": "Lu Yu"
+      },
+      {
+        "name": "Petr Šulc"
+      },
+      {
+        "name": "Fei Zhang"
+      },
+      {
+        "name": "Hao Yan"
+      },
+      {
+        "name": "Shuoxing Jiang"
+      }
+    ],
+    "memberIds": [
+      "hao-liu"
+    ],
+    "year": 2023,
+    "venue": "Journal of the American Chemical Society",
+    "volumePages": "145, 13858–13868",
+    "kind": "article",
+    "recordStatus": "peer-reviewed",
+    "doi": "10.1021/jacs.3c03044",
+    "url": "https://doi.org/10.1021/jacs.3c03044",
+    "featured": false,
+    "researchStoryId": "programmable-assembly",
+    "summary": "Programmable DNA-origami tiles assemble into extended two-dimensional tessellations.",
+    "topics": [
+      "2D assembly",
+      "DNA origami"
+    ],
+    "provenance": {
+      "canonicalSource": {
+        "label": "Publisher DOI record",
+        "url": "https://doi.org/10.1021/jacs.3c03044"
+      },
+      "sourceCheckedAt": "2026-07-29"
+    },
+    "image": {
+      "src": "images/publications/dna-origami-tessellations-2023.webp",
+      "alt": "Tile design strategy and atomic force micrographs of extended two-dimensional DNA-origami tessellations."
+    }
+  },
+  {
+    "id": "synthetic-antibody-2023",
+    "title": "IgG-inspired, multivalent protein-DNA nanostructures for high-affinity, tunable, and reversible binding to biomolecular targets",
+    "authors": [
+      {
+        "name": "Rong Zheng"
+      },
+      {
+        "name": "Yang Xu"
+      },
+      {
+        "name": "Abhay Prasad"
+      },
+      {
+        "name": "Minghui Liu"
+      },
+      {
+        "name": "Zijian Wan"
+      },
+      {
+        "name": "Jiapei Jiang"
+      },
+      {
+        "name": "Xiaoyan Zhou"
+      },
+      {
+        "name": "Ryan M. Porter"
+      },
+      {
+        "name": "Matthew Sample"
+      },
+      {
+        "name": "Erik Poppleton"
+      },
+      {
+        "name": "Jonah Procyk"
+      },
+      {
+        "name": "Hao Liu",
+        "memberId": "hao-liu"
+      },
+      {
+        "name": "Adam Doherty"
+      },
+      {
+        "name": "Pranish Nyaupane"
+      },
+      {
+        "name": "Yize Li"
+      },
+      {
+        "name": "Shaopeng Wang"
+      },
+      {
+        "name": "Hao Yan"
+      },
+      {
+        "name": "Petr Šulc"
+      },
+      {
+        "name": "Nicholas Stephanopoulos"
+      }
+    ],
+    "memberIds": [
+      "hao-liu"
+    ],
+    "year": 2023,
+    "venue": "bioRxiv",
+    "kind": "preprint",
+    "recordStatus": "preprint-not-peer-reviewed",
+    "doi": "10.1101/2023.09.18.558353",
+    "url": "https://doi.org/10.1101/2023.09.18.558353",
+    "featured": false,
+    "summary": "An IgG-inspired protein–DNA nanostructure uses multivalency to bind biomolecular targets with high affinity, tunable strength, and reversibility.",
+    "topics": [
+      "biomolecular engineering",
+      "multivalency"
+    ],
+    "provenance": {
+      "canonicalSource": {
+        "label": "bioRxiv DOI record",
+        "url": "https://doi.org/10.1101/2023.09.18.558353"
+      },
+      "sourceCheckedAt": "2026-08-01"
+    }
+  },
+  {
+    "id": "excitonic-networks-2022",
+    "title": "Two-Dimensional Excitonic Networks Directed by DNA Templates as an Efficient Model Light-Harvesting and Energy Transfer System",
+    "authors": [
+      {
+        "name": "Xu Zhou"
+      },
+      {
+        "name": "Deeksha Satyabola"
+      },
+      {
+        "name": "Hao Liu",
+        "memberId": "hao-liu"
+      },
+      {
+        "name": "Shuoxing Jiang"
+      },
+      {
+        "name": "Xiaodong Qi"
+      },
+      {
+        "name": "Lu Yu"
+      },
+      {
+        "name": "Su Lin"
+      },
+      {
+        "name": "Yan Liu"
+      },
+      {
+        "name": "Neal W. Woodbury"
+      },
+      {
+        "name": "Hao Yan"
+      }
+    ],
+    "memberIds": [
+      "hao-liu"
+    ],
+    "year": 2022,
+    "venue": "Angewandte Chemie International Edition",
+    "volumePages": "61, e202211200",
+    "kind": "article",
+    "recordStatus": "peer-reviewed",
+    "doi": "10.1002/anie.202211200",
+    "url": "https://doi.org/10.1002/anie.202211200",
+    "featured": false,
+    "summary": "DNA templates organize K21 dye aggregates into branched complexes and two-dimensional excitonic networks.",
+    "topics": [
+      "energy transfer",
+      "DNA templating"
+    ],
+    "provenance": {
+      "canonicalSource": {
+        "label": "Publisher DOI record",
+        "url": "https://doi.org/10.1002/anie.202211200"
+      },
+      "sourceCheckedAt": "2026-07-29"
+    },
+    "image": {
+      "src": "images/publications/excitonic-networks-2022.webp",
+      "alt": "Network designs, atomic force micrographs, and measured energy-transfer efficiencies."
+    }
+  },
+  {
+    "id": "excitonic-wires-2022",
+    "title": "DNA-templated programmable excitonic wires for micron-scale exciton transport",
+    "authors": [
+      {
+        "name": "Xu Zhou"
+      },
+      {
+        "name": "Hao Liu",
+        "memberId": "hao-liu"
+      },
+      {
+        "name": "Franky Djutanta"
+      },
+      {
+        "name": "Deeksha Satyabola"
+      },
+      {
+        "name": "Shuoxing Jiang"
+      },
+      {
+        "name": "Xiaodong Qi"
+      },
+      {
+        "name": "Lu Yu"
+      },
+      {
+        "name": "Su Lin"
+      },
+      {
+        "name": "Rizal F. Hariadi"
+      },
+      {
+        "name": "Yan Liu"
+      },
+      {
+        "name": "Neal W. Woodbury"
+      },
+      {
+        "name": "Hao Yan"
+      }
+    ],
+    "memberIds": [
+      "hao-liu"
+    ],
+    "year": 2022,
+    "venue": "Chem",
+    "volumePages": "8, 2442–2459",
+    "kind": "article",
+    "recordStatus": "peer-reviewed",
+    "doi": "10.1016/j.chempr.2022.05.017",
+    "url": "https://doi.org/10.1016/j.chempr.2022.05.017",
+    "featured": false,
+    "summary": "A four-helix-bundle DNA origami templates K21 dye aggregates into excitonic wires.",
+    "topics": [
+      "exciton transport",
+      "DNA templating"
+    ],
+    "provenance": {
+      "canonicalSource": {
+        "label": "Publisher DOI record",
+        "url": "https://doi.org/10.1016/j.chempr.2022.05.017"
+      },
+      "sourceCheckedAt": "2026-07-29"
+    },
+    "image": {
+      "src": "images/publications/excitonic-wires-2022.webp",
+      "alt": "Natural light-harvesting scaffold alongside the DNA-templated excitonic wire and its spectra."
+    }
+  },
+  {
+    "id": "finite-state-machine-2022",
+    "title": "A localized DNA finite-state machine with temporal resolution",
+    "authors": [
+      {
+        "name": "Lan Liu"
+      },
+      {
+        "name": "Fan Hong"
+      },
+      {
+        "name": "Hao Liu",
+        "memberId": "hao-liu"
+      },
+      {
+        "name": "Xu Zhou"
+      },
+      {
+        "name": "Shuoxing Jiang"
+      },
+      {
+        "name": "Petr Šulc"
+      },
+      {
+        "name": "Jian-Hui Jiang"
+      },
+      {
+        "name": "Hao Yan"
+      }
+    ],
+    "memberIds": [
+      "hao-liu"
+    ],
+    "year": 2022,
+    "venue": "Science Advances",
+    "volumePages": "8, eabm9530",
+    "kind": "article",
+    "recordStatus": "peer-reviewed",
+    "doi": "10.1126/sciadv.abm9530",
+    "url": "https://doi.org/10.1126/sciadv.abm9530",
+    "featured": false,
+    "summary": "A localized DNA reaction system implements state transitions with temporal resolution.",
+    "topics": [
+      "molecular programming",
+      "DNA circuits"
+    ],
+    "provenance": {
+      "canonicalSource": {
+        "label": "Publisher DOI record",
+        "url": "https://doi.org/10.1126/sciadv.abm9530"
+      },
+      "sourceCheckedAt": "2026-07-29"
+    },
+    "image": {
+      "src": "images/publications/finite-state-machine-2022.webp",
+      "alt": "Design, implementation, and fluorescence readout of a localized DNA reaction network."
+    }
+  },
+  {
+    "id": "rna-strand-displacement-2021",
+    "title": "Kinetics of RNA and RNA:DNA Hybrid Strand Displacement",
+    "authors": [
+      {
+        "name": "Hao Liu",
+        "memberId": "hao-liu"
+      },
+      {
+        "name": "Fan Hong"
+      },
+      {
+        "name": "Francesca Smith"
+      },
+      {
+        "name": "John Goertz"
+      },
+      {
+        "name": "Thomas Ouldridge"
+      },
+      {
+        "name": "Molly M. Stevens"
+      },
+      {
+        "name": "Hao Yan"
+      },
+      {
+        "name": "Petr Šulc"
+      }
+    ],
+    "memberIds": [
+      "hao-liu"
+    ],
+    "year": 2021,
+    "venue": "ACS Synthetic Biology",
+    "volumePages": "10, 3066–3073",
+    "kind": "article",
+    "recordStatus": "peer-reviewed",
+    "doi": "10.1021/acssynbio.1c00336",
+    "url": "https://doi.org/10.1021/acssynbio.1c00336",
+    "featured": false,
+    "researchStoryId": "rna-strand-displacement",
+    "summary": "Toehold length, substrate-end placement, and mismatch position are shown to tune the kinetics of RNA:RNA and RNA:DNA hybrid strand displacement.",
+    "significance": "It supplies experimentally grounded design guidance for tuning RNA:RNA strand-displacement kinetics through toehold length, substrate-end placement, and mismatch position.",
+    "topics": [
+      "RNA",
+      "kinetics",
+      "strand displacement"
+    ],
+    "provenance": {
+      "canonicalSource": {
+        "label": "Publisher DOI record",
+        "url": "https://doi.org/10.1021/acssynbio.1c00336"
+      },
+      "sourceCheckedAt": "2026-07-29"
+    },
+    "image": {
+      "src": "images/publications/rna-strand-displacement-2021.webp",
+      "alt": "Strand-displacement kinetics for RNA and RNA:DNA hybrid systems across toehold length, substrate-end placement, and mismatch position."
+    }
+  },
+  {
+    "id": "meta-dna-2020",
+    "title": "Meta-DNA structures",
+    "authors": [
+      {
+        "name": "Guangbao Yao"
+      },
+      {
+        "name": "Fei Zhang"
+      },
+      {
+        "name": "Fei Wang"
+      },
+      {
+        "name": "Tianhuan Peng"
+      },
+      {
+        "name": "Hao Liu",
+        "memberId": "hao-liu"
+      },
+      {
+        "name": "Erik Poppleton"
+      },
+      {
+        "name": "Petr Šulc"
+      },
+      {
+        "name": "Shuoxing Jiang"
+      },
+      {
+        "name": "Lan Liu"
+      },
+      {
+        "name": "Chen Gong"
+      },
+      {
+        "name": "Xinxin Jing"
+      },
+      {
+        "name": "Xiaoguo Liu"
+      },
+      {
+        "name": "Lihua Wang"
+      },
+      {
+        "name": "Yan Liu"
+      },
+      {
+        "name": "Chunhai Fan"
+      },
+      {
+        "name": "Hao Yan"
+      }
+    ],
+    "memberIds": [
+      "hao-liu"
+    ],
+    "year": 2020,
+    "venue": "Nature Chemistry",
+    "volumePages": "12, 1067–1075",
+    "kind": "article",
+    "recordStatus": "peer-reviewed",
+    "doi": "10.1038/s41557-020-0539-8",
+    "url": "https://doi.org/10.1038/s41557-020-0539-8",
+    "featured": false,
+    "summary": "DNA-origami units act as higher-order analogues of atoms and bonds, enabling hierarchical assembly into larger structures.",
+    "topics": [
+      "hierarchical assembly",
+      "DNA origami"
+    ],
+    "relatedItems": [
+      {
+        "relation": "author-correction",
+        "title": "Author Correction: Meta-DNA structures",
+        "year": 2021,
+        "venue": "Nature Chemistry",
+        "volumePages": "13, 614",
+        "doi": "10.1038/s41557-020-00611-z",
+        "url": "https://doi.org/10.1038/s41557-020-00611-z",
+        "counted": false
+      }
+    ],
+    "provenance": {
+      "canonicalSource": {
+        "label": "Publisher DOI record",
+        "url": "https://doi.org/10.1038/s41557-020-0539-8"
+      },
+      "sourceCheckedAt": "2026-07-29"
+    },
+    "image": {
+      "src": "images/publications/meta-dna-2020.webp",
+      "alt": "Library of DNA-origami shapes built from meta-DNA units, with gel and electron-microscopy characterization."
+    }
+  },
+  {
+    "id": "oxatub4arene-2017",
+    "title": "H₂S-Responsive Lower Critical Solution Temperature of the Host–Guest Complex Based on Oxatub[4]arene with Tri(ethylene oxide) Moieties",
+    "authors": [
+      {
+        "name": "Liu-Pan Yang"
+      },
+      {
+        "name": "Hao Liu",
+        "memberId": "hao-liu"
+      },
+      {
+        "name": "Song-Bo Lu"
+      },
+      {
+        "name": "Fei Jia"
+      },
+      {
+        "name": "Wei Jiang"
+      }
+    ],
+    "memberIds": [
+      "hao-liu"
+    ],
+    "year": 2017,
+    "venue": "Organic Letters",
+    "volumePages": "19, 1212–1215",
+    "kind": "article",
+    "recordStatus": "peer-reviewed",
+    "doi": "10.1021/acs.orglett.7b00181",
+    "url": "https://doi.org/10.1021/acs.orglett.7b00181",
+    "featured": false,
+    "summary": "An oxatub[4]arene host–guest complex shows H₂S-responsive lower critical solution temperature behavior.",
+    "topics": [
+      "supramolecular chemistry",
+      "host–guest chemistry"
+    ],
+    "provenance": {
+      "canonicalSource": {
+        "label": "Publisher DOI record",
+        "url": "https://doi.org/10.1021/acs.orglett.7b00181"
+      },
+      "sourceCheckedAt": "2026-07-29"
+    }
+  }
+]

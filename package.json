@@ -1,0 +1,26 @@
+{
+  "name": "hao-liu-research",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
+    "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
+    "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
+    "check": "ASTRO_TELEMETRY_DISABLED=1 astro check",
+    "maintenance": "node scripts/maintenance-report.mjs",
+    "validate": "node scripts/validate-build.mjs",
+    "verify:preview": "node scripts/verify-preview.mjs",
+    "test:preview": "npm run build && npm run validate && npm run verify:preview",
+    "test": "npm run check && npm run build && npm run validate && npm run verify:preview",
+    "add-pub": "node scripts/add-publication.mjs"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^7.1.6"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.10",
+    "typescript": "^6.0.0"
+  }
+}

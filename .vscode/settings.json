@@ -1,0 +1,8 @@
+{
+  "json.schemas": [
+    {
+      "fileMatch": ["src/data/publications.json"],
+      "url": "./src/data/publications.schema.json"
+    }
+  ]
+}

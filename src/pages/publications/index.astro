@@ -1,0 +1,112 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageIntro from "../../components/PageIntro.astro";
+import PublicationRow from "../../components/PublicationRow.astro";
+import SocialLinks from "../../components/SocialLinks.astro";
+import publicationSource from "../../data/publications.json";
+import { getPublicPerson } from "../../lib/person";
+import { withBase } from "../../lib/urls";
+
+const person = await getPublicPerson();
+const sourceOrder = new Map(
+  publicationSource.map((publication, index) => [publication.id, index]),
+);
+const publications = (await getCollection("publications")).sort(
+  (a, b) =>
+    b.data.year - a.data.year ||
+    (sourceOrder.get(a.id) ?? Number.MAX_SAFE_INTEGER) -
+      (sourceOrder.get(b.id) ?? Number.MAX_SAFE_INTEGER),
+);
+---
+
+<BaseLayout
+  title={`Publications — ${person.name}`}
+  description={`Peer-reviewed publications and preprints by ${person.name} in nucleic acid nanotechnology, self-assembly, molecular programming, and nanomaterials.`}
+  pageType="CollectionPage"
+  itemList={publications.map((publication) => ({
+    name: publication.data.title,
+    url: publication.data.url,
+  }))}
+>
+  <PageIntro
+    eyebrow="Research output"
+    title="Publications"
+    description="Peer-reviewed research, preprints, and commentary."
+  />
+
+  <section class="publication-tools shell" aria-label="Publication links">
+    <p>{publications.length} publications and preprints</p>
+    <div>
+      <SocialLinks />
+      {
+        publications.length > 0 && (
+          <a
+            class="bibtex-link"
+            href={withBase("publications/hao-liu-publications.bib")}
+            download="hao-liu-publications.bib"
+          >
+            Download BibTeX
+          </a>
+        )
+      }
+    </div>
+  </section>
+
+  {
+    publications.length === 0 ? (
+      <section class="empty-state shell" role="status">
+        <h2>Publication records are temporarily unavailable.</h2>
+        <p>Please use Google Scholar for the current public record.</p>
+        <SocialLinks />
+      </section>
+    ) : (
+      <section class="section shell publication-record" aria-labelledby="publication-list-title">
+        <h2 class="sr-only" id="publication-list-title">
+          Publications, newest first
+        </h2>
+        <div class="publication-rows">
+          {publications.map((publication) => <PublicationRow publication={publication} />)}
+        </div>
+      </section>
+    )
+  }
+
+  <script>
+    async function copyText(text: string) {
+      await navigator.clipboard.writeText(text);
+    }
+
+    if (window.isSecureContext) {
+      document.querySelectorAll<HTMLButtonElement>("[data-copy-citation]").forEach(
+        (button) => {
+          button.hidden = false;
+          button.addEventListener("click", async () => {
+            const citation = button.dataset.copyCitation;
+            const status = button.parentElement?.querySelector<HTMLElement>(
+              ".copy-citation-status",
+            );
+
+            if (!citation) return;
+
+            try {
+              await copyText(citation);
+              button.textContent = "Copied";
+              if (status) status.textContent = "Citation copied to clipboard.";
+            } catch {
+              button.textContent = "Copy failed";
+              if (status) {
+                status.textContent =
+                  "Citation could not be copied. Use the BibTeX download instead.";
+              }
+            }
+
+            window.setTimeout(() => {
+              button.textContent = "Copy citation";
+            }, 1800);
+          });
+        },
+      );
+    }
+  </script>
+</BaseLayout>

@@ -1,0 +1,49 @@
+---
+// Renders a working mailto link without putting a plain address in the HTML.
+//
+// The address is split into user/domain and stored base64-encoded in data
+// attributes, then reassembled in the browser. Naive scrapers regex the raw
+// HTML for `name@domain` or `mailto:` and find neither. It is not
+// cryptography — a scraper that executes JavaScript will still get it — but it
+// removes the site from the large majority of harvesting passes.
+//
+// Without JavaScript the link still resolves, to the Contact page, and keeps a
+// sensible visible label.
+import { getPublicPerson } from "../lib/person";
+import { withBase } from "../lib/urls";
+
+interface Props {
+  class?: string;
+  /** Visible text before JS runs, and for non-JS visitors. */
+  label?: string;
+  /** When true, JS replaces the label with the address itself. */
+  reveal?: boolean;
+}
+
+const person = await getPublicPerson();
+const { class: className, label = "Email", reveal = false } = Astro.props;
+
+const [user, domain] = person.email.split("@");
+const enc = (value: string) => Buffer.from(value, "utf8").toString("base64");
+---
+
+<a
+  class:list={["email-link", className]}
+  href={withBase("contact/")}
+  data-email-user={enc(user)}
+  data-email-domain={enc(domain)}
+  data-email-reveal={reveal ? "" : undefined}
+>{label}</a>
+
+<script>
+  document.querySelectorAll<HTMLAnchorElement>("a.email-link").forEach((link) => {
+    const { emailUser, emailDomain } = link.dataset;
+    if (!emailUser || !emailDomain) return;
+    const address = `${atob(emailUser)}@${atob(emailDomain)}`;
+    link.href = `mailto:${address}`;
+    if (link.dataset.emailReveal !== undefined) link.textContent = address;
+    delete link.dataset.emailUser;
+    delete link.dataset.emailDomain;
+    delete link.dataset.emailReveal;
+  });
+</script>

@@ -1,0 +1,63 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import EmailLink from "../../components/EmailLink.astro";
+import PageIntro from "../../components/PageIntro.astro";
+import SocialLinks from "../../components/SocialLinks.astro";
+import { getPublicPerson } from "../../lib/person";
+
+const person = await getPublicPerson();
+---
+
+<BaseLayout
+  title={`Contact — ${person.name}`}
+  description={`Contact ${person.name} about collaborations in computational design, nucleic acid nanotechnology, and self-assembly.`}
+  pageClass="contact-page"
+>
+  <PageIntro
+    eyebrow="Get in touch"
+    title="Contact"
+    description="I welcome conversations about computational and experimental molecular materials research, collaborations, and new work in programmable self-assembly."
+  />
+
+  <section class="section shell contact-content" aria-labelledby="contact-email-title">
+    <div class="contact-details">
+      <p class="eyebrow">Professional contact</p>
+      <h2 id="contact-email-title">Hao Liu, Ph.D.</h2>
+      <p class="contact-role">{person.role}</p>
+      <p class="contact-affiliation">{person.organizations.join(" · ")}</p>
+      <p class="contact-location">{person.location}</p>
+
+      <EmailLink class="contact-email" label="Conversation welcome" />
+      <SocialLinks />
+
+      <div class="contact-interests">
+        <h3>Research interests</h3>
+        <ul>
+          <li>Inverse design and molecular modeling</li>
+          <li>DNA nanotechnology and programmable self-assembly</li>
+          <li>Research connecting computation with experiment</li>
+        </ul>
+      </div>
+    </div>
+
+    <figure class="contact-map">
+      <iframe
+        title="Map of The Biodesign Institute at Arizona State University in Tempe"
+        src="https://maps.google.com/maps?q=The%20Biodesign%20Institute%20Arizona%20State%20University%20Tempe%20AZ&t=&z=14&ie=UTF8&iwloc=&output=embed"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        allowfullscreen
+      ></iframe>
+      <figcaption>
+        Arizona State University · Tempe, Arizona
+        <a
+          href="https://www.google.com/maps/search/?api=1&query=The+Biodesign+Institute+Arizona+State+University+Tempe+AZ"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Open in Google Maps<span class="sr-only"> (opens in a new tab)</span>
+        </a>
+      </figcaption>
+    </figure>
+  </section>
+</BaseLayout>

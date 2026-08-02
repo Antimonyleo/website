@@ -1,0 +1,105 @@
+---
+import { getEntry } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageIntro from "../../components/PageIntro.astro";
+import SectionHeading from "../../components/SectionHeading.astro";
+import { getPublicPerson } from "../../lib/person";
+
+const person = await getPublicPerson();
+const experience = await getEntry("experience", "hao-liu");
+if (!experience) {
+  throw new Error("Required experience entry 'hao-liu' was not found.");
+}
+const data = experience.data;
+const timeline = [
+  ...data.appointments.map((item) => ({
+    period: item.period,
+    title: item.title,
+    institution: item.institution,
+    detail: item.detail,
+    advisors: item.advisors,
+  })),
+  ...data.education.map((item) => ({
+    period: item.period,
+    title: item.degree,
+    institution: item.institution,
+    detail: item.detail,
+    advisors: undefined,
+  })),
+];
+---
+
+<BaseLayout
+  title={`Experience — ${person.name}`}
+  description={`Research experience, education, and selected presentations by ${person.name}.`}
+  pageType="ProfilePage"
+>
+  <PageIntro
+    eyebrow="Background"
+    title="Experience"
+    description="Research training across molecular modeling, nucleic acid self-assembly, and structural characterization."
+  />
+
+  <section class="section shell" aria-labelledby="training-title">
+    <SectionHeading
+      eyebrow="Career"
+      title="Appointments and education"
+      headingId="training-title"
+    />
+    <ol class="timeline">
+      {
+        timeline.map((item) => (
+          <li>
+            <div class="timeline-date">{item.period}</div>
+            <div>
+              <h3>{item.title}</h3>
+              <p>{item.institution}</p>
+              <p class="timeline-note">{item.detail}</p>
+              {
+                item.advisors && (
+                  <p class="timeline-advisors">
+                    Advisors:{" "}
+                    {item.advisors.map((advisor, index) => (
+                      <>
+                        {index > 0 && " and "}
+                        <a
+                          href={advisor.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {advisor.name}
+                          <span class="sr-only">
+                            {" "}(ASU profile opens in a new tab)
+                          </span>
+                        </a>
+                      </>
+                    ))}
+                  </p>
+                )
+              }
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+
+  <section class="section shell talks-section" aria-labelledby="talks-title">
+    <SectionHeading
+      eyebrow="Research communication"
+      title="Selected presentations"
+      headingId="talks-title"
+    />
+    <ul class="talk-list">
+      {
+        data.presentations.map((presentation) => (
+          <li>
+            <span>{presentation.year}</span>
+            <p>{presentation.venue} — {presentation.title}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+</BaseLayout>

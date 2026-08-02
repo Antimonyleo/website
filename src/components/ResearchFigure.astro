@@ -1,0 +1,75 @@
+---
+import type { CollectionEntry } from "astro:content";
+import type { ResearchFigureData } from "../data/research";
+import { withBase } from "../lib/urls";
+
+interface Props {
+  figure: ResearchFigureData;
+  sourcePublication?: CollectionEntry<"publications">;
+  loading?: "eager" | "lazy";
+}
+
+const {
+  figure,
+  sourcePublication,
+  loading = "lazy",
+} = Astro.props;
+
+if (figure.source && !sourcePublication) {
+  throw new Error(
+    `Research figure "${figure.id}" is missing publication metadata for "${figure.source.publicationId}".`,
+  );
+}
+
+const sourceLabel =
+  figure.source && sourcePublication
+    ? [
+        `${sourcePublication.data.venue} ${sourcePublication.data.year}`,
+        figure.source.locator,
+        figure.source.showDoi ? `doi:${sourcePublication.data.doi}` : undefined,
+      ]
+        .filter(Boolean)
+        .join(" · ")
+    : undefined;
+---
+
+<figure
+  class="research-figure"
+  data-research-figure={figure.id}
+  data-figure-kind={figure.kind}
+>
+  <div
+    class="research-figure-frame"
+    style={`--research-figure-ratio: ${figure.width} / ${figure.height}`}
+  >
+    <img
+      src={withBase(figure.src)}
+      alt={figure.alt}
+      width={figure.width}
+      height={figure.height}
+      loading={loading}
+      decoding="async"
+    />
+  </div>
+  <figcaption>
+    <span>
+      {figure.captionLabel && <strong>{figure.captionLabel}</strong>}
+      {figure.captionLabel && " "}
+      {figure.caption}
+    </span>
+    {figure.credit && <span>{figure.credit}</span>}
+    {
+      figure.source && sourcePublication && sourceLabel && (
+        <a
+          data-figure-source
+          href={sourcePublication.data.url}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          {sourceLabel} ↗
+          <span class="sr-only"> (opens in a new tab)</span>
+        </a>
+      )
+    }
+  </figcaption>
+</figure>

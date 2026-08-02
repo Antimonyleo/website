@@ -1,0 +1,37 @@
+---
+import { getPublicPerson } from "../lib/person";
+
+interface Props {
+  compact?: boolean;
+}
+
+const { compact = false } = Astro.props;
+const person = await getPublicPerson();
+---
+
+<div class:list={["social-links", { compact }]}>
+  <a
+    href={person.scholar}
+    target="_blank"
+    rel="me noopener noreferrer"
+    aria-label="Google Scholar profile (opens in a new tab)"
+  >
+    <svg viewBox="0 0 24 24" role="img" aria-hidden="true">
+      <path d="M12 3 1.8 9.1 12 15.2 20.1 10.4v5.1h1.8V9.3L12 3Z" />
+      <path d="M5.6 12.3v4.2c0 2 2.9 3.6 6.4 3.6s6.4-1.6 6.4-3.6v-4.2L12 16.1l-6.4-3.8Z" />
+    </svg>
+    <span>Google Scholar</span>
+  </a>
+  <a
+    href={person.orcid}
+    target="_blank"
+    rel="me noopener noreferrer"
+    aria-label="ORCID profile (opens in a new tab)"
+  >
+    <svg class="orcid-icon" viewBox="0 0 24 24" role="img" aria-hidden="true">
+      <circle cx="12" cy="12" r="10"></circle>
+      <path class="orcid-letter" d="M7.1 7.2h1.6v1.6H7.1V7.2Zm0 3h1.6v6.5H7.1v-6.5Zm3.3-3h4.2c3.1 0 5.1 1.9 5.1 4.8 0 3-2 4.8-5.1 4.8h-4.2V7.2Zm1.7 1.5v6.5h2.3c2.1 0 3.5-1.2 3.5-3.2s-1.4-3.2-3.5-3.2h-2.3Z"></path>
+    </svg>
+    <span>ORCID</span>
+  </a>
+</div>

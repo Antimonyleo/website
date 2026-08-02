@@ -1,0 +1,16 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getPublicPerson } from "../lib/person";
+import { withBase } from "../lib/urls";
+
+const person = await getPublicPerson();
+---
+
+<BaseLayout title={`Page not found — ${person.name}`} canonicalPath="404.html" noIndex>
+  <section class="not-found shell">
+    <p class="eyebrow">404</p>
+    <h1>Page not found.</h1>
+    <p>The requested page is not available.</p>
+    <a class="text-link" href={withBase()}>Return home</a>
+  </section>
+</BaseLayout>

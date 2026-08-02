@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#fafbfb"/>
+  <rect x="64" y="64" width="1072" height="502" fill="#ffffff" stroke="#d7dee2" stroke-width="2"/>
+  <path d="M64 164h1072M760 164v402" fill="none" stroke="#d7dee2" stroke-width="2"/>
+  <rect x="64" y="64" width="10" height="100" fill="#315f7d"/>
+  <g fill="#58666d" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="600" letter-spacing="2">
+    <text x="104" y="126">NUCLEIC ACID NANOTECHNOLOGY</text>
+  </g>
+  <g fill="#172126" font-family="Arial, Helvetica, sans-serif">
+    <text x="104" y="274" font-size="76" font-weight="700">Hao Liu, Ph.D.</text>
+    <text x="104" y="332" font-size="31">Computational design + experimental nanotechnology</text>
+  </g>
+  <g fill="#58666d" font-family="Courier New, monospace" font-size="21">
+    <text x="104" y="492">MOLECULAR REACTIONS</text>
+    <text x="802" y="245">PROGRAMMABLE</text>
+    <text x="802" y="278">ASSEMBLY</text>
+    <text x="802" y="375">FUNCTIONAL</text>
+    <text x="802" y="408">ORGANIZATION</text>
+  </g>
+  <g fill="none" stroke="#315f7d" stroke-width="4">
+    <path d="M804 308h240"/>
+    <path d="M804 438h240"/>
+  </g>
+</svg>
