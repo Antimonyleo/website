@@ -46,6 +46,19 @@ export const researchFigures = {
       showDoi: true,
     },
   },
+  tessellations: {
+    id: "tessellations-public-evidence",
+    kind: "paper-figure",
+    src: "images/research/dna-origami-tessellations.webp",
+    width: 853,
+    height: 301,
+    alt: "Three atomic-force micrographs side by side, each showing rings assembled from wedge-shaped DNA-origami tiles: five-tile rings in the first field, six in the second, seven in the third.",
+    caption:
+      "A detail from the published figure: the same wedge-shaped tile closes into five-, six-, or seven-member rings depending on the interhelical spacing it is designed with. Scale bar 200 nm.",
+    source: {
+      publicationId: "dna-origami-tessellations-2023",
+    },
+  },
   meteorCrater: {
     id: "meteor-crater-field-photo",
     kind: "photograph",
@@ -162,6 +175,7 @@ export const researchScaleGroups = [
         role: "Second author",
       },
     ],
+    figureId: "tessellations",
   },
   {
     id: "open-crystal-lattices",

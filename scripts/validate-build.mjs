@@ -376,6 +376,10 @@ function validateResearchFigures(researchHtml) {
   const figures = researchFigures(researchHtml);
   const expectedFigureSources = new Map([
     ["polycubes-public-evidence", "10.26434/chemrxiv-2025-qbk3f"],
+    [
+      "tessellations-public-evidence",
+      "Journal of the American Chemical Society 2023",
+    ],
     ["pyrochlore-published-evidence", "10.1126/science.adl5549"],
     ["meteor-crater-field-photo", "Photo by Hao Liu"],
     ["canyon-diablo-specimen", "Photo by Hao Liu"],
@@ -1111,14 +1115,21 @@ async function validateCssOverflowGuards() {
   if (!/(?:overflow-wrap\s*:\s*(?:anywhere|break-word)|word-break\s*:\s*break-word)/i.test(css)) {
     report("CSS overflow guard: expected an overflow-wrap rule for long titles, DOIs, and email");
   }
-  if (/@font-face\b|fonts\.(?:googleapis|gstatic)\.com/i.test(css)) {
-    advise("Design audit: a webfont is loaded; confirm the added request is intentional");
+  // Webfonts are now part of the design, but they must stay self-hosted: the
+  // site promises no third-party requests, and a font CDN would break that.
+  if (/fonts\.(?:googleapis|gstatic)\.com|use\.typekit|fonts\.bunny\.net/i.test(css)) {
+    report("CSS privacy guard: fonts must be self-hosted, not loaded from a third party");
+  }
+  for (const family of ["Source Serif 4", "Archivo"]) {
+    if (!new RegExp(`@font-face[^}]*font-family:\\s*"${family}"`, "is").test(css)) {
+      report(`CSS typography guard: the self-hosted ${family} @font-face rule is missing`);
+    }
+  }
+  if (!/--serif\s*:/.test(css) || !/--sans\s*:/.test(css)) {
+    report("CSS typography guard: the serif/sans pairing tokens are missing");
   }
   if (/\bInter\b|font-weight\s*:\s*720\b/i.test(css)) {
     advise("Design audit: Inter or a 720 weight appears in the current type system");
-  }
-  if (/(?:--serif\b|font-family\s*:[^;}]*\b(?<!sans-)serif\b)/i.test(css)) {
-    advise("Design audit: a serif display style appears in the current type system");
   }
   if (
     /:(?:hover|focus-visible)[^{]*\{[^}]*transform\s*:\s*translate(?:3d|y)?\s*\(/ims.test(
@@ -1267,8 +1278,10 @@ if (/\bclass=(?:"[^"]*\bresearch-map\b[^"]*"|'[^']*\bresearch-map\b[^']*')/i.tes
 if (/\bclass=(?:"[^"]*\bselected-publication\b[^"]*"|'[^']*\bselected-publication\b[^']*')/i.test(homeHtml)) {
   report("index.html: detailed publication cards must remain off the concise homepage");
 }
-if (researchFigures(researchHtml).length !== 5) {
-  advise("Design audit: the Research page no longer renders the current five-figure composition");
+// One figure per scale group plus the three field-note images. A change here
+// usually means a scale group lost its figure and the page rhythm now skips.
+if (researchFigures(researchHtml).length !== 6) {
+  advise("Design audit: the Research page no longer renders the current six-figure composition");
 }
 
 const renderedStoryPreviews = [
@@ -1324,14 +1337,21 @@ if (
 if (decodeHtml(homeHtml).includes("Southern University of Science and Technology")) {
   report("index.html: early training details belong on the Experience page, not the concise homepage");
 }
-const homeHeroPhoto = homeHtml.match(
-  /<(?:figure|div)\b[^>]*\bclass=(?:"[^"]*\bhome-hero-photo\b[^"]*"|'[^']*\bhome-hero-photo\b[^']*')[^>]*>[\s\S]*?<\/(?:figure|div)>/i,
-)?.[0];
-if (
-  !homeHeroPhoto ||
-  !/<img\b[^>]*\balt=(?:"[^"]+"|'[^']+')/i.test(homeHeroPhoto)
-) {
-  report("index.html: the approved hero portrait and descriptive alt text are missing");
+// The hero now leads with a research micrograph and the portrait sits in the
+// profile section. Both must still carry descriptive alt text.
+for (const [className, label] of [
+  ["home-hero-figure", "hero research figure"],
+  ["home-portrait", "profile portrait"],
+]) {
+  const block = homeHtml.match(
+    new RegExp(
+      `<(?:figure|div)\\b[^>]*\\bclass=(?:"[^"]*\\b${className}\\b[^"]*"|'[^']*\\b${className}\\b[^']*')[^>]*>[\\s\\S]*?</(?:figure|div)>`,
+      "i",
+    ),
+  )?.[0];
+  if (!block || !/<img\b[^>]*\balt=(?:"[^"]{20,}"|'[^']{20,}')/i.test(block)) {
+    report(`index.html: the ${label} or its descriptive alt text is missing`);
+  }
 }
 const renderedHomeResearchRoutes = [
   ...homeHtml.matchAll(

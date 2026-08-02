@@ -35,15 +35,17 @@ const finiteStateMachine = publication("finite-state-machine-2022");
     description="I design interaction rules, screen them across patchy-particle and nucleotide-level models, and carry the surviving designs into experiments. The work spans finite objects, extended arrays, and open three-dimensional lattices."
   />
 
-  <nav class="research-jump shell" aria-label="Research sections">
-    <span>Research at a glance</span>
-    <a href="#finite-assemblies">Finite systems</a>
-    <a href="#two-dimensional-arrays">Extended arrays</a>
-    <a href="#open-crystal-lattices">Open crystal lattices</a>
-    <a href="#hexagonal-diamond-story">Field note</a>
-    <a href="#molecular-programming-foundations">Earlier work</a>
-    <a href="#research-directions">Directions</a>
-  </nav>
+  <div class="research-jump-bar">
+    <nav class="research-jump shell" aria-label="Research sections">
+      <span>Research at a glance</span>
+      <a href="#finite-assemblies">Finite systems</a>
+      <a href="#two-dimensional-arrays">Extended arrays</a>
+      <a href="#open-crystal-lattices">Open crystal lattices</a>
+      <a href="#hexagonal-diamond-story">Field note</a>
+      <a href="#molecular-programming-foundations">Earlier work</a>
+      <a href="#research-directions">Directions</a>
+    </nav>
+  </div>
 
   <section
     class="section shell research-program"
@@ -145,4 +147,41 @@ const finiteStateMachine = publication("finite-state-machine-2022");
       </p>
     </div>
   </section>
+
+  <script>
+    // Marks the section list entry for whatever the reader is currently in.
+    // Progressive enhancement: without it the links are ordinary anchors.
+    const links = Array.from(
+      document.querySelectorAll<HTMLAnchorElement>(".research-jump a"),
+    );
+    const targets = links
+      .map((link) => {
+        const target = document.querySelector(link.hash);
+        return target ? { link, target } : null;
+      })
+      .filter((entry): entry is { link: HTMLAnchorElement; target: Element } =>
+        entry !== null,
+      );
+
+    if (targets.length) {
+      const visible = new Set<Element>();
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) visible.add(entry.target);
+            else visible.delete(entry.target);
+          }
+          // targets is in document order, so the topmost section on screen wins.
+          const current = targets.find((entry) => visible.has(entry.target));
+          for (const entry of targets) {
+            if (entry === current) entry.link.setAttribute("aria-current", "true");
+            else entry.link.removeAttribute("aria-current");
+          }
+        },
+        // Discount the sticky header and section bar at the top of the viewport.
+        { rootMargin: "-136px 0px -55% 0px" },
+      );
+      for (const { target } of targets) observer.observe(target);
+    }
+  </script>
 </BaseLayout>

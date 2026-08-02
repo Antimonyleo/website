@@ -5,6 +5,10 @@ import { SITE } from "../config";
 import { getPublicPerson } from "../lib/person";
 import { withBase } from "../lib/urls";
 import "../styles/global.css";
+// Imported rather than referenced by path so Vite emits hashed, immutable
+// filenames and rewrites them for whatever `base` the site is deployed under.
+import archivoFont from "../assets/fonts/archivo.woff2";
+import serifFont from "../assets/fonts/source-serif-4.woff2";
 
 interface Props {
   title?: string;
@@ -32,7 +36,7 @@ const canonical = canonicalPath
   : Astro.site
     ? new URL(Astro.url.pathname, Astro.site)
     : Astro.url;
-const socialImageUrl = new URL(withBase("og-card.png"), Astro.site ?? Astro.url);
+const socialImageUrl = new URL(withBase("og-card.jpg"), Astro.site ?? Astro.url);
 const homeUrl = new URL(withBase(), Astro.site ?? Astro.url);
 
 const personSchema = {
@@ -92,7 +96,11 @@ const pageSchema = {
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
     {noIndex && <meta name="robots" content="noindex, nofollow" />}
-    <meta name="theme-color" content="#f7f8f6" />
+    <meta name="theme-color" content="#f6f4ef" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#121614" media="(prefers-color-scheme: dark)" />
+    {/* Both faces are used above the fold on every page; the italic is not. */}
+    <link rel="preload" href={serifFont} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={archivoFont} as="font" type="font/woff2" crossorigin />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />

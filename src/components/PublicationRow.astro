@@ -77,16 +77,20 @@ const citation = Array.isArray(data.authors)
   <div class="publication-year">{data.year}</div>
   <div class="publication-figure">
     {
-      data.image && (
+      data.image ? (
         <img
           class="publication-thumb"
           src={withBase(data.image.src)}
           alt={data.image.alt}
-          width="240"
-          height="180"
+          width="900"
+          height="600"
           loading="lazy"
           decoding="async"
         />
+      ) : (
+        <div class="publication-plate-empty" aria-hidden="true">
+          {data.venue}
+        </div>
       )
     }
   </div>

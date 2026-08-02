@@ -16,9 +16,15 @@ it is put together are recorded in [DECISIONS.md](DECISIONS.md).
 
 ## Using this as a template for your own site
 
-You are welcome to fork this and make it yours. The design is deliberately plain
-— one column of content, one accent colour, no animation — so it should suit
-most researchers without much fiddling.
+You are welcome to fork this and make it yours. The design is deliberately quiet
+— one accent colour, two typefaces, no animation — so it should suit most
+researchers without much fiddling.
+
+The two typefaces ([Source Serif 4](https://github.com/adobe-fonts/source-serif)
+and [Archivo](https://github.com/Omnibus-Type/Archivo)) are self-hosted in
+`src/assets/fonts/`, so the site makes no third-party requests. Both are under
+the SIL Open Font License; the licences sit beside them. Swap them by replacing
+the files and the `@font-face` blocks at the top of `src/styles/global.css`.
 
 ### 1. Get it running
 

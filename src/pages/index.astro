@@ -50,35 +50,39 @@ const researchRoutes = [
 
 <BaseLayout pageClass="home-page" pageType="ProfilePage">
   <section class="home-hero">
-    <div class="shell home-hero-layout">
-      <div class="home-hero-copy">
-        <p class="eyebrow">Nucleic acid nanotechnology</p>
-        <h1>{displayName(person)}</h1>
-        <p class="home-role">
-          {person.role} · {primaryOrganization(person)} · {person.location}
-        </p>
-        <p class="home-hero-statement">
-          I am a molecular designer and programmer. I write the rules that make
-          molecules react, fold, and assemble themselves into the structures I
-          specify.
-        </p>
-        <div class="home-identity-links">
-          <SocialLinks />
-          <a class="text-link" href={withBase("contact/")}>Contact</a>
-        </div>
+    <div class="home-hero-copy">
+      <p class="eyebrow">Nucleic acid nanotechnology</p>
+      <h1>{displayName(person)}</h1>
+      <p class="home-role">
+        {person.role} · {primaryOrganization(person)} · {person.location}
+      </p>
+      <p class="home-hero-statement">
+        I am a molecular designer and programmer. I write the rules that make
+        molecules react, fold, and assemble themselves into the structures I
+        specify.
+      </p>
+      <div class="home-identity-links">
+        <SocialLinks />
+        <a class="text-link" href={withBase("contact/")}>Contact</a>
       </div>
-
-      <figure class="home-hero-photo">
-        <img
-          src={withBase("images/hao-liu-boston.webp")}
-          alt="Hao Liu at a boat railing on Boston Harbor, with the city skyline behind him."
-          width="1800"
-          height="1350"
-          decoding="async"
-          loading="eager"
-        />
-      </figure>
     </div>
+
+    <figure class="home-hero-figure">
+      <img
+        src={withBase("images/research/pyrochlore-crystal.webp")}
+        alt="Scanning electron micrograph of a faceted, silica-preserved DNA-origami pyrochlore crystal roughly ten micrometres across, its surface covered in an ordered array of pores."
+        width="1200"
+        height="900"
+        decoding="async"
+        loading="eager"
+        fetchpriority="high"
+      />
+      <figcaption>
+        <span>A DNA-origami pyrochlore lattice, silica-preserved and imaged by
+          scanning electron microscopy.</span>
+        <a href={withBase("research/#open-crystal-lattices")}>How it was designed</a>
+      </figcaption>
+    </figure>
   </section>
 
   <section
@@ -86,6 +90,17 @@ const researchRoutes = [
     aria-labelledby="home-profile-title"
   >
     <div class="home-profile-layout">
+      <figure class="home-portrait">
+        <img
+          src={withBase("images/hao-liu-boston.webp")}
+          alt="Hao Liu at a boat railing on Boston Harbor, with the city skyline behind him."
+          width="1800"
+          height="1350"
+          decoding="async"
+          loading="lazy"
+        />
+      </figure>
+
       <div class="home-profile-copy" data-home-bio>
         <SectionHeading
           eyebrow="Profile"
@@ -94,26 +109,39 @@ const researchRoutes = [
         />
         {person.bio.map((paragraph) => <p>{paragraph}</p>)}
       </div>
-
-      <nav class="home-research-nav" aria-label="Research overview">
-        <p class="eyebrow">Research</p>
-        <div class="home-research-route-list">
-          {
-            researchRoutes.map((route) => (
-              <a
-                class="home-research-route"
-                href={withBase(`research/#${route.anchor}`)}
-                data-home-research-route={route.anchor}
-              >
-                <span class="home-research-route-label">{route.label}</span>
-                <strong>{route.title}</strong>
-                <span>{route.description}</span>
-              </a>
-            ))
-          }
-        </div>
-      </nav>
     </div>
+  </section>
+
+  <section
+    class="section shell home-research"
+    aria-labelledby="home-research-title"
+  >
+    <SectionHeading
+      eyebrow="Research"
+      title="Three scales of assembly"
+      headingId="home-research-title"
+    />
+
+    <nav class="home-research-route-list" aria-label="Research overview">
+      {
+        researchRoutes.map((route, index) => (
+          <a
+            class="home-research-route"
+            href={withBase(`research/#${route.anchor}`)}
+            data-home-research-route={route.anchor}
+          >
+            <span class="home-research-route-index">
+              {String(index + 1).padStart(2, "0")}
+            </span>
+            <span class="home-research-route-label">{route.label}</span>
+            <strong>{route.title}</strong>
+            <span class="home-research-route-description">
+              {route.description}
+            </span>
+          </a>
+        ))
+      }
+    </nav>
   </section>
 
   <section
