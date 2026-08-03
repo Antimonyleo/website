@@ -483,8 +483,18 @@ dl {
 
 .home-hero-field {
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
-  min-height: clamp(430px, 46vw, 600px);
+  /*
+    A definite height for the image row, not min-height on the figure. With an
+    indefinite row the 1fr resolved to the image's own intrinsic height, so a
+    1200x900 source rendered 990px tall at desktop and the hero swallowed the
+    whole screen.
+  */
+  /*
+    The floor is set by the card, not by taste: the card is 362px plus 34px of
+    margin, and anything shorter lets it spill over the caption strip and hide
+    the provenance line.
+  */
+  grid-template-rows: clamp(430px, 34vw, 480px) auto;
   margin: 0;
   background: var(--surface-alt);
 }
@@ -493,7 +503,9 @@ dl {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 62% 44%;
+  /* Top-anchored: at this band ratio a centred crop lands entirely inside the
+     crystal face and reads as noise. The top edge keeps the silhouette. */
+  object-position: 50% 0%;
 }
 
 .home-hero-field figcaption {
@@ -2042,18 +2054,16 @@ dl {
 }
 
 /*
-  Below this the card covers almost the whole field and the micrograph stops
-  being visible at all, so the two stack instead — with a small overlap so the
-  card still reads as sitting on the image rather than after it.
+  Below this a 432px card sits on a field barely twice its width and the
+  micrograph stops being readable, so the two stack instead.
 */
-@media (max-width: 720px) {
+@media (max-width: 900px) {
   .home-hero > * {
     grid-area: auto;
   }
 
   .home-hero-field {
-    min-height: 0;
-    aspect-ratio: 4 / 3;
+    grid-template-rows: clamp(220px, 58vw, 340px) auto;
   }
 
   /* No overlap here: the only thing to overlap is the caption strip, and
