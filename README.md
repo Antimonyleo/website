@@ -61,6 +61,7 @@ Almost everything you need to change is in five places.
 | Appointments, education, talks | `src/content/experience/hao-liu.md` |
 | Publications | `src/data/publications.json` |
 | Research sections and figures | `src/data/research.ts` |
+| Released software and data | `src/data/tools.ts` |
 
 Rename both files in `src/content/` to your own slug (for example
 `jane-doe.md`), then update the two places that look them up by name:

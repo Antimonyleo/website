@@ -23,10 +23,10 @@ export const researchFigures = {
     kind: "paper-figure",
     src: "images/research/dna-polycubes.webp",
     width: 1200,
-    height: 1427,
-    alt: "Four columns repeated for five DNA polycube targets: the target shape, the cube-level design, an oxDNA simulation of the assembled structure, and the corresponding electron-microscopy image.",
+    height: 799,
+    alt: "Four columns repeated for three DNA polycube targets: the target shape, the cube-level design, an oxDNA simulation of the assembled structure, and the corresponding electron-microscopy image.",
     caption:
-      "Finite DNA polycubes, from target geometry through simulation to experimental imaging.",
+      "Finite DNA polycubes, from target geometry through simulation to experimental imaging. Three of the five targets in the published figure.",
     source: {
       publicationId: "polycubes-2025",
       locator: "Figure 2",

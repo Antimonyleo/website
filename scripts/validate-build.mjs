@@ -73,6 +73,7 @@ const expectedRoutes = new Map([
   ["Home", "index.html"],
   ["Research", join("research", "index.html")],
   ["Publications", join("publications", "index.html")],
+  ["Tools", join("tools", "index.html")],
   ["Experience", join("experience", "index.html")],
   ["Contact", join("contact", "index.html")],
   ["Not found", "404.html"],

@@ -16,6 +16,7 @@ const routes = [
     status: 200,
     marker: "data-publication-record",
   },
+  { path: `${basePath}tools/`, status: 200, marker: "data-tool=" },
   { path: `${basePath}experience/`, status: 200, marker: "<main" },
   { path: `${basePath}contact/`, status: 200, marker: "data-email-domain" },
   {
