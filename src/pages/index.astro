@@ -56,28 +56,11 @@ const researchRoutes = [
 
 <BaseLayout pageClass="home-page" pageType="ProfilePage">
   <section class="home-hero">
-    <div class="home-hero-copy">
-      <p class="eyebrow">Nucleic acid nanotechnology</p>
-      <h1>{displayName(person)}</h1>
-      <p class="home-role">
-        {person.role} · {primaryOrganization(person)} · {person.location}
-      </p>
-      <p class="home-hero-statement">
-        I am a molecular designer and programmer. I write the rules that make
-        molecules react, fold, and assemble themselves into the structures I
-        specify.
-      </p>
-      <div class="home-identity-links">
-        <SocialLinks />
-        <a class="text-link" href={withBase("contact/")}>Contact</a>
-      </div>
-    </div>
-
-    <figure class="home-hero-figure">
+    <figure class="home-hero-field">
       <img
         src={withBase(heroImage)}
         srcset={srcSetFor(heroImage)}
-        sizes="(max-width: 900px) 100vw, 48vw"
+        sizes="100vw"
         alt="Scanning electron micrograph of a faceted, silica-preserved DNA-origami pyrochlore crystal roughly ten micrometres across, its surface covered in an ordered array of pores."
         width="1200"
         height="900"
@@ -91,6 +74,40 @@ const researchRoutes = [
         <a href={withBase("research/#open-crystal-lattices")}>How it was designed</a>
       </figcaption>
     </figure>
+
+    <div class="home-hero-card">
+      <div class="home-hero-masthead">
+        <img
+          src={withBase(portraitImage)}
+          srcset={srcSetFor(portraitImage)}
+          sizes="72px"
+          alt="Hao Liu at a boat railing on Boston Harbor, with the city skyline behind him."
+          width="1800"
+          height="1350"
+          decoding="async"
+          loading="eager"
+        />
+        <div>
+          <p class="eyebrow">Nucleic acid nanotechnology</p>
+          <h1>{displayName(person)}</h1>
+        </div>
+      </div>
+
+      <div class="home-hero-card-body">
+        <p class="home-role">
+          {person.role} · {primaryOrganization(person)}
+        </p>
+        <p class="home-hero-statement">
+          I am a molecular designer and programmer. I write the rules that make
+          molecules react, fold, and assemble themselves into the structures I
+          specify.
+        </p>
+        <div class="home-identity-links">
+          <SocialLinks />
+          <a class="text-link" href={withBase("contact/")}>Contact</a>
+        </div>
+      </div>
+    </div>
   </section>
 
   <section
@@ -98,25 +115,12 @@ const researchRoutes = [
     aria-labelledby="home-profile-title"
   >
     <div class="home-profile-layout">
-      <figure class="home-portrait">
-        <img
-          src={withBase(portraitImage)}
-          srcset={srcSetFor(portraitImage)}
-          sizes="(max-width: 640px) 62vw, 260px"
-          alt="Hao Liu at a boat railing on Boston Harbor, with the city skyline behind him."
-          width="1800"
-          height="1350"
-          decoding="async"
-          loading="lazy"
-        />
-      </figure>
-
+      <SectionHeading
+        eyebrow="Profile"
+        title="Research profile"
+        headingId="home-profile-title"
+      />
       <div class="home-profile-copy" data-home-bio>
-        <SectionHeading
-          eyebrow="Profile"
-          title="Research profile"
-          headingId="home-profile-title"
-        />
         {person.bio.map((paragraph) => <p>{paragraph}</p>)}
       </div>
     </div>

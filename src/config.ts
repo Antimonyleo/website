@@ -9,7 +9,6 @@ export const SITE = {
 export const NAV_ITEMS = [
   { label: "Research", path: "research/" },
   { label: "Publications", path: "publications/" },
-  { label: "Tools", path: "tools/" },
   { label: "Experience", path: "experience/" },
   { label: "Contact", path: "contact/" },
 ] as const;

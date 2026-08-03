@@ -73,7 +73,6 @@ const expectedRoutes = new Map([
   ["Home", "index.html"],
   ["Research", join("research", "index.html")],
   ["Publications", join("publications", "index.html")],
-  ["Tools", join("tools", "index.html")],
   ["Experience", join("experience", "index.html")],
   ["Contact", join("contact", "index.html")],
   ["Not found", "404.html"],
@@ -1338,11 +1337,12 @@ if (
 if (decodeHtml(homeHtml).includes("Southern University of Science and Technology")) {
   report("index.html: early training details belong on the Experience page, not the concise homepage");
 }
-// The hero now leads with a research micrograph and the portrait sits in the
-// profile section. Both must still carry descriptive alt text.
+// The hero is a research micrograph used as a full-bleed field, with the
+// identity card — including the portrait — laid on top of it. Both images must
+// still carry descriptive alt text.
 for (const [className, label] of [
-  ["home-hero-figure", "hero research figure"],
-  ["home-portrait", "profile portrait"],
+  ["home-hero-field", "hero research figure"],
+  ["home-hero-masthead", "masthead portrait"],
 ]) {
   const block = homeHtml.match(
     new RegExp(

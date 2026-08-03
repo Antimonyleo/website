@@ -119,10 +119,17 @@ const pageSchema = {
   </head>
   <body class:list={["site-v2", pageClass]}>
     <a class="skip-link" href="#main-content">Skip to content</a>
-    <SiteHeader />
-    <main id="main-content">
-      <slot />
-    </main>
-    <SiteFooter />
+    {/*
+      The whole site is a paper card standing on a dark field, rather than a
+      full-bleed page. It is the structural move that gives the layout an
+      identity — typography alone cannot do it.
+    */}
+    <div class="site-frame">
+      <SiteHeader />
+      <main id="main-content">
+        <slot />
+      </main>
+      <SiteFooter />
+    </div>
   </body>
 </html>

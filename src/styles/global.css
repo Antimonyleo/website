@@ -42,6 +42,8 @@
   --line-strong: #c6c0b0;
   --accent: #2c5f57;
   --dark: #131d1a;
+  /* The field the paper card stands on. */
+  --frame: #232825;
   --dark-ink: #eae6dc;
   --dark-muted: #a4aea7;
   /* Scientific figures are authored on white; they stay on white in dark mode. */
@@ -88,6 +90,7 @@
     --line-strong: #3d4844;
     --accent: #7cbfb2;
     --dark: #0d1210;
+    --frame: #0a0d0c;
     --dark-ink: #e9e6dd;
     --dark-muted: #9aa49d;
     color-scheme: dark;
@@ -102,7 +105,7 @@
 
 html {
   min-width: 320px;
-  background: var(--bg);
+  background: var(--frame);
   scroll-padding-top: 84px;
 }
 
@@ -113,13 +116,25 @@ html {
 */
 body {
   margin: 0;
-  background: var(--bg);
+  background: var(--frame);
   color: var(--ink);
   font-family: var(--serif);
   font-size: var(--step-body);
   line-height: 1.62;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
+}
+
+/*
+  The card. Wide enough that publication figures still have room — this is not
+  a 500px column — but bounded, so the page reads as a document on a surface
+  instead of a browser window filled edge to edge.
+*/
+.site-frame {
+  width: min(100%, 1320px);
+  margin-inline: auto;
+  background: var(--bg);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 12%, transparent);
 }
 
 main {
@@ -345,7 +360,8 @@ dl {
   top: 0;
   height: 66px;
   border-bottom: 1px solid var(--line);
-  background: color-mix(in srgb, var(--bg) 94%, transparent);
+  /* Opaque enough that the dark field never shows through the blur. */
+  background: color-mix(in srgb, var(--bg) 96%, transparent);
   backdrop-filter: blur(12px);
 }
 
@@ -450,48 +466,131 @@ dl {
 /* Home */
 
 /*
-  The hero is deliberately not inside .shell. The copy is padded so its left
-  edge lands on the shell gutter, while the figure runs to the right edge of the
-  viewport — the first thing a visitor sees should be something Hao built.
+  The image is the field, not a panel beside the text: it runs the full width of
+  the card and the content sits on top of it. That overlap is what the layout
+  borrows from the reference site — an image you look at, with the page laid on
+  it, rather than two columns sharing a band.
 */
 .home-hero {
+  position: relative;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 0.92fr);
-  align-items: center;
   border-bottom: 1px solid var(--line);
+}
+
+.home-hero > * {
+  grid-area: 1 / 1;
+}
+
+.home-hero-field {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  min-height: clamp(430px, 46vw, 600px);
+  margin: 0;
+  background: var(--surface-alt);
+}
+
+.home-hero-field img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 62% 44%;
+}
+
+.home-hero-field figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  justify-content: flex-end;
+  padding: 11px clamp(18px, 2vw, 30px) 12px;
+  background: var(--dark);
+  color: var(--dark-muted);
+  font-family: var(--sans);
+  font-size: var(--step-micro);
+  line-height: 1.45;
+  text-align: right;
+}
+
+.home-hero-field figcaption span {
+  max-width: 46ch;
+}
+
+.home-hero-field figcaption a {
+  color: var(--dark-ink);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* The accent green is only 2.2:1 on --dark; WCAG 2.2 SC 1.4.11 needs 3:1. */
+.home-hero-field :focus-visible {
+  outline-color: var(--dark-ink);
+}
+
+
+/*
+  The floating card. Held to a narrow measure so it reads as a panel set on the
+  micrograph, and pinned left so the crystal stays visible beside it.
+*/
+.home-hero-card {
+  z-index: 1;
+  width: min(432px, calc(100% - 2 * var(--gutter)));
+  align-self: center;
+  justify-self: start;
+  margin-block: 34px;
+  margin-inline-start: clamp(var(--gutter), 5vw, 70px);
   background: var(--surface);
+  box-shadow: 0 18px 44px color-mix(in srgb, #000 26%, transparent);
 }
 
-.home-hero-copy {
-  max-width: 42rem;
-  padding-block: clamp(48px, 6vw, 88px);
-  padding-inline: max(var(--gutter), calc(50vw - var(--shell) / 2))
-    clamp(28px, 4vw, 64px);
+.home-hero-masthead {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 16px;
+  align-items: center;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-alt);
 }
 
-.home-hero h1 {
-  margin-bottom: 12px;
+.home-hero-masthead img {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  object-position: 31% 42%;
+  border-radius: 2px;
+}
+
+.home-hero-masthead .eyebrow {
+  margin-bottom: 4px;
+}
+
+.home-hero-card h1 {
+  margin-bottom: 0;
+  font-size: clamp(27px, 2.4vw, 33px);
+  line-height: 1.1;
+}
+
+.home-hero-card-body {
+  padding: 20px 22px 22px;
 }
 
 .home-role {
-  margin-bottom: 25px;
+  margin-bottom: 14px;
   color: var(--muted);
-  font-size: var(--step-body);
-  font-weight: 650;
+  font-size: var(--step-micro);
+  font-weight: 500;
 }
 
 .home-hero-statement {
-  max-width: 49ch;
-  margin-bottom: 22px;
+  margin-bottom: 16px;
   color: var(--ink);
-  font-size: var(--step-3);
-  line-height: 1.48;
+  font-size: var(--step-lead);
+  line-height: 1.45;
 }
 
 .home-identity-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 22px;
+  gap: 2px 20px;
   align-items: center;
 }
 
@@ -500,77 +599,6 @@ dl {
   min-height: 44px;
   align-items: center;
   font-weight: 700;
-}
-
-/*
-  Caption sits in its own solid strip rather than as a scrim over the image:
-  the micrograph carries a burned-in scale bar in the lower left, and an overlay
-  caption collides with it at some viewport widths.
-*/
-.home-hero-figure {
-  display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
-  min-height: clamp(340px, 44vw, 560px);
-  margin: 0;
-  align-self: stretch;
-  background: var(--surface-alt);
-}
-
-.home-hero-figure img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: 50% 45%;
-}
-
-.home-hero-figure figcaption {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 16px;
-  padding: 11px clamp(18px, 2vw, 26px) 12px;
-  background: var(--dark);
-  color: var(--dark-muted);
-  font-family: var(--sans);
-  font-size: var(--step-micro);
-  line-height: 1.45;
-}
-
-.home-hero-figure figcaption span {
-  max-width: 52ch;
-}
-
-.home-hero-figure figcaption a {
-  color: var(--dark-ink);
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-/* The accent green is only 2.2:1 on --dark; WCAG 2.2 SC 1.4.11 needs 3:1. */
-.home-hero-figure :focus-visible {
-  outline-color: var(--dark-ink);
-}
-
-@media (max-width: 900px) {
-  .home-hero {
-    grid-template-columns: 1fr;
-  }
-
-  .home-hero-copy {
-    padding-inline: var(--gutter);
-    padding-block: 44px 34px;
-  }
-
-  /* 16:9 cropped the crystal down to a sliver of its top edge. */
-  .home-hero-figure {
-    min-height: 0;
-    aspect-ratio: 5 / 4;
-  }
-
-  /* Framed just above the burned-in scale bar, which would otherwise be cut in
-     half by the caption strip and read as a rendering artefact. */
-  .home-hero-figure img {
-    object-position: 50% 34%;
-  }
 }
 
 .social-links {
@@ -619,29 +647,23 @@ dl {
   display: none;
 }
 
+/*
+  Side-heading layout: the section title sits in a margin column beside the
+  prose, which echoes the numbered label column on the research page and stops
+  the section from being one narrow paragraph with half the card empty.
+*/
 .home-profile-layout {
   display: grid;
-  grid-template-columns: minmax(0, 260px) minmax(0, 1fr);
-  gap: clamp(32px, 5vw, 64px);
+  grid-template-columns: minmax(0, 250px) minmax(0, 1fr);
+  gap: clamp(28px, 4vw, 60px);
   align-items: start;
 }
 
-.home-portrait {
-  margin: 0;
-  overflow: hidden;
-  border: 1px solid var(--line);
-  border-radius: 2px;
+.home-profile .section-heading {
+  margin-bottom: 0;
 }
 
-.home-portrait img {
-  width: 100%;
-  /* height:auto is required — the intrinsic height attribute otherwise wins
-     over aspect-ratio and the portrait renders at its full 1350px. */
-  height: auto;
-  aspect-ratio: 4 / 5;
-  object-fit: cover;
-  object-position: 31% 50%;
-}
+
 
 .home-profile .section-heading {
   margin-bottom: 22px;
@@ -788,7 +810,8 @@ dl {
   z-index: 40;
   top: 66px;
   border-bottom: 1px solid var(--line);
-  background: color-mix(in srgb, var(--bg) 94%, transparent);
+  /* Opaque enough that the dark field never shows through the blur. */
+  background: color-mix(in srgb, var(--bg) 96%, transparent);
   backdrop-filter: blur(12px);
 }
 
@@ -1318,15 +1341,23 @@ dl {
   Records without a usable figure still occupy the column, otherwise the left
   edge of the citation block collapses twice down the page.
 */
+/*
+  A filled tile at this size reads as a large empty box. A hairline with the
+  venue centred inside it reads as "no figure for this record", which is what
+  it means, while still holding the column edge.
+*/
 .publication-plate-empty {
   display: grid;
   padding: 16px;
-  align-content: end;
-  background: var(--surface-alt);
-  color: var(--muted);
+  border-style: dashed;
+  border-color: color-mix(in srgb, var(--line-strong) 70%, transparent);
+  place-content: center;
+  background: none;
+  color: color-mix(in srgb, var(--muted) 78%, transparent);
   font-family: var(--sans);
   font-size: var(--step-micro);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
+  text-align: center;
   text-transform: uppercase;
 }
 
@@ -1405,81 +1436,6 @@ dl {
 
 .empty-state {
   padding-block: 86px;
-}
-
-/* Tools */
-
-.tool-list {
-  padding: 0;
-  margin: 0;
-  border-top: 1px solid var(--ink);
-  list-style: none;
-}
-
-.tool-entry {
-  display: grid;
-  grid-template-columns: minmax(0, 300px) minmax(0, 1fr);
-  gap: clamp(24px, 4vw, 56px);
-  padding-block: clamp(26px, 3vw, 36px);
-  border-bottom: 1px solid var(--line);
-}
-
-.tool-entry h3 {
-  margin-bottom: 7px;
-  font-size: var(--step-3);
-}
-
-.tool-entry h3 a {
-  color: var(--ink);
-  text-decoration: none;
-}
-
-.tool-entry h3 a:hover {
-  color: var(--accent);
-  text-decoration: underline;
-}
-
-.tool-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 3px 9px;
-  margin: 0;
-  color: var(--muted);
-  font-family: var(--sans);
-  font-size: var(--step-micro);
-}
-
-.tool-meta span + span::before {
-  margin-right: 9px;
-  color: var(--line-strong);
-  content: "\00b7";
-}
-
-.tool-summary {
-  max-width: var(--prose);
-  margin: 0;
-}
-
-.tool-parts {
-  max-width: var(--prose);
-  padding: 0 0 0 1.15em;
-  margin: 14px 0 0;
-  color: var(--muted);
-  font-size: var(--step-label);
-  line-height: 1.55;
-  list-style-position: outside;
-}
-
-.tool-parts li + li {
-  margin-top: 5px;
-}
-
-.tool-role {
-  max-width: var(--prose);
-  margin: 14px 0 0;
-  color: var(--muted);
-  font-family: var(--sans);
-  font-size: var(--step-micro);
 }
 
 /* Experience */
@@ -1795,10 +1751,6 @@ dl {
     border-bottom: 0;
   }
 
-  .home-profile-layout {
-    grid-template-columns: minmax(0, 200px) minmax(0, 1fr);
-    gap: 34px;
-  }
 
   .home-research-route-list {
     grid-template-columns: 1fr;
@@ -1866,7 +1818,7 @@ dl {
   */
   @media (min-width: 641px) {
     .publication-row {
-      grid-template-columns: 46px 190px minmax(0, 1fr);
+      grid-template-columns: 44px 230px minmax(0, 1fr);
       column-gap: 22px;
     }
 
@@ -1920,14 +1872,7 @@ dl {
     font-size: var(--step-lead);
   }
 
-  .home-profile-layout {
-    grid-template-columns: 1fr;
-    gap: 26px;
-  }
 
-  .home-portrait {
-    width: min(62%, 220px);
-  }
 
   .home-publication-list > li {
     grid-template-columns: 1fr;
@@ -2017,10 +1962,6 @@ dl {
     padding-block: 17px;
   }
 
-  .tool-entry {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
 
   /* On a phone the plates would add ~1,700px of scroll to a list that is
      already 7,000px tall, and the title alone identifies the paper. */
@@ -2074,6 +2015,52 @@ dl {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+}
+
+/* Home responsive */
+
+/* "NANOTECHNOLOGY" plus its tracking does not fit beside a 72px portrait once
+   the card is down to 280px. */
+@media (max-width: 400px) {
+  .home-hero-masthead {
+    grid-template-columns: 56px minmax(0, 1fr);
+    gap: 13px;
+  }
+
+  .home-hero-masthead img {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+@media (max-width: 860px) {
+  .home-profile-layout {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}
+
+/*
+  Below this the card covers almost the whole field and the micrograph stops
+  being visible at all, so the two stack instead — with a small overlap so the
+  card still reads as sitting on the image rather than after it.
+*/
+@media (max-width: 720px) {
+  .home-hero > * {
+    grid-area: auto;
+  }
+
+  .home-hero-field {
+    min-height: 0;
+    aspect-ratio: 4 / 3;
+  }
+
+  /* No overlap here: the only thing to overlap is the caption strip, and
+     covering the provenance line to save 40px is not a trade worth making. */
+  .home-hero-card {
+    width: auto;
+    margin: 26px var(--gutter) 0;
   }
 }
 
@@ -2161,7 +2148,6 @@ dl {
   }
 
   /* The hero micrograph is the one image worth the toner; the rest are not. */
-  .home-portrait,
   .publication-figure {
     display: none;
   }
@@ -2170,8 +2156,4 @@ dl {
     grid-template-columns: 1fr;
   }
 
-  .home-hero-figure {
-    min-height: 0;
-    max-height: 9cm;
-  }
 }

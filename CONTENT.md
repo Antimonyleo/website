@@ -123,15 +123,6 @@ layouts read to build `srcset`. Commit the variants and the manifest together
 with the image. `npm test` fails if they are missing or stale, because without
 them a phone downloads the full-size file.
 
-## Tools and data
-
-Entries live in `src/data/tools.ts`. Only list something that is public,
-resolves, and is genuinely yours to list. State your part in it no more
-strongly than the paper does — the `role` field should be traceable to a code
-availability statement or an author contributions statement, not to memory.
-Check the link before committing; a dead link on this page is worse than an
-empty page.
-
 ## Identity, position, and presentations
 
 Update public identity, biography, affiliation, and contact details in
