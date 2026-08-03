@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import type { ResearchFigureData } from "../data/research";
+import { srcSetFor } from "../lib/images";
 import { withBase } from "../lib/urls";
 
 interface Props {
@@ -44,6 +45,8 @@ const sourceLabel =
   >
     <img
       src={withBase(figure.src)}
+      srcset={srcSetFor(figure.src)}
+      sizes="(max-width: 900px) 92vw, 480px"
       alt={figure.alt}
       width={figure.width}
       height={figure.height}

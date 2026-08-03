@@ -41,7 +41,6 @@
   --line: #ddd8cb;
   --line-strong: #c6c0b0;
   --accent: #2c5f57;
-  --accent-quiet: #4d7a72;
   --dark: #131d1a;
   --dark-ink: #eae6dc;
   --dark-muted: #a4aea7;
@@ -88,7 +87,6 @@
     --line: #2c3531;
     --line-strong: #3d4844;
     --accent: #7cbfb2;
-    --accent-quiet: #63a598;
     --dark: #0d1210;
     --dark-ink: #e9e6dd;
     --dark-muted: #9aa49d;
@@ -288,7 +286,6 @@ dl {
 .publication-meta,
 .publication-tools,
 .publication-year,
-.record-note,
 .related-correction,
 .research-experience-note,
 .research-figure figcaption,
@@ -1244,7 +1241,7 @@ dl {
 
 .publication-meta span + span::before {
   margin-right: 9px;
-  color: #a3ada8;
+  color: var(--line-strong);
   content: "·";
 }
 
@@ -1394,31 +1391,9 @@ dl {
   display: none;
 }
 
-.record-note {
-  display: flex;
-  gap: 22px;
-  align-items: flex-start;
-  justify-content: space-between;
-  padding-block: 0 64px;
-  color: var(--muted);
-  font-size: var(--step-label);
-}
 
-.record-note p {
-  max-width: 72ch;
-  margin: 0;
-}
 
-.record-note time {
-  color: var(--ink);
-  font-weight: 700;
-}
 
-.record-note > a {
-  flex: 0 0 auto;
-  font-family: var(--mono);
-  font-weight: 650;
-}
 
 .empty-state {
   padding-block: 86px;
@@ -1471,39 +1446,11 @@ dl {
   margin-top: 10px;
 }
 
-.capabilities-section {
-  border-block: 1px solid var(--line);
-  background: var(--surface-alt);
-}
 
-.capability-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  border-top: 1px solid var(--ink);
-}
 
-.capability-grid article {
-  min-height: 124px;
-  padding: 19px 28px 19px 0;
-  border-bottom: 1px solid var(--line);
-}
 
-.capability-grid article:nth-child(even) {
-  padding-right: 0;
-  padding-left: 28px;
-  border-left: 1px solid var(--line);
-}
 
-.capability-grid h3 {
-  font-size: var(--step-lead);
-}
 
-.capability-grid p {
-  max-width: 58ch;
-  margin: 0;
-  color: var(--muted);
-  font-size: var(--step-label);
-}
 
 .talk-list {
   padding: 0;
@@ -1741,13 +1688,14 @@ dl {
 
   .mobile-nav nav {
     position: absolute;
-    top: 57px;
+    /* Below the header's bottom border, not across it. */
+    top: calc(100% + 1px);
     right: 0;
     display: grid;
     width: min(320px, calc(100vw - 36px));
     border: 1px solid var(--line);
     background: var(--surface);
-    box-shadow: 0 12px 28px rgba(23, 33, 30, 0.12);
+    box-shadow: 0 12px 28px color-mix(in srgb, var(--dark) 16%, transparent);
   }
 
   .mobile-nav nav a {
@@ -1831,6 +1779,27 @@ dl {
   .publication-links {
     grid-column: 2;
     justify-content: flex-start;
+  }
+
+  /*
+    Between phone and desktop there is still room to keep the plate beside the
+    citation. Stacking it here added ~2,200px of scroll for no gain.
+  */
+  @media (min-width: 641px) {
+    .publication-row {
+      grid-template-columns: 46px 190px minmax(0, 1fr);
+      column-gap: 22px;
+    }
+
+    .publication-figure {
+      grid-column: 2;
+      max-width: none;
+    }
+
+    .publication-citation,
+    .publication-links {
+      grid-column: 3;
+    }
   }
 
   .contact-content {
@@ -1980,26 +1949,13 @@ dl {
     margin-top: 0;
   }
 
-  .record-note {
-    flex-direction: column;
-    padding-bottom: 54px;
-  }
 
   .timeline li {
     grid-template-columns: 1fr;
     gap: 7px;
   }
 
-  .capability-grid {
-    grid-template-columns: 1fr;
-  }
 
-  .capability-grid article,
-  .capability-grid article:nth-child(even) {
-    min-height: auto;
-    padding: 17px 0;
-    border-left: 0;
-  }
 
   .talk-list li {
     grid-template-columns: 58px minmax(0, 1fr);
@@ -2034,5 +1990,104 @@ dl {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+}
+
+/*
+  Print
+
+  Search committees do print these pages. Without this the dark footer and the
+  hero caption strip come out as solid blocks of toner, the sticky header lands
+  on top of the first paragraph, and every external link loses its destination.
+*/
+@media print {
+  :root {
+    --bg: #ffffff;
+    --surface: #ffffff;
+    --surface-alt: #ffffff;
+    --ink: #000000;
+    --muted: #333333;
+    --line: #bbbbbb;
+    --line-strong: #999999;
+    --accent: #000000;
+    --dark: #ffffff;
+    --dark-ink: #000000;
+    --dark-muted: #333333;
+    --section-space: 24px;
+    --gutter: 0px;
+  }
+
+  .site-header,
+  .research-jump-bar,
+  .skip-link,
+  .mobile-nav,
+  .footer-nav,
+  .social-links,
+  .publication-tools,
+  .contact-map,
+  .external-arrow {
+    display: none;
+  }
+
+  /* Selectors here must outrank `.publication-links :is(a, button)`. */
+  .publication-links .copy-citation,
+  .publication-links .research-story-link,
+  .publication-action-group .copy-citation,
+  .publication-action-group .research-story-link {
+    display: none;
+  }
+
+  .site-footer {
+    border-top: 1px solid var(--line);
+  }
+
+  body {
+    font-size: 11pt;
+    line-height: 1.45;
+  }
+
+  /*
+    Give the reader the destination they can no longer click — but only once
+    per record. The DOI line below each title carries the same URL, so printing
+    it on the heading as well just doubles the noise.
+  */
+  main a[href^="http"]:not(.publication-row h3 a):not(.home-publication-list h3 a)::after {
+    content: " (" attr(href) ")";
+    font-family: var(--mono);
+    font-size: 0.82em;
+    overflow-wrap: anywhere;
+  }
+
+  main a[href^="http"] .sr-only {
+    display: none;
+  }
+
+  .publication-row,
+  .research-scale-row,
+  .timeline li,
+  .talk-list li,
+  .research-figure {
+    break-inside: avoid;
+  }
+
+  h1,
+  h2,
+  h3 {
+    break-after: avoid;
+  }
+
+  /* The hero micrograph is the one image worth the toner; the rest are not. */
+  .home-portrait,
+  .publication-figure {
+    display: none;
+  }
+
+  .home-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .home-hero-figure {
+    min-height: 0;
+    max-height: 9cm;
   }
 }

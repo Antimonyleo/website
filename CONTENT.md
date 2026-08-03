@@ -111,6 +111,18 @@ column edge still holds.
 Never re-crop a figure that carries a burned-in scale bar unless you know the
 calibration; rescale the existing crop instead, so the bar stays true.
 
+### After adding or replacing any image
+
+```bash
+npm run images
+```
+
+This writes narrower copies (`name.w600.webp`, `name.w900.webp`) beside every
+image wider than 800px and refreshes `src/data/image-variants.json`, which the
+layouts read to build `srcset`. Commit the variants and the manifest together
+with the image. `npm test` fails if they are missing or stale, because without
+them a phone downloads the full-size file.
+
 ## Identity, position, and presentations
 
 Update public identity, biography, affiliation, and contact details in

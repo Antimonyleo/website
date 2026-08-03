@@ -3,8 +3,12 @@ import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SectionHeading from "../components/SectionHeading.astro";
 import SocialLinks from "../components/SocialLinks.astro";
+import { srcSetFor } from "../lib/images";
 import { displayName, getPublicPerson, primaryOrganization } from "../lib/person";
 import { withBase } from "../lib/urls";
+
+const heroImage = "images/research/pyrochlore-crystal.webp";
+const portraitImage = "images/hao-liu-boston.webp";
 
 const person = await getPublicPerson();
 const publicationCollection = await getCollection("publications");
@@ -35,12 +39,14 @@ const researchRoutes = [
     label: "Extended arrays",
     title: "DNA origami tessellations",
     description:
-      "Collaborative work on tile geometry and interhelical spacing for ordered arrays.",
+      "Tile geometry and interhelical spacing tuned to build micrometre-scale two-dimensional patterns.",
     anchor: "two-dimensional-arrays",
   },
   {
+    // Titles match the headings on /research/ so the click-through does not
+    // land on a section that appears to be called something else.
     label: "Open crystal lattices",
-    title: "Three-dimensional topology",
+    title: "Interaction design for three-dimensional topology",
     description:
       "Inverse design and experimental realization of complex crystal lattices.",
     anchor: "open-crystal-lattices",
@@ -69,7 +75,9 @@ const researchRoutes = [
 
     <figure class="home-hero-figure">
       <img
-        src={withBase("images/research/pyrochlore-crystal.webp")}
+        src={withBase(heroImage)}
+        srcset={srcSetFor(heroImage)}
+        sizes="(max-width: 900px) 100vw, 48vw"
         alt="Scanning electron micrograph of a faceted, silica-preserved DNA-origami pyrochlore crystal roughly ten micrometres across, its surface covered in an ordered array of pores."
         width="1200"
         height="900"
@@ -92,7 +100,9 @@ const researchRoutes = [
     <div class="home-profile-layout">
       <figure class="home-portrait">
         <img
-          src={withBase("images/hao-liu-boston.webp")}
+          src={withBase(portraitImage)}
+          srcset={srcSetFor(portraitImage)}
+          sizes="(max-width: 640px) 62vw, 260px"
           alt="Hao Liu at a boat railing on Boston Harbor, with the city skyline behind him."
           width="1800"
           height="1350"

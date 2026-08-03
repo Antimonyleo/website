@@ -4,17 +4,18 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
-    "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
-    "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
-    "check": "ASTRO_TELEMETRY_DISABLED=1 astro check",
-    "maintenance": "node scripts/maintenance-report.mjs",
-    "validate": "node scripts/validate-build.mjs",
-    "verify:preview": "node scripts/verify-preview.mjs",
-    "test:preview": "npm run build && npm run validate && npm run verify:preview",
-    "test": "npm run check && npm run build && npm run validate && npm run verify:preview",
     "add-pub": "node scripts/add-publication.mjs",
-    "test:template": "npm run check && npm run build"
+    "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
+    "check": "ASTRO_TELEMETRY_DISABLED=1 astro check",
+    "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
+    "images": "node scripts/build-image-variants.mjs",
+    "maintenance": "node scripts/maintenance-report.mjs",
+    "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
+    "test": "npm run check && npm run build && node scripts/build-image-variants.mjs --check && npm run validate && npm run verify:preview",
+    "test:preview": "npm run build && npm run validate && npm run verify:preview",
+    "test:template": "npm run check && npm run build",
+    "validate": "node scripts/validate-build.mjs",
+    "verify:preview": "node scripts/verify-preview.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
