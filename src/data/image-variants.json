@@ -10,7 +10,8 @@
     },
     {
       "src": "images/hao-liu-boston.webp",
-      "width": 1800
+      "width": 1800,
+      "sourceFingerprint": "9416eb35298a70053b20f7482e9faa367459597cb410799e1206ee4fc9607e19"
     }
   ],
   "images/publications/dna-origami-tessellations-2023.webp": [
@@ -20,7 +21,8 @@
     },
     {
       "src": "images/publications/dna-origami-tessellations-2023.webp",
-      "width": 900
+      "width": 900,
+      "sourceFingerprint": "aafc3676c5d2ef607f730059512f441bb4d2b1039c06a8c7fbc503d2f8d38ed8"
     }
   ],
   "images/publications/excitonic-networks-2022.webp": [
@@ -30,7 +32,8 @@
     },
     {
       "src": "images/publications/excitonic-networks-2022.webp",
-      "width": 900
+      "width": 900,
+      "sourceFingerprint": "674d190a65102e69530523a59f63a8e51524a6819a21651d11ff4bd06a2649d2"
     }
   ],
   "images/publications/excitonic-wires-2022.webp": [
@@ -40,7 +43,8 @@
     },
     {
       "src": "images/publications/excitonic-wires-2022.webp",
-      "width": 900
+      "width": 900,
+      "sourceFingerprint": "5b3bafa128b5527ea0852ea741b73a3054f6420311ba1c084dcfe018e0782a58"
     }
   ],
   "images/publications/finite-state-machine-2022.webp": [
@@ -50,7 +54,8 @@
     },
     {
       "src": "images/publications/finite-state-machine-2022.webp",
-      "width": 900
+      "width": 900,
+      "sourceFingerprint": "bc88cdea92ae44494eff644e7b1e184cc07afc61893c4de5923fc6b9122200c7"
     }
   ],
   "images/publications/hairygami-2024.webp": [
@@ -60,7 +65,8 @@
     },
     {
       "src": "images/publications/hairygami-2024.webp",
-      "width": 900
+      "width": 900,
+      "sourceFingerprint": "d23ed1140aca07fe93354dd97f5de1dd69d8f9b322cd9dc5ebe149a2f4fdbcc5"
     }
   ],
   "images/publications/meta-dna-2020.webp": [
@@ -70,7 +76,8 @@
     },
     {
       "src": "images/publications/meta-dna-2020.webp",
-      "width": 900
+      "width": 900,
+      "sourceFingerprint": "683ea36aee881e83c65a0e39662b6a5d0ba72feb8279abd18f3c6160e740846c"
     }
   ],
   "images/publications/polycubes-2025.webp": [
@@ -80,7 +87,8 @@
     },
     {
       "src": "images/publications/polycubes-2025.webp",
-      "width": 900
+      "width": 900,
+      "sourceFingerprint": "752325ff38c8e16df102cdea81bdc57be87b51195e1b48d14f918b04110b4726"
     }
   ],
   "images/publications/pyrochlore-2024.webp": [
@@ -90,7 +98,8 @@
     },
     {
       "src": "images/publications/pyrochlore-2024.webp",
-      "width": 900
+      "width": 900,
+      "sourceFingerprint": "5a2bd56979ebf1c62c29fadb66345ee0c4a5402dd807833a4a722b6191b3e68c"
     }
   ],
   "images/publications/rna-strand-displacement-2021.webp": [
@@ -100,7 +109,8 @@
     },
     {
       "src": "images/publications/rna-strand-displacement-2021.webp",
-      "width": 900
+      "width": 900,
+      "sourceFingerprint": "2ad5fd6a9769fe7345edc700991fc2ac7509b91c6ae99fe297fdd0f70b7d171d"
     }
   ],
   "images/publications/tetrahedral-lattices-2026.webp": [
@@ -110,7 +120,8 @@
     },
     {
       "src": "images/publications/tetrahedral-lattices-2026.webp",
-      "width": 900
+      "width": 900,
+      "sourceFingerprint": "a9926cb229926e5748dae71ade51ea5414780b3cb13d0ef4201392330eb2d4e9"
     }
   ],
   "images/research/canyon-diablo-meteorite.webp": [
@@ -124,7 +135,8 @@
     },
     {
       "src": "images/research/canyon-diablo-meteorite.webp",
-      "width": 1200
+      "width": 1200,
+      "sourceFingerprint": "53f3be1b5fc6fcba4fc94892616a48e7778e384c41cda71a915609e3dff563cd"
     }
   ],
   "images/research/dna-origami-tessellations.webp": [
@@ -134,7 +146,8 @@
     },
     {
       "src": "images/research/dna-origami-tessellations.webp",
-      "width": 853
+      "width": 853,
+      "sourceFingerprint": "3e10e9fb3681e910bffffa7b11838968bcb0f5ef4646343b3c249ffe2c6f24cb"
     }
   ],
   "images/research/dna-polycubes.webp": [
@@ -148,7 +161,8 @@
     },
     {
       "src": "images/research/dna-polycubes.webp",
-      "width": 1200
+      "width": 1200,
+      "sourceFingerprint": "c002ee8c73b8edcaec2600a03ff8037fa03c5ade748f4992f03d79cc9b34dafd"
     }
   ],
   "images/research/hexagonal-diamond-detail.webp": [
@@ -162,7 +176,8 @@
     },
     {
       "src": "images/research/hexagonal-diamond-detail.webp",
-      "width": 1640
+      "width": 1640,
+      "sourceFingerprint": "55b5de14c124dd4b6cc4acc4ecb6d37a2a2910ed2dac9517880796746e6431ac"
     }
   ],
   "images/research/meteor-crater.webp": [
@@ -176,7 +191,8 @@
     },
     {
       "src": "images/research/meteor-crater.webp",
-      "width": 1600
+      "width": 1600,
+      "sourceFingerprint": "1d8ecd00cb04886a09034e1616d0ddb4d341d8664e5c1f7b81dc80af9b204a88"
     }
   ],
   "images/research/pyrochlore-crystal.webp": [
@@ -190,7 +206,8 @@
     },
     {
       "src": "images/research/pyrochlore-crystal.webp",
-      "width": 1200
+      "width": 1200,
+      "sourceFingerprint": "38d4164337cb9d7055ffb3e04aeb239b42cf5ad449423962db7b20dd5eba7a01"
     }
   ]
 }

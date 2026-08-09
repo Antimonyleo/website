@@ -13,7 +13,8 @@
  * Variants are committed rather than generated during the build so the deploy
  * workflow stays a plain `astro build`.
  */
-import { readdir, readFile, stat, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { readdir, readFile, writeFile } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { basename, dirname, extname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -26,6 +27,7 @@ const manifestPath = join(root, "src", "data", "image-variants.json");
 /** Below this an extra request costs more than the bytes it saves. */
 const MIN_SOURCE_WIDTH = 800;
 const TARGET_WIDTHS = [600, 900];
+const WEBP_OPTIONS = { quality: 82, effort: 6 };
 /**
  * Variants are tagged `.w600.webp`. A plain `-600` suffix is not safe here:
  * publication plates are named after their year, so `foo-2023.webp` would be
@@ -44,6 +46,16 @@ async function* walk(dir) {
 const check = process.argv.includes("--check");
 const manifest = {};
 const written = [];
+const current = existsSync(manifestPath)
+  ? await readFile(manifestPath, "utf8")
+  : "";
+let currentManifest = {};
+
+try {
+  currentManifest = JSON.parse(current);
+} catch {
+  // The serialized comparison below reports an invalid or incomplete manifest.
+}
 
 for await (const file of walk(imagesDir)) {
   if (VARIANT_PATTERN.test(file)) continue;
@@ -58,6 +70,14 @@ for await (const file of walk(imagesDir)) {
   if (widths.length === 0) continue;
 
   const key = relative(join(root, "public"), file).split(/[\\/]/).join("/");
+  const sourceFingerprint = createHash("sha256")
+    .update(await readFile(file))
+    .update(JSON.stringify({ widths, webp: WEBP_OPTIONS }))
+    .digest("hex");
+  const previousSource = Array.isArray(currentManifest[key])
+    ? currentManifest[key].find((entry) => entry.src === key)
+    : undefined;
+  const sourceChanged = previousSource?.sourceFingerprint !== sourceFingerprint;
   const entries = [];
 
   for (const target of widths) {
@@ -65,14 +85,17 @@ for await (const file of walk(imagesDir)) {
       dirname(file),
       `${basename(file, ".webp")}.w${target}.webp`,
     );
-    if (!existsSync(out) || (await stat(out)).mtimeMs < (await stat(file)).mtimeMs) {
+    if (!existsSync(out)) {
       if (check) {
-        console.error(`stale or missing variant: ${relative(root, out)}`);
+        console.error(`missing variant: ${relative(root, out)}`);
         process.exitCode = 1;
       } else {
-        await image.clone().resize({ width: target }).webp({ quality: 82, effort: 6 }).toFile(out);
+        await image.clone().resize({ width: target }).webp(WEBP_OPTIONS).toFile(out);
         written.push(relative(root, out));
       }
+    } else if (!check && sourceChanged) {
+      await image.clone().resize({ width: target }).webp(WEBP_OPTIONS).toFile(out);
+      written.push(relative(root, out));
     }
     entries.push({
       src: relative(join(root, "public"), out).split(/[\\/]/).join("/"),
@@ -80,12 +103,11 @@ for await (const file of walk(imagesDir)) {
     });
   }
 
-  entries.push({ src: key, width });
+  entries.push({ src: key, width, sourceFingerprint });
   manifest[key] = entries;
 }
 
 const serialized = `${JSON.stringify(manifest, null, 2)}\n`;
-const current = existsSync(manifestPath) ? await readFile(manifestPath, "utf8") : "";
 
 if (check) {
   if (current !== serialized) {
