@@ -20,14 +20,24 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v6
+      - name: Install dependencies
+        run: npm ci
       - name: Report content-maintenance reminders
         continue-on-error: true
         run: npm run maintenance
-      - name: Check, build, and upload site
-        uses: withastro/action@v6
+      - name: Check and build site
+        run: npm run test
+      - name: Upload GitHub Pages artifact
+        uses: actions/upload-pages-artifact@v5
         with:
-          node-version: 24
-          build-cmd: npm run test
+          path: ./dist
 
   deploy:
     needs: build
