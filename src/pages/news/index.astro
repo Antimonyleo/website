@@ -1,0 +1,38 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import NewsCard from "../../components/NewsCard.astro";
+import PageIntro from "../../components/PageIntro.astro";
+import { getNewsItems } from "../../lib/news";
+import { getPublicPerson } from "../../lib/person";
+import { withBase } from "../../lib/urls";
+
+const person = await getPublicPerson();
+const newsItems = await getNewsItems();
+---
+
+<BaseLayout
+  title={`News — ${person.name}`}
+  description={`Research updates and short notes from ${person.name}.`}
+  pageType="CollectionPage"
+  itemList={newsItems.map(({ post }) => ({
+    name: post.data.title,
+    url: new URL(withBase(`news/${post.id}/`), Astro.site ?? Astro.url).href,
+  }))}
+>
+  <PageIntro
+    eyebrow="Updates"
+    title="News"
+    description="Short notes on new papers and research developments."
+  />
+
+  <section class="section shell news-index" aria-labelledby="news-list-title">
+    <h2 class="sr-only" id="news-list-title">News, newest first</h2>
+    <div class="news-card-grid">
+      {
+        newsItems.map((item) => (
+          <NewsCard post={item.post} publication={item.publication} />
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>

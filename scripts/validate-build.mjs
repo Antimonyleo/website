@@ -72,6 +72,7 @@ const defaultPrivateGuardFile = resolve("files/site-private-guard-terms.txt");
 const expectedRoutes = new Map([
   ["Home", "index.html"],
   ["Research", join("research", "index.html")],
+  ["News", join("news", "index.html")],
   ["Publications", join("publications", "index.html")],
   ["Experience", join("experience", "index.html")],
   ["Contact", join("contact", "index.html")],

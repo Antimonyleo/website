@@ -8,12 +8,43 @@ and their rationale are recorded in [DECISIONS.md](DECISIONS.md).
 | Content | Edit |
 | ------- | ---- |
 | Identity, affiliation, contact, and biography | `src/content/people/hao-liu.md` |
+| News posts | `src/content/news/*.md` |
 | Publications, authorship, and review status | `src/data/publications.json` |
 | Research groups, publication references, and figures | `src/data/research.ts` |
 | Appointments, methods, and presentations | `src/content/experience/hao-liu.md` |
 
 Keep facts in these files and render them from components. Do not copy the same
 claim into several pages.
+
+## News
+
+Each file in `src/content/news/` is one post. The filename becomes the public
+URL, so use a short, lowercase, hyphenated name such as
+`conference-update.md`. The front matter controls the listing; the Markdown
+below it is the post itself:
+
+```md
+---
+title: "A short, specific headline"
+date: "2026-08-09"
+summary: "One sentence shown on the Home and News pages."
+publicationId: "tetrahedral-lattices-2026"
+---
+
+Write one or more short paragraphs here.
+```
+
+For a paper announcement, set `publicationId` to the stable ID already in
+`src/data/publications.json`. The site then supplies the citation, DOI, image,
+venue, and review status; do not copy those facts into the news front matter.
+For a public update that is not tied to a paper, omit `publicationId`.
+
+The lowest-friction browser workflow is to press `.` on the GitHub repository,
+copy a recent file in `src/content/news/`, rename it, edit the four fields and
+body, then commit the change. Keep `date` in `YYYY-MM-DD` format and use the date
+of the public event or announcement. Run `npm test` before publishing when
+working locally. Never use news posts for unpublished results or material from
+`files/`.
 
 ## Publications
 

@@ -11,6 +11,7 @@ const pollIntervalMs = 150;
 const routes = [
   { path: basePath, status: 200, marker: "<main" },
   { path: `${basePath}research/`, status: 200, marker: "<main" },
+  { path: `${basePath}news/`, status: 200, marker: "data-news-post" },
   {
     path: `${basePath}publications/`,
     status: 200,

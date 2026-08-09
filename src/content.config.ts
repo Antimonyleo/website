@@ -112,6 +112,16 @@ const publications = defineCollection({
   ]),
 });
 
+const news = defineCollection({
+  loader: glob({ base: "./src/content/news", pattern: "**/*.md" }),
+  schema: z.object({
+    title: z.string(),
+    date: isoDate,
+    summary: z.string(),
+    publicationId: z.string().optional(),
+  }),
+});
+
 const experience = defineCollection({
   loader: glob({ base: "./src/content/experience", pattern: "**/*.md" }),
   schema: z.object({
@@ -165,6 +175,7 @@ const experience = defineCollection({
 
 export const collections = {
   experience,
+  news,
   people,
   publications,
 };

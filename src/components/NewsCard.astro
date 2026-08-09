@@ -1,0 +1,52 @@
+---
+import type { NewsItem } from "../lib/news";
+import { formatNewsDate } from "../lib/news";
+import { srcSetFor } from "../lib/images";
+import { withBase } from "../lib/urls";
+
+interface Props extends NewsItem {}
+
+const { post, publication } = Astro.props;
+const postUrl = withBase(`news/${post.id}/`);
+const image = publication?.data.image;
+const publicationStatus =
+  publication?.data.recordStatus === "preprint-not-peer-reviewed"
+    ? "Preprint, not peer reviewed"
+    : publication?.data.recordStatus === "editorial"
+      ? "Commentary"
+      : publication
+        ? "Peer reviewed"
+        : undefined;
+---
+
+<article class:list={["news-card", !image && "news-card-text-only"]} data-news-post={post.id}>
+  {
+    image && (
+      <a class="news-card-figure" href={postUrl} tabindex="-1" aria-hidden="true">
+        <img
+          src={withBase(image.src)}
+          srcset={srcSetFor(image.src)}
+          sizes="(max-width: 640px) calc(100vw - 40px), (max-width: 900px) 220px, 190px"
+          alt=""
+          width="900"
+          height="600"
+          decoding="async"
+          loading="lazy"
+        />
+      </a>
+    )
+  }
+  <div class="news-card-copy">
+    <p class="news-card-meta">
+      <time datetime={post.data.date}>{formatNewsDate(post.data.date)}</time>
+      {
+        publication && publicationStatus && (
+          <span>{publication.data.venue} · {publicationStatus}</span>
+        )
+      }
+    </p>
+    <h3><a href={postUrl}>{post.data.title}</a></h3>
+    <p class="news-card-summary">{post.data.summary}</p>
+    <a class="news-card-link" href={postUrl}>Read note</a>
+  </div>
+</article>

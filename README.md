@@ -52,13 +52,14 @@ If you publish at `https://YOUR-USERNAME.github.io` itself, set `base: "/"`.
 
 ### 3. Replace the content
 
-Almost everything you need to change is in five places.
+Almost everything you need to change is in six places.
 
 | What | File |
 | --- | --- |
 | Site name, page title, description | `src/config.ts` |
 | Your name, role, affiliation, bio, links | `src/content/people/hao-liu.md` |
 | Appointments, education, talks | `src/content/experience/hao-liu.md` |
+| News posts | `src/content/news/*.md` |
 | Publications | `src/data/publications.json` |
 | Research sections and figures | `src/data/research.ts` |
 

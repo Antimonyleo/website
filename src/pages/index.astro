@@ -1,9 +1,11 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import NewsCard from "../components/NewsCard.astro";
 import SectionHeading from "../components/SectionHeading.astro";
 import SocialLinks from "../components/SocialLinks.astro";
 import { srcSetFor } from "../lib/images";
+import { getNewsItems } from "../lib/news";
 import { displayName, getPublicPerson, primaryOrganization } from "../lib/person";
 import { withBase } from "../lib/urls";
 
@@ -11,6 +13,7 @@ const heroImage = "images/research/pyrochlore-crystal.webp";
 const portraitImage = "images/hao-liu-boston.webp";
 
 const person = await getPublicPerson();
+const latestNews = (await getNewsItems()).slice(0, 2);
 const publicationCollection = await getCollection("publications");
 // Driven by `featured` + `selectedOrder` in publications.json so the data,
 // not this file, decides what appears here.
@@ -124,6 +127,28 @@ const researchRoutes = [
         {person.bio.map((paragraph) => <p>{paragraph}</p>)}
       </div>
     </div>
+  </section>
+
+  <section
+    class="section shell home-news"
+    aria-labelledby="home-news-title"
+  >
+    <SectionHeading
+      eyebrow="News"
+      title="Latest notes"
+      description="Brief introductions to new preprints and published work."
+      headingId="home-news-title"
+    />
+
+    <div class="news-card-grid">
+      {
+        latestNews.map((item) => (
+          <NewsCard post={item.post} publication={item.publication} />
+        ))
+      }
+    </div>
+
+    <a class="section-link" href={withBase("news/")}>All news</a>
   </section>
 
   <section

@@ -8,6 +8,7 @@ export const SITE = {
 
 export const NAV_ITEMS = [
   { label: "Research", path: "research/" },
+  { label: "News", path: "news/" },
   { label: "Publications", path: "publications/" },
   { label: "Experience", path: "experience/" },
   { label: "Contact", path: "contact/" },

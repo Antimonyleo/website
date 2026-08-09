@@ -1,0 +1,89 @@
+---
+import { render } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageIntro from "../../components/PageIntro.astro";
+import { srcSetFor } from "../../lib/images";
+import {
+  formatNewsDate,
+  getNewsItems,
+  type NewsItem,
+} from "../../lib/news";
+import { getPublicPerson } from "../../lib/person";
+import { withBase } from "../../lib/urls";
+
+export async function getStaticPaths() {
+  const items = await getNewsItems();
+  return items.map((item) => ({
+    params: { slug: item.post.id },
+    props: item,
+  }));
+}
+
+const { post, publication } = Astro.props as NewsItem;
+const { Content } = await render(post);
+const person = await getPublicPerson();
+const image = publication?.data.image;
+const publicationStatus = publication
+  ? publication.data.recordStatus === "preprint-not-peer-reviewed"
+    ? ["Preprint", publication.data.manuscriptStatus, "not peer reviewed"]
+        .filter(Boolean)
+        .join(" · ")
+    : publication.data.recordStatus === "editorial"
+      ? "Commentary"
+      : "Peer reviewed"
+  : undefined;
+---
+
+<BaseLayout
+  title={`${post.data.title} — ${person.name}`}
+  description={post.data.summary}
+  canonicalPath={`news/${post.id}/`}
+>
+  <PageIntro
+    eyebrow={`News · ${formatNewsDate(post.data.date)}`}
+    title={post.data.title}
+    description={post.data.summary}
+  />
+
+  <article
+    class:list={[
+      "section",
+      "shell",
+      "news-article",
+      !publication && "news-article-without-publication",
+    ]}
+  >
+    <div class="news-article-body">
+      <Content />
+    </div>
+
+    {
+      publication && (
+        <aside class="news-related-publication" aria-labelledby="related-publication-title">
+          {image && (
+            <img
+              src={withBase(image.src)}
+              srcset={srcSetFor(image.src)}
+              sizes="(max-width: 640px) calc(100vw - 40px), (max-width: 900px) 600px, 380px"
+              alt={image.alt}
+              width="900"
+              height="600"
+              decoding="async"
+            />
+          )}
+          <p class="eyebrow">Related {publication.data.kind}</p>
+          <h2 id="related-publication-title">
+            <a href={publication.data.url} target="_blank" rel="noopener noreferrer">
+              {publication.data.title}
+              <span class="external-arrow" aria-hidden="true">↗</span>
+              <span class="sr-only"> (opens in a new tab)</span>
+            </a>
+          </h2>
+          <p class="news-publication-status">
+            {publication.data.venue} · {publicationStatus}
+          </p>
+        </aside>
+      )
+    }
+  </article>
+</BaseLayout>

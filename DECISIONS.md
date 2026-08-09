@@ -37,5 +37,8 @@ changes; implementation history belongs in Git.
 - **2026-07 — Maintenance:** Release checks block factual, privacy, structural,
   and accessibility defects. Temporary design preferences are advisory so the
   visual system can evolve deliberately.
+- **2026-08 — News:** Short public updates live as individual Markdown files.
+  Paper announcements reference stable publication IDs so formal metadata and
+  review status continue to come from the publication source of truth.
 - **2026-07 — Deployment:** GitHub Pages deployment follows a passing release
   gate and explicit approval; a successful build alone does not authorize it.
