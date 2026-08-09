@@ -131,16 +131,21 @@ const groupFigure = group.figureId
     )}
 
     {group.story && (
-      <section
+      /*
+        Progressive disclosure. The field note is 843px of natural-history
+        context — worth keeping in full, but not worth 18% of the page before a
+        reader has finished the research itself. Open it and nothing is lost.
+      */
+      <details
         class="research-story"
         id={group.story.id}
         aria-labelledby={`${group.story.id}-title`}
       >
-        <header class="research-story-heading">
+        <summary class="research-story-heading">
           <p class="eyebrow">{group.story.eyebrow}</p>
           <h4 id={`${group.story.id}-title`}>{group.story.title}</h4>
           <p>{group.story.description}</p>
-        </header>
+        </summary>
 
         <div class="research-story-layout">
           <div class="research-story-copy">
@@ -191,7 +196,7 @@ const groupFigure = group.figureId
             </div>
           </div>
         </div>
-      </section>
+      </details>
     )}
   </div>
 </li>

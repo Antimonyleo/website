@@ -1,11 +1,10 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import NewsCard from "../components/NewsCard.astro";
 import SectionHeading from "../components/SectionHeading.astro";
 import SocialLinks from "../components/SocialLinks.astro";
 import { srcSetFor } from "../lib/images";
-import { getNewsItems } from "../lib/news";
+import { formatNewsDate, getNewsItems } from "../lib/news";
 import { displayName, getPublicPerson, primaryOrganization } from "../lib/person";
 import { withBase } from "../lib/urls";
 
@@ -96,7 +95,12 @@ const researchRoutes = [
         </div>
       </div>
 
-      <div class="home-hero-card-body">
+      {/*
+        The biography lives here rather than in a separate "Research profile"
+        section below. Saying who he is twice before any research appears was
+        what made the opening feel both busy and slow.
+      */}
+      <div class="home-hero-card-body" data-home-bio>
         <p class="home-role">
           {person.role} · {primaryOrganization(person)}
         </p>
@@ -105,50 +109,13 @@ const researchRoutes = [
           molecules react, fold, and assemble themselves into the structures I
           specify.
         </p>
+        {person.bio.map((paragraph) => <p class="home-hero-bio">{paragraph}</p>)}
         <div class="home-identity-links">
           <SocialLinks />
           <a class="text-link" href={withBase("contact/")}>Contact</a>
         </div>
       </div>
     </div>
-  </section>
-
-  <section
-    class="section shell home-profile"
-    aria-labelledby="home-profile-title"
-  >
-    <div class="home-profile-layout">
-      <SectionHeading
-        eyebrow="Profile"
-        title="Research profile"
-        headingId="home-profile-title"
-      />
-      <div class="home-profile-copy" data-home-bio>
-        {person.bio.map((paragraph) => <p>{paragraph}</p>)}
-      </div>
-    </div>
-  </section>
-
-  <section
-    class="section shell home-news"
-    aria-labelledby="home-news-title"
-  >
-    <SectionHeading
-      eyebrow="News"
-      title="Latest notes"
-      description="Brief introductions to new preprints and published work."
-      headingId="home-news-title"
-    />
-
-    <div class="news-card-grid">
-      {
-        latestNews.map((item) => (
-          <NewsCard post={item.post} publication={item.publication} />
-        ))
-      }
-    </div>
-
-    <a class="section-link" href={withBase("news/")}>All news</a>
   </section>
 
   <section
@@ -181,6 +148,43 @@ const researchRoutes = [
         ))
       }
     </nav>
+  </section>
+
+  {/*
+    News sits after the research it reports on, and as compact rows rather than
+    illustrated cards. It was previously taller than the research module and
+    came before it, which put temporary items above the durable narrative. The
+    full cards remain on /news/.
+  */}
+  <section class="section shell home-news" aria-labelledby="home-news-title">
+    <SectionHeading
+      eyebrow="News"
+      title="Latest notes"
+      headingId="home-news-title"
+    />
+
+    <ol class="home-news-list">
+      {
+        latestNews.map(({ post, publication }) => (
+          <li data-news-post={post.id}>
+            <p class="home-news-date">
+              <time datetime={post.data.date}>
+                {formatNewsDate(post.data.date)}
+              </time>
+            </p>
+            <div>
+              <h3>
+                <a href={withBase(`news/${post.id}/`)}>{post.data.title}</a>
+              </h3>
+              <p class="home-news-summary">{post.data.summary}</p>
+            </div>
+            <p class="home-news-venue">{publication?.data.venue}</p>
+          </li>
+        ))
+      }
+    </ol>
+
+    <a class="section-link" href={withBase("news/")}>All news</a>
   </section>
 
   <section
