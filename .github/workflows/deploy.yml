@@ -32,8 +32,16 @@ jobs:
       - name: Report content-maintenance reminders
         continue-on-error: true
         run: npm run maintenance
-      - name: Check and build site
-        run: npm run test
+      - name: Check Astro project
+        run: npm run check
+      - name: Build site
+        run: npm run build
+      - name: Check generated image variants
+        run: node scripts/build-image-variants.mjs --check
+      - name: Validate built site
+        run: npm run validate
+      - name: Verify production preview
+        run: npm run verify:preview
       - name: Upload GitHub Pages artifact
         uses: actions/upload-pages-artifact@v5
         with:
