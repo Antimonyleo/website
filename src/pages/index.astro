@@ -79,16 +79,18 @@ const researchRoutes = [
 
     <div class="home-hero-card">
       <div class="home-hero-masthead">
-        <img
-          src={withBase(portraitImage)}
-          srcset={srcSetFor(portraitImage)}
-          sizes="72px"
-          alt="Hao Liu at a boat railing on Boston Harbor, with the city skyline behind him."
-          width="1800"
-          height="1350"
-          decoding="async"
-          loading="eager"
-        />
+        <div class="home-hero-portrait">
+          <img
+            src={withBase(portraitImage)}
+            srcset={srcSetFor(portraitImage)}
+            sizes="(max-width: 400px) 84px, 104px"
+            alt="Hao Liu at a boat railing on Boston Harbor, with the city skyline behind him."
+            width="1800"
+            height="1350"
+            decoding="async"
+            loading="eager"
+          />
+        </div>
         <div>
           <p class="eyebrow">Nucleic acid nanotechnology</p>
           <h1>{displayName(person)}</h1>
