@@ -71,14 +71,14 @@ const citation = Array.isArray(data.authors)
 ---
 
 <article
-  class="publication-row"
+  class:list={["publication-row", !data.image && "publication-row-text-only"]}
   data-publication-record
   data-publication-id={publication.id}
 >
   <div class="publication-year">{data.year}</div>
-  <div class="publication-figure">
-    {
-      data.image ? (
+  {
+    data.image && (
+      <div class="publication-figure">
         <img
           class="publication-thumb"
           src={withBase(data.image.src)}
@@ -90,13 +90,9 @@ const citation = Array.isArray(data.authors)
           loading="lazy"
           decoding="async"
         />
-      ) : (
-        <div class="publication-plate-empty" aria-hidden="true">
-          {data.venue}
-        </div>
-      )
-    }
-  </div>
+      </div>
+    )
+  }
   <div class="publication-citation">
     <div class="publication-meta">
       <span>{kindLabel}</span>

@@ -142,9 +142,15 @@ const groupFigure = group.figureId
         aria-labelledby={`${group.story.id}-title`}
       >
         <summary class="research-story-heading">
-          <p class="eyebrow">{group.story.eyebrow}</p>
+          <span class="eyebrow">{group.story.eyebrow}</span>
           <h4 id={`${group.story.id}-title`}>{group.story.title}</h4>
-          <p>{group.story.description}</p>
+          <span class="research-story-description">
+            {group.story.description}
+          </span>
+          <span class="research-story-toggle" aria-hidden="true">
+            <span class="research-story-toggle-closed">Read the note</span>
+            <span class="research-story-toggle-open">Hide the note</span>
+          </span>
         </summary>
 
         <div class="research-story-layout">

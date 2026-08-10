@@ -136,8 +136,8 @@ Thumbnails in `public/images/publications/` are all **900 × 600 WebP**, one
 legible panel per paper on a white plate with a 26px margin. Crop to a single
 panel — a whole multi-panel journal figure is unreadable at the size it is
 displayed and turns the list into grey noise. If a paper has no usable panel,
-leave `image` off the record entirely: the row renders a quiet venue tile so the
-column edge still holds.
+leave `image` off the record entirely: the row renders in a compact text-only
+layout instead of inventing a decorative placeholder.
 
 Never re-crop a figure that carries a burned-in scale bar unless you know the
 calibration; rescale the existing crop instead, so the bar stays true.

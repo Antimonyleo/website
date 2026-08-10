@@ -658,45 +658,6 @@ dl {
 }
 
 /*
-  Side-heading layout: the section title sits in a margin column beside the
-  prose, which echoes the numbered label column on the research page and stops
-  the section from being one narrow paragraph with half the card empty.
-*/
-.home-profile-layout {
-  display: grid;
-  grid-template-columns: minmax(0, 250px) minmax(0, 1fr);
-  gap: clamp(28px, 4vw, 60px);
-  align-items: start;
-}
-
-.home-profile .section-heading {
-  margin-bottom: 0;
-}
-
-
-
-.home-profile .section-heading {
-  margin-bottom: 22px;
-}
-
-.home-profile .section-heading h2 {
-  font-size: var(--step-2);
-}
-
-.home-profile-copy {
-  max-width: var(--prose);
-}
-
-.home-profile-copy > p {
-  color: var(--muted);
-}
-
-.home-profile-copy > p:first-of-type {
-  color: var(--ink);
-  font-size: var(--step-lead);
-}
-
-/*
   Three equal columns, separated by a single rule above each card. The previous
   two-up grid left the third card orphaned in a half-width row with a vertical
   rule hanging off nothing.
@@ -1282,7 +1243,8 @@ dl {
   grid-column: 1 / -1;
 }
 
-/* The disclosure marker is replaced by an explicit affordance in ::after. */
+/* The native disclosure state remains available to assistive technology; the
+   visible affordance uses explicit text that can move into flow on phones. */
 .research-story > summary {
   cursor: pointer;
   list-style: none;
@@ -1299,12 +1261,16 @@ dl {
   padding-right: 130px;
 }
 
-.research-story-heading::after {
+.research-story-heading .eyebrow,
+.research-story-description {
+  display: block;
+}
+
+.research-story-toggle {
   position: absolute;
   top: 2px;
   right: 0;
   color: var(--accent);
-  content: "Read the note";
   font-family: var(--sans);
   font-size: var(--step-micro);
   font-weight: 600;
@@ -1312,8 +1278,13 @@ dl {
   text-underline-offset: 0.22em;
 }
 
-.research-story[open] .research-story-heading::after {
-  content: "Hide the note";
+.research-story-toggle-open,
+.research-story[open] .research-story-toggle-closed {
+  display: none;
+}
+
+.research-story[open] .research-story-toggle-open {
+  display: inline;
 }
 
 .research-story > summary:focus-visible {
@@ -1326,7 +1297,7 @@ dl {
   font-size: var(--step-2);
 }
 
-.research-story-heading > p:last-child {
+.research-story-description {
   margin: 0;
   color: var(--muted);
 }
@@ -1495,6 +1466,10 @@ dl {
   border-bottom: 1px solid var(--line);
 }
 
+.publication-row-text-only {
+  grid-template-columns: 54px minmax(0, 1fr) 142px;
+}
+
 .publication-year {
   color: var(--ink);
   font-size: var(--step-label);
@@ -1571,8 +1546,7 @@ dl {
   the background the figures were authored on. Consistency of framing is what
   makes a set of unrelated journal figures read as one collection.
 */
-.publication-thumb,
-.publication-plate-empty {
+.publication-thumb {
   width: 100%;
   aspect-ratio: 3 / 2;
   border: 1px solid var(--line);
@@ -1583,30 +1557,6 @@ dl {
   height: auto;
   object-fit: contain;
   background: var(--plate);
-}
-
-/*
-  Records without a usable figure still occupy the column, otherwise the left
-  edge of the citation block collapses twice down the page.
-*/
-/*
-  A filled tile at this size reads as a large empty box. A hairline with the
-  venue centred inside it reads as "no figure for this record", which is what
-  it means, while still holding the column edge.
-*/
-.publication-plate-empty {
-  display: grid;
-  padding: 16px;
-  border-style: dashed;
-  border-color: color-mix(in srgb, var(--line-strong) 70%, transparent);
-  place-content: center;
-  background: none;
-  color: color-mix(in srgb, var(--muted) 78%, transparent);
-  font-family: var(--sans);
-  font-size: var(--step-micro);
-  letter-spacing: 0.08em;
-  text-align: center;
-  text-transform: uppercase;
 }
 
 .publication-summary {
@@ -2101,6 +2051,15 @@ dl {
     .publication-links {
       grid-column: 3;
     }
+
+    .publication-row-text-only {
+      grid-template-columns: 44px minmax(0, 1fr);
+    }
+
+    .publication-row-text-only .publication-citation,
+    .publication-row-text-only .publication-links {
+      grid-column: 2;
+    }
   }
 
   .contact-content {
@@ -2193,6 +2152,16 @@ dl {
 
   .research-story-heading h4 {
     font-size: var(--step-3);
+  }
+
+  .research-story-heading {
+    padding-right: 0;
+  }
+
+  .research-story-toggle {
+    position: static;
+    display: inline-block;
+    margin-top: 10px;
   }
 
   .research-story-copy {
@@ -2320,17 +2289,8 @@ dl {
   }
 }
 
-@media (max-width: 860px) {
-  .home-profile-layout {
-    grid-template-columns: 1fr;
-    gap: 6px;
-  }
-}
-
-/*
-  Below this a 432px card sits on a field barely twice its width and the
-  micrograph stops being readable, so the two stack instead.
-*/
+/* Below this the floating card sits on a field barely twice its width and the
+   micrograph stops being readable, so the two stack instead. */
 @media (max-width: 900px) {
   .home-hero > * {
     grid-area: auto;
@@ -2348,12 +2308,28 @@ dl {
   }
 }
 
+/* Five short links still fit comfortably on a tablet; reserve the disclosure
+   menu for genuinely narrow headers. */
+@media (min-width: 721px) and (max-width: 900px) {
+  .header-inner {
+    grid-template-columns: 1fr auto 1fr;
+  }
+
+  .desktop-nav {
+    display: block;
+  }
+
+  .mobile-nav {
+    display: none;
+  }
+}
+
 /*
   Print
 
-  Search committees do print these pages. Without this the dark footer and the
-  hero caption strip come out as solid blocks of toner, the sticky header lands
-  on top of the first paragraph, and every external link loses its destination.
+  Search committees do print these pages. Without this the dark footer comes
+  out as a solid block of toner, the sticky header lands on top of the first
+  paragraph, and every external link loses its destination.
 */
 @media print {
   :root {
@@ -2429,6 +2405,14 @@ dl {
   h2,
   h3 {
     break-after: avoid;
+  }
+
+  .research-story > :not(summary) {
+    display: grid;
+  }
+
+  .research-story-toggle {
+    display: none;
   }
 
   /* The hero micrograph is the one image worth the toner; the rest are not. */
