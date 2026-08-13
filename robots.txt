@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://antimonyleo.github.io/website/sitemap-index.xml

@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="A tetrahedral vertex: four bonds meeting at a point">
+  <rect width="64" height="64" rx="13" fill="#16211d"/>
+  <g stroke="#f6f4ef" stroke-width="3.4" stroke-linecap="round" fill="none">
+    <path d="M32 32V13"/>
+    <path d="M32 32 15 43"/>
+    <path d="M32 32 49 43"/>
+    <path d="M32 32v19"/>
+  </g>
+  <g fill="#f6f4ef">
+    <circle cx="32" cy="13" r="4.4"/>
+    <circle cx="15" cy="43" r="4.4"/>
+    <circle cx="49" cy="43" r="4.4"/>
+    <circle cx="32" cy="51" r="4.4"/>
+  </g>
+  <circle cx="32" cy="32" r="5.2" fill="#7cbfb2"/>
+</svg>
