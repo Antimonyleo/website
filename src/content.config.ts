@@ -32,16 +32,40 @@ const publicationAuthor = z.object({
   contributions: z.array(contribution).max(2).optional(),
 });
 
-const isoDate = z
-  .string()
-  .regex(/^\d{4}-\d{2}-\d{2}$/, "Expected an ISO date in YYYY-MM-DD format")
-  .refine(
-    (value) => {
-      const date = new Date(`${value}T00:00:00Z`);
-      return !Number.isNaN(date.valueOf()) && date.toISOString().startsWith(value);
-    },
-    "Expected a valid calendar date",
-  );
+const isoDate = z.preprocess(
+  // Form editors may serialize a YAML date without quotes, which the Markdown
+  // loader reads as a Date object. Normalize that representation while keeping
+  // the collection's public data shape as YYYY-MM-DD strings.
+  (value) =>
+    value instanceof Date && !Number.isNaN(value.valueOf())
+      ? value.toISOString().slice(0, 10)
+      : value,
+  z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, "Expected an ISO date in YYYY-MM-DD format")
+    .refine(
+      (value) => {
+        const date = new Date(`${value}T00:00:00Z`);
+        return !Number.isNaN(date.valueOf()) && date.toISOString().startsWith(value);
+      },
+      "Expected a valid calendar date",
+    ),
+);
+
+const newsFigure = z.object({
+  src: z
+    .string()
+    .regex(
+      /^\/?images\/(?:news|publications|research)\/[a-z0-9][a-z0-9-]*\.webp$/,
+      "Use a kebab-case WebP file from public/images/news, publications, or research",
+    ),
+  alt: z.string().min(20).max(240),
+  caption: z.string().min(20).max(300),
+  credit: z.string().min(3).max(160),
+  sourceUrl: z.url().optional(),
+  // Front Matter CMS writes this discriminator for a repeatable field group.
+  fieldGroup: z.literal("newsFigure").optional(),
+});
 
 const publicationBase = z.object({
   title: z.string(),
@@ -115,10 +139,11 @@ const publications = defineCollection({
 const news = defineCollection({
   loader: glob({ base: "./src/content/news", pattern: "**/*.md" }),
   schema: z.object({
-    title: z.string(),
+    title: z.string().min(8).max(120),
     date: isoDate,
-    summary: z.string(),
-    publicationId: z.string().optional(),
+    summary: z.string().min(40).max(300),
+    publicationId: z.string().min(1).optional(),
+    figures: z.array(newsFigure).max(3).optional(),
   }),
 });
 

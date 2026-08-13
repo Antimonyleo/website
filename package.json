@@ -14,7 +14,7 @@
     "test": "npm run check && npm run build && node scripts/build-image-variants.mjs --check && npm run validate && npm run verify:preview",
     "test:preview": "npm run build && npm run validate && npm run verify:preview",
     "test:template": "npm run check && npm run build",
-    "validate": "node scripts/validate-build.mjs",
+    "validate": "node scripts/validate-editor-config.mjs && node scripts/validate-build.mjs",
     "verify:preview": "node scripts/verify-preview.mjs"
   },
   "dependencies": {

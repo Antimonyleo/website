@@ -41,6 +41,8 @@
   --line: #ddd8cb;
   --line-strong: #c6c0b0;
   --accent: #2c5f57;
+  --oxide: #9b573b;
+  --oxide-soft: #ead8cd;
   --dark: #131d1a;
   /* The field the paper card stands on. */
   --frame: #232825;
@@ -89,6 +91,8 @@
     --line: #2c3531;
     --line-strong: #3d4844;
     --accent: #7cbfb2;
+    --oxide: #d39478;
+    --oxide-soft: #3b2b25;
     --dark: #0d1210;
     --frame: #0a0d0c;
     --dark-ink: #e9e6dd;
@@ -116,6 +120,7 @@ html {
 */
 body {
   margin: 0;
+  position: relative;
   background: var(--frame);
   color: var(--ink);
   font-family: var(--serif);
@@ -126,14 +131,57 @@ body {
 }
 
 /*
+  The paper card keeps its quiet field, while these restrained layers give the
+  surrounding frame a little air. The fixed layer is deliberately inert so it
+  can never intercept a click or create a horizontal scroll track.
+*/
+body::before {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse at 8% 3%,
+      color-mix(in srgb, var(--oxide) 13%, transparent),
+      transparent 35rem
+    ),
+    radial-gradient(
+      ellipse at 94% 90%,
+      color-mix(in srgb, var(--accent) 12%, transparent),
+      transparent 38rem
+    );
+  content: "";
+  opacity: 0.45;
+}
+
+/*
   The card. Wide enough that publication figures still have room — this is not
   a 500px column — but bounded, so the page reads as a document on a surface
   instead of a browser window filled edge to edge.
 */
 .site-frame {
+  position: relative;
+  z-index: 1;
   width: min(100%, 1320px);
   margin-inline: auto;
-  background: var(--bg);
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(
+      ellipse at 86% -12%,
+      color-mix(in srgb, var(--accent) 7%, transparent),
+      transparent 34rem
+    ),
+    radial-gradient(
+      ellipse at 3% 48%,
+      color-mix(in srgb, var(--oxide) 5%, transparent),
+      transparent 38rem
+    ),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--surface) 24%, transparent),
+      transparent 24rem
+    );
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 12%, transparent);
 }
 
@@ -500,6 +548,7 @@ dl {
     whole screen.
   */
   grid-template-rows: clamp(330px, 27vw, 400px) auto;
+  overflow: hidden;
   margin: 0;
 }
 
@@ -511,6 +560,18 @@ dl {
   /* Top-anchored: at this band ratio a centred crop lands entirely inside the
      crystal face and reads as noise. The top edge keeps the silhouette. */
   object-position: 50% 0%;
+  transform-origin: 50% 48%;
+  animation: home-hero-drift 24s ease-in-out infinite alternate;
+}
+
+@keyframes home-hero-drift {
+  from {
+    transform: scale(1.012) translate3d(0, 0, 0);
+  }
+
+  to {
+    transform: scale(1.025) translate3d(-0.35%, -0.2%, 0);
+  }
 }
 
 .home-hero-field figcaption {
@@ -549,11 +610,16 @@ dl {
   margin-inline-start: clamp(var(--gutter), 5vw, 70px);
   border: 1px solid var(--line);
   background: var(--surface);
+  box-shadow: 0 11px 30px color-mix(in srgb, var(--dark) 11%, transparent);
+}
+
+.home-hero-card:focus-within {
+  box-shadow: 0 14px 34px color-mix(in srgb, var(--dark) 15%, transparent);
 }
 
 .home-hero-masthead {
   display: grid;
-  grid-template-columns: 104px minmax(0, 1fr);
+  grid-template-columns: 128px minmax(0, 1fr);
   gap: 18px;
   align-items: center;
   padding: 18px 22px;
@@ -562,8 +628,8 @@ dl {
 }
 
 .home-hero-portrait {
-  width: 104px;
-  height: 104px;
+  width: 128px;
+  height: 128px;
   overflow: hidden;
   border-radius: 2px;
 }
@@ -572,8 +638,8 @@ dl {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 31% 42%;
-  transform: scale(1.14);
+  object-position: 34% 42%;
+  transform: scale(1.08);
 }
 
 .home-hero-masthead .eyebrow {
@@ -665,22 +731,37 @@ dl {
 }
 
 /*
-  Three equal columns, separated by a single rule above each card. The previous
-  two-up grid left the third card orphaned in a half-width row with a vertical
-  rule hanging off nothing.
+  The atlas keeps the route list readable while a single, stable plate gives
+  each scale a visual counterpart. On touch layouts the same figures move into
+  their route, so no hover-only information is lost.
 */
+.home-research-atlas {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+  gap: clamp(38px, 5.5vw, 76px);
+  align-items: start;
+}
+
 .home-research-route-list {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0 clamp(24px, 3vw, 44px);
+  grid-template-columns: 1fr;
+  padding: 0;
+  margin: 0;
+  list-style: none;
 }
 
 .home-research-route {
   display: block;
-  padding: 15px 0 4px;
+  padding: 16px 0 21px;
   border-top: 1px solid var(--ink);
   color: var(--ink);
   text-decoration: none;
+  transition: padding-inline-start 280ms ease;
+}
+
+.home-research-route:hover,
+.home-research-route:focus-visible {
+  padding-inline-start: 7px;
 }
 
 .home-research-route-index {
@@ -727,6 +808,76 @@ dl {
   text-underline-offset: 0.18em;
 }
 
+.home-research-route-mobile-figure {
+  display: none;
+}
+
+.home-research-stage {
+  position: relative;
+  height: clamp(290px, 31vw, 410px);
+  min-height: 290px;
+  overflow: hidden;
+  border-top: 1px solid var(--line-strong);
+  background: var(--plate);
+}
+
+.home-research-stage-figure {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  padding: clamp(16px, 2vw, 28px);
+  margin: 0;
+  opacity: 0;
+  place-items: center;
+  pointer-events: none;
+  transition: opacity 380ms ease;
+}
+
+.home-research-stage-figure:first-child {
+  opacity: 1;
+}
+
+.home-research-stage-figure img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Browsers without :has keep the first (finite-systems) plate as the stable
+   fallback; supporting browsers crossfade the route that is being inspected. */
+@supports selector(.home-research-atlas:has(.home-research-route:hover)) {
+  .home-research-atlas:has(
+      .home-research-route:is(:hover, :focus-visible)
+    )
+    .home-research-stage-figure {
+    opacity: 0;
+  }
+
+  .home-research-atlas:has(
+      .home-research-route[data-home-research-route="finite-assemblies"]:is(
+        :hover,
+        :focus-visible
+      )
+    )
+    .home-research-stage-figure[data-atlas-figure="finite"],
+  .home-research-atlas:has(
+      .home-research-route[data-home-research-route="two-dimensional-arrays"]:is(
+        :hover,
+        :focus-visible
+      )
+    )
+    .home-research-stage-figure[data-atlas-figure="periodic"],
+  .home-research-atlas:has(
+      .home-research-route[data-home-research-route="open-crystal-lattices"]:is(
+        :hover,
+        :focus-visible
+      )
+    )
+    .home-research-stage-figure[data-atlas-figure="open"] {
+    opacity: 1;
+  }
+}
+
 .home-news {
   padding-top: 54px;
   border-top: 1px solid var(--line);
@@ -734,15 +885,16 @@ dl {
 
 .news-card-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(32px, 4vw, 52px);
+  max-width: 980px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 18px;
 }
 
 .news-card {
   display: grid;
   grid-template-columns: minmax(0, 190px) minmax(0, 1fr);
   gap: 20px;
-  padding-top: 16px;
+  padding-block: 16px 20px;
   border-top: 1px solid var(--ink);
   align-items: start;
 }
@@ -886,6 +1038,51 @@ dl {
   color: var(--ink);
   font-size: var(--step-lead);
   line-height: 1.58;
+}
+
+.news-article-figure {
+  margin: clamp(32px, 5vw, 48px) 0 0;
+}
+
+.news-article-figure-frame {
+  display: grid;
+  min-height: 260px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--plate);
+  place-items: center;
+}
+
+.news-article-figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 640px;
+  object-fit: contain;
+}
+
+.news-article-figure figcaption {
+  display: grid;
+  gap: 5px;
+  padding-top: 10px;
+  color: var(--muted);
+  font-family: var(--sans);
+  font-size: var(--step-micro);
+  line-height: 1.55;
+}
+
+.news-figure-credit {
+  color: var(--accent);
+  font-weight: 650;
+}
+
+.news-figure-credit a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.news-figure-credit a:hover {
+  text-decoration: underline;
 }
 
 .news-related-publication {
@@ -1186,6 +1383,9 @@ dl {
   border: 1px solid var(--line);
   border-radius: 2px;
   background: var(--plate);
+  transition:
+    border-color 300ms ease,
+    box-shadow 300ms ease;
 }
 
 .research-figure[data-figure-kind="paper-figure"] .research-figure-frame {
@@ -1198,6 +1398,12 @@ dl {
 
 .research-figure-frame img {
   width: 100%;
+}
+
+.research-figure:hover .research-figure-frame,
+.research-figure:focus-within .research-figure-frame {
+  border-color: var(--oxide);
+  box-shadow: 0 8px 22px color-mix(in srgb, var(--dark) 8%, transparent);
 }
 
 /*
@@ -1471,6 +1677,13 @@ dl {
   gap: 26px;
   padding-block: 26px;
   border-bottom: 1px solid var(--line);
+  border-inline-start: 2px solid transparent;
+  transition: border-color 300ms ease;
+}
+
+.publication-row:hover,
+.publication-row:focus-within {
+  border-inline-start-color: var(--oxide);
 }
 
 .publication-row-text-only {
@@ -1545,6 +1758,7 @@ dl {
 
 .publication-figure {
   min-width: 0;
+  overflow: hidden;
 }
 
 /*
@@ -1564,6 +1778,12 @@ dl {
   height: auto;
   object-fit: contain;
   background: var(--plate);
+  transition: transform 300ms ease;
+}
+
+.publication-row:hover .publication-thumb,
+.publication-row:focus-within .publication-thumb {
+  transform: scale(1.015);
 }
 
 .publication-summary {
@@ -1646,6 +1866,7 @@ dl {
 /* Experience */
 
 .timeline {
+  position: relative;
   padding: 0;
   margin: 0;
   border-top: 1px solid var(--ink);
@@ -1657,6 +1878,7 @@ dl {
 }
 
 .timeline li {
+  position: relative;
   display: grid;
   grid-template-columns: 150px minmax(0, 1fr);
   gap: 28px;
@@ -1665,9 +1887,37 @@ dl {
 }
 
 .timeline-date {
-  color: var(--muted);
-  font-size: var(--step-label);
-  font-weight: 650;
+  color: var(--oxide);
+  font-size: var(--step-body);
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+@media (min-width: 641px) {
+  .timeline::before {
+    position: absolute;
+    inset-block: 0;
+    left: 164px;
+    width: 1px;
+    background: var(--line-strong);
+    content: "";
+    pointer-events: none;
+  }
+
+  .timeline li::before {
+    position: absolute;
+    top: 31px;
+    left: 159px;
+    width: 10px;
+    height: 10px;
+    border: 2px solid var(--surface);
+    border-radius: 50%;
+    background: var(--oxide);
+    box-shadow: 0 0 0 1px var(--oxide);
+    content: "";
+    pointer-events: none;
+  }
 }
 
 .timeline h3 {
@@ -1963,6 +2213,28 @@ dl {
 
   .home-research-route {
     padding: 15px 0 20px;
+  }
+
+  .home-research-atlas {
+    display: block;
+  }
+
+  .home-research-stage {
+    display: none;
+  }
+
+  .home-research-route-mobile-figure {
+    display: grid;
+    padding: 12px;
+    margin: 17px 0 0;
+    border: 1px solid var(--line);
+    background: var(--plate);
+  }
+
+  .home-research-route-mobile-figure img {
+    width: 100%;
+    height: clamp(150px, 30vw, 240px);
+    object-fit: contain;
   }
 
   .news-card-grid {
@@ -2278,21 +2550,52 @@ dl {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
   }
+
+  .home-hero-field img {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .home-research-stage-figure {
+    transition: none !important;
+  }
+
+  .home-research-stage-figure:first-child {
+    opacity: 1 !important;
+  }
+
+  .home-research-stage-figure:not(:first-child) {
+    opacity: 0 !important;
+  }
+}
+
+@media (forced-colors: active) {
+  body::before {
+    display: none;
+  }
+
+  .site-frame {
+    background-image: none;
+  }
+
+  .home-hero-card {
+    box-shadow: none;
+  }
 }
 
 /* Home responsive */
 
 /* Keep the portrait recognizably personal on a phone while preserving enough
    measure for the identity text beside it. */
-@media (max-width: 400px) {
+@media (max-width: 640px) {
   .home-hero-masthead {
-    grid-template-columns: 84px minmax(0, 1fr);
+    grid-template-columns: 108px minmax(0, 1fr);
     gap: 13px;
   }
 
   .home-hero-portrait {
-    width: 84px;
-    height: 84px;
+    width: 108px;
+    height: 108px;
   }
 }
 
@@ -2348,11 +2651,22 @@ dl {
     --line: #bbbbbb;
     --line-strong: #999999;
     --accent: #000000;
+    --oxide: #000000;
+    --oxide-soft: #ffffff;
     --dark: #ffffff;
     --dark-ink: #000000;
     --dark-muted: #333333;
+    --frame: #ffffff;
     --section-space: 24px;
     --gutter: 0px;
+  }
+
+  body::before {
+    display: none;
+  }
+
+  .site-frame {
+    background-image: none;
   }
 
   .site-header,
@@ -2429,6 +2743,20 @@ dl {
 
   .home-hero {
     grid-template-columns: 1fr;
+  }
+
+  .home-hero-field img {
+    animation: none;
+    transform: none;
+  }
+
+  .home-research-route-mobile-figure,
+  .home-research-stage {
+    display: none;
+  }
+
+  .home-research-stage-figure {
+    transition: none;
   }
 
 }

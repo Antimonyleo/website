@@ -18,6 +18,44 @@ claim into several pages.
 
 ## News
 
+### Local editor (recommended)
+
+Open the repository in Visual Studio Code and install its recommended **Front
+Matter CMS** extension. The shared `frontmatter.json` configuration exposes only
+the News folder and gives every entry the same required headline, date, and
+summary fields, a dropdown of existing publications, and an optional repeatable
+figure form. Git actions are disabled in the editor, so saving changes only
+updates local files.
+
+Open the News dashboard with `Alt+D` on Linux/Windows or `Option+D` on macOS.
+Choose **Create content**, select **News**, enter the headline, and complete the
+metadata form. Write the full note in the Markdown editor; its formatting
+buttons cover headings, links, emphasis, quotes, and lists. Select **Start
+server** and **Open preview** to see the actual local News page before
+publishing.
+
+To add a figure, first open the Front Matter **Media** dashboard and drag a WebP
+file into `public/images/news/`, or reuse an approved image already under
+`public/images/publications/` or `public/images/research/`. Then add a
+**Figures** block to the News entry and choose the image. Alt text, caption, and
+credit are required together; add the DOI or canonical public URL when the
+image comes from a paper. The first figure becomes the thumbnail on the News
+listing, while every figure appears with its caption in the full note. A News
+entry may contain at most three figures.
+
+Finish by running `npm run images` after a new upload, then `npm test`, reviewing
+the diff, and committing the entry, source image, responsive variants, and
+image manifest together. The editor accepts WebP only, and the test fails when
+a wide image is missing its responsive copies.
+
+The editor configuration intentionally does not manage the rest of the
+website. When adding a publication to
+`src/data/publications.json`, also add its stable ID and title to the
+`publicationId` choices in `frontmatter.json`; `npm test` checks that the two
+lists remain synchronized.
+
+### Editing Markdown directly
+
 Each file in `src/content/news/` is one post. The filename becomes the public
 URL, so use a short, lowercase, hyphenated name such as
 `conference-update.md`. The front matter controls the listing; the Markdown
@@ -29,6 +67,13 @@ title: "A short, specific headline"
 date: "2026-08-09"
 summary: "One sentence shown on the Home and News pages."
 publicationId: "tetrahedral-lattices-2026"
+figures:
+  - fieldGroup: "newsFigure"
+    src: "/images/news/open-lattice.webp"
+    alt: "A descriptive account of the visible structure and its important features."
+    caption: "A concise explanation of why this figure supports the news update."
+    credit: "Liu et al., ChemRxiv (2026)"
+    sourceUrl: "https://doi.org/10.26434/chemrxiv.15004426/v1"
 ---
 
 Write one or more short paragraphs here.
@@ -38,13 +83,14 @@ For a paper announcement, set `publicationId` to the stable ID already in
 `src/data/publications.json`. The site then supplies the citation, DOI, image,
 venue, and review status; do not copy those facts into the news front matter.
 For a public update that is not tied to a paper, omit `publicationId`.
+Figures are optional; omit the complete `figures` block when none is needed.
+Never copy an image from `files/` into a News entry.
 
-The lowest-friction browser workflow is to press `.` on the GitHub repository,
-copy a recent file in `src/content/news/`, rename it, edit the four fields and
-body, then commit the change. Keep `date` in `YYYY-MM-DD` format and use the date
-of the public event or announcement. Run `npm test` before publishing when
-working locally. Never use news posts for unpublished results or material from
-`files/`.
+Without Front Matter CMS, copy a recent file in `src/content/news/`, rename it,
+edit the four fields and body, then commit the change. Keep `date` in
+`YYYY-MM-DD` format and use the date of the public event or announcement. Run
+`npm test` before publishing. Never use news posts for unpublished results or
+material from `files/`.
 
 ## Publications
 

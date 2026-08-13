@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import SectionHeading from "../components/SectionHeading.astro";
 import SocialLinks from "../components/SocialLinks.astro";
+import { researchFigures } from "../data/research";
 import { srcSetFor } from "../lib/images";
 import { formatNewsDate, getNewsItems } from "../lib/news";
 import { displayName, getPublicPerson, primaryOrganization } from "../lib/person";
@@ -36,6 +37,8 @@ const researchRoutes = [
     description:
       "A compact set of interaction rules for finite, multicomponent DNA-origami assemblies.",
     anchor: "finite-assemblies",
+    atlasFigure: "finite",
+    figure: researchFigures.polycubes,
   },
   {
     label: "Extended arrays",
@@ -43,6 +46,8 @@ const researchRoutes = [
     description:
       "Tile geometry and interhelical spacing tuned to build micrometre-scale two-dimensional patterns.",
     anchor: "two-dimensional-arrays",
+    atlasFigure: "periodic",
+    figure: researchFigures.tessellations,
   },
   {
     // Titles match the headings on /research/ so the click-through does not
@@ -52,6 +57,8 @@ const researchRoutes = [
     description:
       "Inverse design and experimental realization of complex crystal lattices.",
     anchor: "open-crystal-lattices",
+    atlasFigure: "open",
+    figure: researchFigures.hexagonalDiamond,
   },
 ];
 ---
@@ -83,7 +90,7 @@ const researchRoutes = [
           <img
             src={withBase(portraitImage)}
             srcset={srcSetFor(portraitImage)}
-            sizes="(max-width: 400px) 84px, 104px"
+            sizes="(max-width: 640px) 108px, 128px"
             alt="Hao Liu at a boat railing on Boston Harbor, with the city skyline behind him."
             width="1800"
             height="1350"
@@ -125,26 +132,62 @@ const researchRoutes = [
       headingId="home-research-title"
     />
 
-    <nav class="home-research-route-list" aria-label="Research overview">
-      {
-        researchRoutes.map((route, index) => (
-          <a
-            class="home-research-route"
-            href={withBase(`research/#${route.anchor}`)}
-            data-home-research-route={route.anchor}
-          >
-            <span class="home-research-route-index">
-              {String(index + 1).padStart(2, "0")}
-            </span>
-            <span class="home-research-route-label">{route.label}</span>
-            <strong>{route.title}</strong>
-            <span class="home-research-route-description">
-              {route.description}
-            </span>
-          </a>
-        ))
-      }
-    </nav>
+    <div class="home-research-atlas">
+      <nav class="home-research-route-list" aria-label="Research overview">
+        {
+          researchRoutes.map((route, index) => (
+            <a
+              class="home-research-route"
+              href={withBase(`research/#${route.anchor}`)}
+              data-home-research-route={route.anchor}
+            >
+              <span class="home-research-route-index">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <span class="home-research-route-label">{route.label}</span>
+              <strong>{route.title}</strong>
+              <span class="home-research-route-description">
+                {route.description}
+              </span>
+              <figure class="home-research-route-mobile-figure">
+                <img
+                  src={withBase(route.figure.src)}
+                  srcset={srcSetFor(route.figure.src)}
+                  sizes="100vw"
+                  alt={route.figure.alt}
+                  width={route.figure.width}
+                  height={route.figure.height}
+                  decoding="async"
+                  loading="lazy"
+                />
+              </figure>
+            </a>
+          ))
+        }
+      </nav>
+
+      <div class="home-research-stage" aria-hidden="true">
+        {
+          researchRoutes.map((route) => (
+            <figure
+              class="home-research-stage-figure"
+              data-atlas-figure={route.atlasFigure}
+            >
+              <img
+                src={withBase(route.figure.src)}
+                srcset={srcSetFor(route.figure.src)}
+                sizes="(min-width: 900px) 42vw, 100vw"
+                alt=""
+                width={route.figure.width}
+                height={route.figure.height}
+                decoding="async"
+                loading="lazy"
+              />
+            </figure>
+          ))
+        }
+      </div>
+    </div>
   </section>
 
   {/*

@@ -1,0 +1,181 @@
+{
+  "$schema": "https://frontmatter.codes/frontmatter.schema.json",
+  "frontMatter.framework.id": "astro",
+  "frontMatter.framework.startCommand": "npm run dev",
+  "frontMatter.content.pageFolders": [
+    {
+      "title": "News",
+      "path": "[[workspace]]/src/content/news",
+      "excludeSubdir": true,
+      "previewPath": "website/news",
+      "contentTypes": ["default"]
+    }
+  ],
+  "frontMatter.content.defaultSorting": "PublishedDesc",
+  "frontMatter.content.hideFm": true,
+  "frontMatter.content.hideFmMessage": "Use the News metadata form to edit these fields.",
+  "frontMatter.content.wysiwyg": true,
+  "frontMatter.content.publicFolder": "public",
+  "frontMatter.contentHealth.enabled": false,
+  "frontMatter.dashboard.content.card.fields.description": "summary",
+  "frontMatter.dashboard.content.card.fields.state": false,
+  "frontMatter.dashboard.content.cardTags": "",
+  "frontMatter.preview.host": "http://127.0.0.1:4321",
+  "frontMatter.preview.trailingSlash": true,
+  "frontMatter.file.preserveCasing": false,
+  "frontMatter.file.slugSeparator": "-",
+  "frontMatter.git.enabled": false,
+  "frontMatter.copilot.enabled": false,
+  "frontMatter.media.supportedMimeTypes": ["image/webp"],
+  "frontMatter.taxonomy.fieldGroups": [
+    {
+      "id": "newsFigure",
+      "labelField": "caption",
+      "fields": [
+        {
+          "title": "Image",
+          "name": "src",
+          "type": "image",
+          "required": true,
+          "description": "Choose or upload a WebP file under public/images; put new News images in public/images/news."
+        },
+        {
+          "title": "Alt text",
+          "name": "alt",
+          "type": "string",
+          "required": true,
+          "description": "Describe what the figure shows for someone who cannot see it; do not repeat the caption."
+        },
+        {
+          "title": "Caption",
+          "name": "caption",
+          "type": "string",
+          "required": true,
+          "description": "One concise sentence explaining why the figure belongs with this update."
+        },
+        {
+          "title": "Credit",
+          "name": "credit",
+          "type": "string",
+          "required": true,
+          "description": "Name the public paper/source or identify this as your original image."
+        },
+        {
+          "title": "Public source link",
+          "name": "sourceUrl",
+          "type": "string",
+          "single": true,
+          "required": false,
+          "description": "For a published figure, link to the DOI or canonical public source."
+        }
+      ]
+    }
+  ],
+  "frontMatter.taxonomy.contentTypes": [
+    {
+      "name": "default",
+      "pageBundle": false,
+      "clearEmpty": true,
+      "fields": [
+        {
+          "title": "Headline",
+          "name": "title",
+          "type": "string",
+          "single": true,
+          "required": true,
+          "description": "A short, specific headline. It is also used to generate the filename."
+        },
+        {
+          "title": "Date",
+          "name": "date",
+          "type": "datetime",
+          "default": "{{now}}",
+          "dateFormat": "yyyy-MM-dd",
+          "isPublishDate": true,
+          "required": true,
+          "description": "Use the date of the public announcement or event."
+        },
+        {
+          "title": "One-sentence summary",
+          "name": "summary",
+          "type": "string",
+          "required": true,
+          "description": "Shown on the Home and News pages; keep it factual and understandable on its own."
+        },
+        {
+          "title": "Related publication",
+          "name": "publicationId",
+          "type": "choice",
+          "required": false,
+          "description": "Choose a paper only when the announcement is about it. The site supplies its citation and DOI.",
+          "choices": [
+            {
+              "id": "",
+              "title": "No related publication"
+            },
+            {
+              "id": "tetrahedral-lattices-2026",
+              "title": "2026 · Programmable selection of tetrahedral crystal lattices from a single nanoscale scaffold"
+            },
+            {
+              "id": "polycubes-2025",
+              "title": "2025 · Universal 3D Nanoscale Assembly with DNA Polycubes"
+            },
+            {
+              "id": "nanoparticle-patterns-2025",
+              "title": "2025 · Programming precise nanoparticle patterns"
+            },
+            {
+              "id": "pyrochlore-2024",
+              "title": "2024 · Inverse design of a pyrochlore lattice of DNA origami through model-driven experiments"
+            },
+            {
+              "id": "hairygami-2024",
+              "title": "2024 · Hairygami: Analysis of DNA Nanostructures’ Conformational Change Driven by Functionalizable Overhangs"
+            },
+            {
+              "id": "dna-origami-tessellations-2023",
+              "title": "2023 · DNA Origami Tessellations"
+            },
+            {
+              "id": "synthetic-antibody-2023",
+              "title": "2023 · IgG-inspired, multivalent protein-DNA nanostructures for high-affinity, tunable, and reversible binding to biomolecular targets"
+            },
+            {
+              "id": "excitonic-networks-2022",
+              "title": "2022 · Two-Dimensional Excitonic Networks Directed by DNA Templates as an Efficient Model Light-Harvesting and Energy Transfer System"
+            },
+            {
+              "id": "excitonic-wires-2022",
+              "title": "2022 · DNA-templated programmable excitonic wires for micron-scale exciton transport"
+            },
+            {
+              "id": "finite-state-machine-2022",
+              "title": "2022 · A localized DNA finite-state machine with temporal resolution"
+            },
+            {
+              "id": "rna-strand-displacement-2021",
+              "title": "2021 · Kinetics of RNA and RNA:DNA Hybrid Strand Displacement"
+            },
+            {
+              "id": "meta-dna-2020",
+              "title": "2020 · Meta-DNA structures"
+            },
+            {
+              "id": "oxatub4arene-2017",
+              "title": "2017 · H₂S-Responsive Lower Critical Solution Temperature of the Host–Guest Complex Based on Oxatub[4]arene with Tri(ethylene oxide) Moieties"
+            }
+          ]
+        },
+        {
+          "title": "Figures",
+          "name": "figures",
+          "type": "block",
+          "fieldGroup": ["newsFigure"],
+          "required": false,
+          "description": "Optional. Add a complete block for each figure; the first becomes the News listing thumbnail."
+        }
+      ]
+    }
+  ]
+}

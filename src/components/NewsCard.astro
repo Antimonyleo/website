@@ -8,7 +8,9 @@ interface Props extends NewsItem {}
 
 const { post, publication } = Astro.props;
 const postUrl = withBase(`news/${post.id}/`);
-const image = publication?.data.image;
+const newsFigure = post.data.figures?.[0];
+const image = newsFigure ?? publication?.data.image;
+const imageSrc = image?.src.replace(/^\/+/, "");
 const publicationStatus =
   publication?.data.recordStatus === "preprint-not-peer-reviewed"
     ? "Preprint, not peer reviewed"
@@ -21,11 +23,11 @@ const publicationStatus =
 
 <article class:list={["news-card", !image && "news-card-text-only"]} data-news-post={post.id}>
   {
-    image && (
+    image && imageSrc && (
       <a class="news-card-figure" href={postUrl} tabindex="-1" aria-hidden="true">
         <img
-          src={withBase(image.src)}
-          srcset={srcSetFor(image.src)}
+          src={withBase(imageSrc)}
+          srcset={srcSetFor(imageSrc)}
           sizes="(max-width: 640px) calc(100vw - 40px), (max-width: 900px) 220px, 190px"
           alt=""
           width="900"

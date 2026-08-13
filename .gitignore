@@ -22,6 +22,7 @@ files/site-private-guard-terms.txt
 
 # Editor/agent session state.
 .claude/
+.frontmatter/database/
 
 # Internal working documents. Kept locally; not published on the public repo.
 # AGENTS.md, DECISIONS.md, CONTENT.md and README.md are intentionally tracked.

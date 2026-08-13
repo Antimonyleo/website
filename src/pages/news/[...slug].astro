@@ -23,6 +23,11 @@ const { post, publication } = Astro.props as NewsItem;
 const { Content } = await render(post);
 const person = await getPublicPerson();
 const image = publication?.data.image;
+const figures = post.data.figures ?? [];
+const figureSources = new Set(
+  figures.map((figure) => figure.src.replace(/^\/+/, "")),
+);
+const publicationImageSrc = image?.src.replace(/^\/+/, "");
 const publicationStatus = publication
   ? publication.data.recordStatus === "preprint-not-peer-reviewed"
     ? ["Preprint", publication.data.manuscriptStatus, "not peer reviewed"]
@@ -55,15 +60,50 @@ const publicationStatus = publication
   >
     <div class="news-article-body">
       <Content />
+      {
+        figures.map((figure) => {
+          const src = figure.src.replace(/^\/+/, "");
+          return (
+            <figure class="news-article-figure">
+              <div class="news-article-figure-frame">
+                <img
+                  src={withBase(src)}
+                  srcset={srcSetFor(src)}
+                  sizes="(max-width: 640px) calc(100vw - 40px), (max-width: 900px) 600px, 720px"
+                  alt={figure.alt}
+                  width="1200"
+                  height="800"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <figcaption>
+                <span>{figure.caption}</span>
+                <span class="news-figure-credit">
+                  {figure.sourceUrl ? (
+                    <a href={figure.sourceUrl} target="_blank" rel="noopener noreferrer">
+                      {figure.credit}
+                      <span class="external-arrow" aria-hidden="true">↗</span>
+                      <span class="sr-only"> (opens in a new tab)</span>
+                    </a>
+                  ) : (
+                    figure.credit
+                  )}
+                </span>
+              </figcaption>
+            </figure>
+          );
+        })
+      }
     </div>
 
     {
       publication && (
         <aside class="news-related-publication" aria-labelledby="related-publication-title">
-          {image && (
+          {image && publicationImageSrc && !figureSources.has(publicationImageSrc) && (
             <img
-              src={withBase(image.src)}
-              srcset={srcSetFor(image.src)}
+              src={withBase(publicationImageSrc)}
+              srcset={srcSetFor(publicationImageSrc)}
               sizes="(max-width: 640px) calc(100vw - 40px), (max-width: 900px) 600px, 380px"
               alt={image.alt}
               width="900"
