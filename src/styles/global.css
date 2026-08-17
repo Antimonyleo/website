@@ -83,7 +83,7 @@
   --prose: 34rem;
   --prose-tight: 26rem;
   --gutter: 32px;
-  --section-space: 54px;
+  --section-space: 46px;
   color-scheme: light;
 }
 
@@ -141,7 +141,14 @@ body::before {
   opacity: 0.45;
 }
 
+/*
+  Lifted above the fixed radial wash so section band edges stay crisp and body
+  text is not read through a tint. The site header is a positioned sibling at a
+  higher index, so it still floats over everything.
+*/
 main {
+  position: relative;
+  z-index: 1;
   min-height: 62vh;
 }
 
@@ -254,6 +261,40 @@ dl {
 */
 .section + .section {
   padding-top: calc(var(--section-space) * 0.45);
+}
+
+/*
+  Vertical rhythm. Every section sat on the same flat ground, so a long page
+  read as one uninterrupted scroll with nothing marking where one argument
+  ended and the next began. Alternate sections now take the warmer sand
+  ground, full-bleed to the viewport edge while their content stays in the
+  shell.
+
+  clip-path plus a wide box-shadow spread paints edge-to-edge from inside a
+  max-width container, which avoids wrapping every section in an extra element
+  across six page templates. The clip keeps the bleed horizontal only, so the
+  band still ends exactly at the section box.
+
+  Measured on --surface-alt (#efeade): muted 5.3:1, accent 6.3:1, oxide 5.3:1
+  — all AA for body text.
+
+  A band punctuates; it is not a page skin. The publications record list opts
+  out because it is a single section thousands of pixels long, where a tint
+  stops reading as rhythm and just becomes a second flat ground.
+*/
+main > section:nth-of-type(even):not(.publication-record) {
+  background: var(--surface-alt);
+  clip-path: inset(0 -100vmax);
+  box-shadow: 0 0 0 100vmax var(--surface-alt);
+}
+
+/*
+  A tinted band needs symmetric breathing room. The compacted top padding that
+  applies to any section following another would sit the colour tight against
+  the first line. Specificity 0,2,1 to beat `.section + .section`.
+*/
+main > section.section:nth-of-type(even):not(.publication-record) {
+  padding-block: var(--section-space);
 }
 
 .eyebrow {
@@ -404,6 +445,7 @@ dl {
 }
 
 .desktop-nav a {
+  position: relative;
   display: inline-flex;
   min-height: 44px;
   align-items: center;
@@ -420,11 +462,26 @@ dl {
   color: var(--ink);
 }
 
-.desktop-nav a[aria-current="page"] {
-  text-decoration: underline;
-  text-decoration-color: var(--accent);
-  text-decoration-thickness: 2px;
-  text-underline-offset: 8px;
+/*
+  The current-page rule and the hover rule draw the same underline, so it is a
+  pseudo-element that can be animated rather than a text-decoration that
+  cannot. See the motion section for the transition.
+*/
+.desktop-nav a::after {
+  position: absolute;
+  right: 0;
+  bottom: 9px;
+  left: 0;
+  height: 2px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  content: "";
+}
+
+.desktop-nav a:hover::after,
+.desktop-nav a[aria-current="page"]::after {
+  transform: scaleX(1);
 }
 
 .mobile-nav {
@@ -1950,7 +2007,7 @@ dl {
 @media (max-width: 900px) {
   :root {
     --gutter: 28px;
-    --section-space: 58px;
+    --section-space: 50px;
   }
 
   .header-inner {
@@ -2133,7 +2190,7 @@ dl {
 @media (max-width: 640px) {
   :root {
     --gutter: 20px;
-    --section-space: 48px;
+    --section-space: 40px;
   }
 
 
@@ -2294,6 +2351,87 @@ dl {
   .footer-nav {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+}
+
+/* ---------------------------------------------------------------------------
+   Motion.
+
+   Three rules, all of them tied to something the reader is doing: content
+   arriving as it is scrolled to, a figure responding to the pointer, and a
+   navigation item showing where it leads. Nothing loops, nothing moves on its
+   own, and nothing animates above the fold on first paint.
+
+   The reveal is opt-in from JavaScript: the script adds `js-reveal` to <html>
+   and `reveal` to each target, so with JavaScript off or under a
+   reduced-motion preference every element keeps its ordinary static styles.
+   That ordering matters — an opacity:0 default in CSS would leave the page
+   blank for anyone the script never reaches.
+--------------------------------------------------------------------------- */
+
+.js-reveal .reveal {
+  opacity: 0;
+  transform: translate3d(0, 14px, 0);
+  transition:
+    opacity 620ms cubic-bezier(0.22, 0.68, 0.32, 1),
+    transform 620ms cubic-bezier(0.22, 0.68, 0.32, 1);
+  will-change: opacity, transform;
+}
+
+.js-reveal .reveal.is-revealed {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+/*
+  A figure is the one element worth making feel physical: the plate lifts a
+  little and its hairline firms up, which reads as picking up a specimen card
+  rather than as a web card hover.
+*/
+.research-figure-frame,
+.publication-figure,
+.home-hero-figure img {
+  transition:
+    transform 420ms cubic-bezier(0.22, 0.68, 0.32, 1),
+    box-shadow 420ms ease,
+    border-color 420ms ease;
+}
+
+.research-figure:hover .research-figure-frame,
+.research-figure:focus-within .research-figure-frame,
+.publication-row:hover .publication-figure,
+.publication-row:focus-within .publication-figure {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px -14px rgb(23 29 25 / 34%);
+}
+
+/*
+  The hero image is the only thing on the site that moves without a hover: a
+  slow, tiny settle on load. 1.5% over 1.2s is below the threshold where it
+  reads as an animation — it reads as the page finishing.
+*/
+.home-hero-figure img {
+  animation: hero-settle 1200ms cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+@keyframes hero-settle {
+  from {
+    opacity: 0.55;
+    transform: scale(1.015);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/*
+  The navigation underline grows from the leading edge instead of appearing all
+  at once. scaleX on a pseudo-element, so nothing reflows. The element itself
+  is defined with the header rules; only its motion belongs here.
+*/
+.desktop-nav a::after {
+  transition: transform 260ms cubic-bezier(0.22, 0.68, 0.32, 1);
 }
 
 @media (prefers-reduced-motion: reduce) {

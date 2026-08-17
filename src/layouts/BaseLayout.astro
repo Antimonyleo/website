@@ -122,5 +122,79 @@ const pageSchema = {
       <slot />
     </main>
     <SiteFooter />
+    <script>
+      /*
+        Content settles in as it is scrolled to. Progressive enhancement in
+        both directions: the hiding styles are scoped to `.js-reveal`, which
+        only this script adds, so with JavaScript disabled — or when the reader
+        prefers reduced motion — every element keeps its ordinary static
+        styles and nothing is ever left invisible.
+      */
+      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+      if (!reduced.matches) {
+        /*
+          Repeating items and the headings that introduce them. Deliberately
+          not whole sections: on most pages the section element is also the
+          shell, so fading a section would fade a full screen of content at
+          once, which reads as the page loading slowly rather than as content
+          arriving.
+        */
+        const targets = document.querySelectorAll<HTMLElement>(
+          [
+            ".section-heading",
+            ".home-paper",
+            ".publication-row",
+            ".research-scale-row",
+            ".news-card",
+            ".timeline > li",
+          ].join(", "),
+        );
+
+        if (targets.length && "IntersectionObserver" in window) {
+          document.documentElement.classList.add("js-reveal");
+
+          const observer = new IntersectionObserver(
+            (entries) => {
+              for (const entry of entries) {
+                if (!entry.isIntersecting) continue;
+                // One-shot: scrolling back up must not replay it.
+                entry.target.classList.add("is-revealed");
+                observer.unobserve(entry.target);
+              }
+            },
+            // Fires slightly before the element reaches the viewport edge, so
+            // the transition is finishing rather than starting as it arrives.
+            { rootMargin: "0px 0px -8% 0px", threshold: 0.01 },
+          );
+
+          for (const [index, target] of targets.entries()) {
+            target.classList.add("reveal");
+            /*
+              Items in the same group arrive in sequence rather than together.
+              Capped at four steps so a long publication list never leaves the
+              reader waiting on a queue.
+            */
+            target.style.transitionDelay = `${Math.min(index, 4) * 70}ms`;
+            observer.observe(target);
+          }
+
+          /*
+            Anything already on screen at load reveals immediately, and the
+            hero keeps no delay — the first paint should not look staged.
+          */
+          requestAnimationFrame(() => {
+            for (const target of targets) {
+              const box = target.getBoundingClientRect();
+              if (box.top < window.innerHeight) {
+                target.style.transitionDelay = "0ms";
+                target.classList.add("is-revealed");
+                observer.unobserve(target);
+              }
+            }
+          });
+        }
+      }
+    </script>
   </body>
 </html>

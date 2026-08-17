@@ -1134,12 +1134,26 @@ async function validateCssOverflowGuards() {
   if (/\bInter\b|font-weight\s*:\s*720\b/i.test(css)) {
     advise("Design audit: Inter or a 720 weight appears in the current type system");
   }
-  if (
-    /:(?:hover|focus-visible)[^{]*\{[^}]*transform\s*:\s*translate(?:3d|y)?\s*\(/ims.test(
-      css,
-    )
-  ) {
-    advise("Design audit: hover/focus translation appears in an interactive style");
+  /*
+    Magnitude, not presence. A 2-4px nudge on a figure plate reads as picking
+    up a specimen card; a large lift reads as a web-app tile and is what this
+    guard is actually for. Flagging any translation at all meant an approved
+    motion decision produced a permanent advisory on every build.
+  */
+  const hoverTranslations = [
+    ...css.matchAll(
+      /:(?:hover|focus-visible|focus-within)[^{]*\{[^}]*?transform\s*:\s*translate(?:3d|Y)?\s*\(([^)]*)\)/gims,
+    ),
+  ].map((match) => match[1]);
+  const oversizedLifts = hoverTranslations.filter((value) =>
+    [...value.matchAll(/(-?\d+(?:\.\d+)?)px/g)].some(
+      (match) => Math.abs(Number(match[1])) > 4,
+    ),
+  );
+  if (oversizedLifts.length > 0) {
+    advise(
+      `Design audit: hover/focus lift exceeds 4px in ${oversizedLifts.length} rule(s) — reads as a web-app tile`,
+    );
   }
   if (/\bborder-radius\s*:\s*999(?:9)?px\b/i.test(css)) {
     advise("Design audit: decorative pill styling appears in the current visual system");

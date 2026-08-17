@@ -32,6 +32,19 @@ changes; implementation history belongs in Git.
   scientific artwork and do not publish private slide or research assets.
 - **2026-07 — Portrait:** Prefer an authentic photograph over an AI-modified
   portrait. A stronger real portrait may replace the current image later.
+- **2026-08 — Motion:** Motion is allowed where it is tied to what the reader
+  is doing: content revealing as it is scrolled to, a figure plate lifting up
+  to 4px under the pointer, a navigation underline growing from its leading
+  edge, and one settle on the hero at first paint. Nothing loops or moves on
+  its own. The reveal is added by script, so no-JS and reduced-motion readers
+  get the static page and no element can be left invisible.
+- **2026-08 — Page rhythm:** Alternate sections take the warmer sand ground,
+  full-bleed, so a long page reads as chapters rather than one scroll. Long
+  record lists opt out — a tint thousands of pixels tall stops punctuating and
+  becomes a second flat ground.
+- **2026-08 — Publication status:** The interface names the venue kind
+  ("Preprint", "Commentary") and never a review verdict. Author roles appear on
+  the Research page next to specific evidence, not beside every homepage entry.
 - **2026-08 — Visual system:** Use one light, restrained editorial academic
   layout across the site, with self-hosted serif/sans typography, one palette,
   and one spacing/grid system. This is a current choice, not a permanent build
