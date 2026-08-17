@@ -41,6 +41,13 @@
   --line: #e0dbcf;
   --line-strong: #c3bcab;
   --accent: #1f5f52;
+  /*
+    A second accent with a job, not a decoration. Green marks design and
+    computation; oxide marks experiment, measurement and elapsed time. Used
+    consistently the pair reads as a legend rather than as ornament, which is
+    the only kind of colour a scientific page can carry.
+    #8f4f2e on --bg is 5.7:1 — AA for body text.
+  */
   --oxide: #8f4f2e;
   --oxide-soft: #f2e4da;
   --dark: #131d1a;
@@ -702,7 +709,7 @@ dl {
 
 .home-paper-meta span:first-child {
   margin-right: auto;
-  color: var(--accent);
+  color: var(--oxide);
   letter-spacing: 0.1em;
 }
 
@@ -772,6 +779,11 @@ dl {
   height: auto;
   aspect-ratio: 3 / 2;
   object-fit: contain;
+}
+
+/* Elapsed time, same category as the timeline dates. */
+.news-card-meta time {
+  color: var(--oxide);
 }
 
 .news-card-meta {
@@ -1012,7 +1024,7 @@ dl {
 
 .research-scale-index {
   padding-top: 2px;
-  color: var(--accent);
+  color: var(--oxide);
   font-size: var(--step-label);
   font-weight: 700;
 }
@@ -1464,6 +1476,14 @@ dl {
   font-size: var(--step-label);
   line-height: 1.42;
   text-wrap: pretty;
+}
+
+/* Review status is the one piece of metadata a reader must not skim past.
+   Oxide marks the unreviewed case; peer-reviewed stays in the muted default,
+   so colour signals "look here" rather than "this is bad". */
+.publication-status-unreviewed {
+  color: var(--oxide);
+  font-weight: 600;
 }
 
 .publication-meta span + span::before {
