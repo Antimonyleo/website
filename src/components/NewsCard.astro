@@ -11,14 +11,17 @@ const postUrl = withBase(`news/${post.id}/`);
 const newsFigure = post.data.figures?.[0];
 const image = newsFigure ?? publication?.data.image;
 const imageSrc = image?.src.replace(/^\/+/, "");
+/*
+  The venue kind, not a review verdict. "Preprint" and "Commentary" describe
+  where the work sits; a published research article needs no badge, so it gets
+  none rather than a "Peer reviewed" stamp.
+*/
 const publicationStatus =
   publication?.data.recordStatus === "preprint-not-peer-reviewed"
-    ? "Preprint, not peer reviewed"
+    ? "Preprint"
     : publication?.data.recordStatus === "editorial"
       ? "Commentary"
-      : publication
-        ? "Peer reviewed"
-        : undefined;
+      : undefined;
 ---
 
 <article class:list={["news-card", !image && "news-card-text-only"]} data-news-post={post.id}>

@@ -522,8 +522,13 @@ function validateResearchFigures(researchHtml) {
   if (visibleResearch.includes("DNA Origami Tessellations")) {
     report("research page: the secondary-author tessellation paper belongs in Publications, not the focused research narrative");
   }
-  if (countMatches(researchHtml, /\bNot peer reviewed\b/gi) < 2) {
-    report("research page: both assembly preprints need visible not-peer-reviewed labels");
+  /*
+    Review-status wording was removed from the interface at the author's
+    request. Unpublished work must still be identifiable, so the guard now
+    checks for the venue fact — "Preprint" — instead of a review verdict.
+  */
+  if (countMatches(researchHtml, /\bPreprint\b/gi) < 2) {
+    report("research page: both assembly preprints need a visible preprint label");
   }
 
   const collaborativeWorkIds = [
@@ -1352,15 +1357,21 @@ if (countMatches(homeHtml, /\bdata-home-proposition(?:=|\s|>)/gi) !== 1) {
 if (decodeHtml(homeHtml).includes("Southern University of Science and Technology")) {
   report("index.html: early training details belong on the Experience page, not the concise homepage");
 }
-// The hero is a 65/35 scientific diptych. The complete, light-ground polycube
-// plate avoids decorative scientific cropping; both images keep descriptive alt.
-if (
-  countMatches(
-    homeHtml,
-    /\bdata-home-hero-paper=(?:"polycubes-2025"|'polycubes-2025')/gi,
-  ) !== 1
-) {
-  report("index.html: the uncropped polycubes hero plate is missing");
+/*
+  The hero must be a complete published plate belonging to a featured paper —
+  the intent is "no decorative cropping, and the image is evidence the reader
+  can go and check", not one particular paper. Naming a single id here meant
+  changing the hero tripped a failure that read like a missing file.
+*/
+const heroPaperId = [
+  ...homeHtml.matchAll(/\bdata-home-hero-paper=(?:"([^"]+)"|'([^']+)')/gi),
+].map((match) => match[1] ?? match[2]);
+if (heroPaperId.length !== 1) {
+  report("index.html: the hero figure must name exactly one source paper");
+} else if (!expectedHomePrimaryPublicationIds.includes(heroPaperId[0])) {
+  report(
+    `index.html: hero paper ${heroPaperId[0]} is not a featured publication`,
+  );
 }
 for (const [className, label] of [
   ["home-hero-figure", "hero research figure"],
@@ -1439,8 +1450,8 @@ for (const publication of sourcePublications) {
     report(`${publication.id}: rendered author list must structurally highlight Hao Liu`);
   }
   if (publication.recordStatus === "preprint-not-peer-reviewed") {
-    if (!/\bPreprint\b/i.test(record) || !/\bNot peer reviewed\b/i.test(record)) {
-      report(`${publication.id}: rendered preprint status is incomplete`);
+    if (!/\bPreprint\b/i.test(record)) {
+      report(`${publication.id}: rendered preprint status is missing`);
     }
   } else if (publication.recordStatus === "editorial") {
     if (!/\b(?:Commentary|News &amp; Views|News & Views)\b/i.test(record)) {

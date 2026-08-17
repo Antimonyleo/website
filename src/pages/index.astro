@@ -6,7 +6,16 @@ import { srcSetFor } from "../lib/images";
 import { displayName, getPublicPerson, primaryOrganization } from "../lib/person";
 import { withBase } from "../lib/urls";
 
-const heroImage = "images/publications/polycubes-2025.webp";
+/*
+  The full-bleed pyrochlore micrograph, not the publication plate. The plate
+  versions of the crystal papers are single panels lifted from composite
+  figures: they carry clipped panel letters and baked-in white padding, so at
+  hero size the crystal sits small inside a white box. This one fills its
+  frame, and it is the same specimen the Research page presents as evidence —
+  shown wide here as the face of the work, shown with its full caption there.
+*/
+const heroImage = "images/research/pyrochlore-crystal.webp";
+const heroPaperId = "pyrochlore-2024";
 const portraitImage = "images/hao-liu-boston.webp";
 const person = await getPublicPerson();
 const publications = await getCollection("publications");
@@ -19,20 +28,22 @@ const publicationsById = new Map(
   by `featured` and `selectedOrder` in publications.json — as
   publications.schema.json documents — so changing the selection does not mean
   editing markup.
+
+  Author roles are deliberately not shown here. The full author list, with Hao
+  highlighted, is on the Publications page; repeating "first and
+  co-corresponding author" beside every entry reads as a claim being pressed
+  rather than a result being described.
 */
-const paperLeads: Record<string, { role: string; lead: string }> = {
+const paperLeads: Record<string, { lead: string }> = {
   "pyrochlore-2024": {
-    role: "First author",
     lead:
       "Can interaction rules designed on a computer survive the wet lab? Modeling led to a DNA-origami pyrochlore lattice verified by scattering and microscopy.",
   },
   "tetrahedral-lattices-2026": {
-    role: "First and co-corresponding author",
     lead:
       "Can one nanoscale scaffold choose among several open crystals? Reprogramming only four sticky ends selects cubic diamond, hexagonal diamond, or ice 0.",
   },
   "polycubes-2025": {
-    role: "Co-first and co-corresponding author",
     lead:
       "How few components are enough to build a chosen 3D object? Inverse design programs DNA-origami cubes while screening out competing assemblies.",
   },
@@ -58,22 +69,22 @@ if (selectedPapers.length === 0) {
 
 <BaseLayout pageClass="home-page" pageType="ProfilePage">
   <section class="home-hero shell" aria-labelledby="home-title">
-    <figure class="home-hero-figure" data-home-hero-paper="polycubes-2025">
+    <figure class="home-hero-figure" data-home-hero-paper={heroPaperId}>
       <img
         src={withBase(heroImage)}
         srcset={srcSetFor(heroImage)}
         sizes="(min-width: 1240px) 767px, (min-width: 721px) 62vw, 100vw"
-        alt="A designed DNA-origami polycube shown beside an electron-microscopy image of the experimentally assembled structure."
-        width="900"
-        height="600"
+        alt="Scanning electron micrograph of a faceted, silica-preserved DNA-origami pyrochlore crystal, its surface showing the ordered pore pattern of the designed lattice."
+        width="1200"
+        height="900"
         decoding="async"
         loading="eager"
         fetchpriority="high"
       />
       <figcaption>
-        <span>Design and experiment · DNA polycubes</span>
+        <span>Design and experiment · DNA-origami pyrochlore crystal</span>
         <a
-          href={publicationsById.get("polycubes-2025")!.data.url}
+          href={publicationsById.get(heroPaperId)!.data.url}
           target="_blank"
           rel="noopener noreferrer"
         >Read the paper ↗</a>
@@ -130,7 +141,7 @@ if (selectedPapers.length === 0) {
 
     <div class="home-paper-grid">
       {
-        selectedPapers.map(({ publication, role, lead }, index) => (
+        selectedPapers.map(({ publication, lead }, index) => (
           <article
             class="home-paper"
             data-home-primary-publication={publication.id}
@@ -138,7 +149,6 @@ if (selectedPapers.length === 0) {
             <div class="home-paper-meta">
               <span>{String(index + 1).padStart(2, "0")}</span>
               <span>{publication.data.year}</span>
-              <span>{role}</span>
             </div>
             <h3>
               <a
@@ -153,9 +163,8 @@ if (selectedPapers.length === 0) {
             <p>{lead}</p>
             <p class="home-paper-venue">
               {publication.data.venue}
-              {publication.data.recordStatus === "preprint-not-peer-reviewed"
-                ? " · Preprint, not peer reviewed"
-                : " · Peer reviewed"}
+              {publication.data.recordStatus === "preprint-not-peer-reviewed" &&
+                " · Preprint"}
             </p>
           </article>
         ))

@@ -97,11 +97,6 @@ const citation = Array.isArray(data.authors)
     <div class="publication-meta">
       <span>{kindLabel}</span>
       {data.manuscriptStatus && <span>{data.manuscriptStatus}</span>}
-      {
-        data.recordStatus === "preprint-not-peer-reviewed" && (
-          <span class="publication-status-unreviewed">Not peer reviewed</span>
-        )
-      }
       {data.kind !== "preprint" && <span>{data.venue}</span>}
       {data.volumePages && <span>{data.volumePages}</span>}
     </div>

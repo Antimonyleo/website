@@ -1497,14 +1497,6 @@ dl {
   text-wrap: pretty;
 }
 
-/* Review status is the one piece of metadata a reader must not skim past.
-   Oxide marks the unreviewed case; peer-reviewed stays in the muted default,
-   so colour signals "look here" rather than "this is bad". */
-.publication-status-unreviewed {
-  color: var(--oxide);
-  font-weight: 600;
-}
-
 .publication-meta span + span::before {
   margin-right: 9px;
   color: var(--line-strong);

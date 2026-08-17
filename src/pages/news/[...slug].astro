@@ -28,15 +28,16 @@ const figureSources = new Set(
   figures.map((figure) => figure.src.replace(/^\/+/, "")),
 );
 const publicationImageSrc = image?.src.replace(/^\/+/, "");
-const publicationStatus = publication
-  ? publication.data.recordStatus === "preprint-not-peer-reviewed"
-    ? ["Preprint", publication.data.manuscriptStatus, "not peer reviewed"]
-        .filter(Boolean)
-        .join(" · ")
-    : publication.data.recordStatus === "editorial"
+/*
+  The venue kind, not a review verdict. A published research article carries no
+  badge at all, so the record-status branches collapse to two named cases.
+*/
+const publicationStatus =
+  publication?.data.recordStatus === "preprint-not-peer-reviewed"
+    ? ["Preprint", publication.data.manuscriptStatus].filter(Boolean).join(" · ")
+    : publication?.data.recordStatus === "editorial"
       ? "Commentary"
-      : "Peer reviewed"
-  : undefined;
+      : undefined;
 ---
 
 <BaseLayout

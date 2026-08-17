@@ -22,16 +22,6 @@ const publication = (id: string) => {
   return record;
 };
 
-const reviewLabel = (record: CollectionEntry<"publications">) => {
-  if (record.data.recordStatus === "peer-reviewed") {
-    return "Peer reviewed";
-  }
-  if (record.data.recordStatus === "preprint-not-peer-reviewed") {
-    return "Not peer reviewed";
-  }
-  return "Editorial";
-};
-
 const sourcePublication = (figure: ResearchFigureData) =>
   figure.source ? publication(figure.source.publicationId) : undefined;
 
@@ -82,9 +72,7 @@ const groupFigures = (group.figureIds ?? []).map((id) => researchFigures[id]);
                     <span class="sr-only"> (opens in a new tab)</span>
                   </a>
                 </h4>
-                <p class="research-paper-role">
-                  {reference.role} · {reviewLabel(record)}
-                </p>
+                <p class="research-paper-role">{reference.role}</p>
               </article>
             );
           })

@@ -22,7 +22,7 @@ const publications = (await getCollection("publications")).sort(
 
 <BaseLayout
   title={`Publications — ${person.name}`}
-  description={`Peer-reviewed publications and preprints by ${person.name} in nucleic acid nanotechnology, self-assembly, molecular programming, and nanomaterials.`}
+  description={`Journal articles and preprints by ${person.name} in nucleic acid nanotechnology, self-assembly, molecular programming, and nanomaterials.`}
   pageType="CollectionPage"
   itemList={publications.map((publication) => ({
     name: publication.data.title,
@@ -32,7 +32,7 @@ const publications = (await getCollection("publications")).sort(
   <PageIntro
     eyebrow="Research output"
     title="Publications"
-    description="Peer-reviewed research, preprints, and commentary."
+    description="Journal articles, preprints, and commentary."
   />
 
   <section class="publication-tools shell" aria-label="Publication links">
