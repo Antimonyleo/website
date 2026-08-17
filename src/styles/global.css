@@ -1132,6 +1132,25 @@ dl {
   align-content: center;
 }
 
+/*
+  Two figures in one group — the pyrochlore and hexagonal-diamond micrographs
+  are the evidence for the two papers under Open crystal lattices, so they
+  stack in the figure column as a small evidence gallery.
+
+  The 260px floor above exists to stop a lone wide figure reading as a sliver.
+  With two plates the column already has presence, and keeping the floor would
+  force 520px of plate before captions, so the pair relaxes it and lets each
+  image keep its own published proportions. Must follow the base rule: an
+  override placed above it loses on source order.
+*/
+.research-scale-figure-pair {
+  display: grid;
+  gap: 26px;
+}
+
+.research-scale-figure-pair .research-figure-frame {
+  min-height: 0;
+}
 
 .research-figure {
   min-width: 0;

@@ -67,6 +67,7 @@ const errors = [];
 const warnings = [];
 let sourcePublications = [];
 let sourceResearchFigureIds = [];
+let sourceResearchGroups = [];
 const defaultPrivateGuardFile = resolve("files/site-private-guard-terms.txt");
 
 const expectedRoutes = new Map([
@@ -377,6 +378,10 @@ function validateResearchFigures(researchHtml) {
   const figures = researchFigures(researchHtml);
   const expectedFigureSources = new Map([
     ["polycubes-public-evidence", "10.26434/chemrxiv-2025-qbk3f"],
+    ["pyrochlore-published-evidence", "10.1126/science.adl5549"],
+    ["hexagonal-diamond-public-evidence", "10.26434/chemrxiv.15004426/v1"],
+    ["meteor-crater-field-photo", "Photo by Hao Liu"],
+    ["canyon-diablo-specimen", "Photo by Hao Liu"],
   ]);
   const figuresById = new Map();
   for (const [index, figure] of figures.entries()) {
@@ -625,6 +630,7 @@ async function validateResearchSource() {
   const groups = Array.isArray(research.researchScaleGroups)
     ? research.researchScaleGroups
     : [];
+  sourceResearchGroups = groups;
   if (figures.length === 0) {
     report("research source: researchFigures must be a non-empty record");
   }
@@ -677,7 +683,7 @@ async function validateResearchSource() {
 
   for (const group of groups) {
     const referencedFigureKeys = [
-      group?.figureId,
+      ...(group?.figureIds ?? []),
       ...(group?.story?.photoFigureIds ?? []),
       group?.story?.paperFigureId,
     ].filter(Boolean);
@@ -1270,11 +1276,24 @@ if (/\bclass=(?:"[^"]*\bresearch-map\b[^"]*"|'[^']*\bresearch-map\b[^']*')/i.tes
 if (/\bclass=(?:"[^"]*\bselected-publication\b[^"]*"|'[^']*\bselected-publication\b[^']*')/i.test(homeHtml)) {
   report("index.html: detailed publication cards must remain off the concise homepage");
 }
-// The focused Research page deliberately uses one complete, light-ground
-// figure. Papers without a suitable web image remain text-led rather than
-// being cropped or cosmetically altered.
-if (researchFigures(researchHtml).length !== 1) {
-  advise("Design audit: the Research page changed from its single-figure composition");
+/*
+  Every paper the Research page claims should show its own evidence. A group
+  that lists publications but renders no figure is the failure mode worth
+  catching — a first-author result presented as text alone.
+
+  This replaces a fixed figure count, which asserted a composition rather than
+  an intent and so fired on any honest change to the evidence set. The rendered
+  ids are already matched against src/data/research.ts and the approved source
+  list above; a count adds nothing but a false alarm.
+*/
+for (const group of sourceResearchGroups) {
+  const figureCount =
+    (group?.figureIds?.length ?? 0) + (group?.story?.photoFigureIds?.length ?? 0);
+  if ((group?.publications?.length ?? 0) > 0 && figureCount === 0) {
+    advise(
+      `Design audit: research group “${group?.id ?? "unknown"}” cites ${group.publications.length} paper(s) but shows no figure`,
+    );
+  }
 }
 
 const renderedStoryPreviews = [

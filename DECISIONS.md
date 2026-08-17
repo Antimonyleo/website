@@ -21,14 +21,15 @@ changes; implementation history belongs in Git.
   papers Hao led: finite three-dimensional assemblies, pyrochlore, and
   tetrahedral crystal lattices. Secondary-author work remains in the complete
   Publications record; supporting collaborations stay subordinate.
-- **2026-08 — Field story:** The hexagonal-diamond field note is not part of the
-  focused Research page. The primary paper narrative takes priority over
-  natural-history context.
+- **2026-08 — Field story:** The hexagonal-diamond field note belongs with the
+  three-dimensional lattice work because the connection is topology, not
+  composition. It stays subordinate to that research chapter — nested behind a
+  disclosure rather than given its own route — but it stays.
 - **2026-08 — Scientific visuals:** Use approved public paper figures without
-  decorative cropping. Prefer a complete, light-ground figure; when the
-  available image is visually unsuitable, keep the paper text-led instead of
-  repainting scientific evidence. Avoid generic AI scientific artwork and do
-  not publish private slide or research assets.
+  decorative cropping. A dark stage or a black scale-bar label is normal in
+  electron microscopy and is not grounds for dropping a figure; each paper the
+  Research page claims should show its own evidence. Avoid generic AI
+  scientific artwork and do not publish private slide or research assets.
 - **2026-07 — Portrait:** Prefer an authentic photograph over an AI-modified
   portrait. A stronger real portrait may replace the current image later.
 - **2026-08 — Visual system:** Use one light, restrained editorial academic

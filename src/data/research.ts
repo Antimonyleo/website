@@ -32,6 +32,56 @@ export const researchFigures = {
       locator: "Figure 2",
     },
   },
+  pyrochlore: {
+    id: "pyrochlore-published-evidence",
+    kind: "paper-figure",
+    src: "images/research/pyrochlore-crystal.webp",
+    width: 1200,
+    height: 900,
+    alt: "Scanning electron micrograph of a faceted, silica-preserved DNA-origami pyrochlore crystal about ten micrometers across, its surface showing the ordered pore pattern of the underlying lattice.",
+    caption:
+      "Silica-preserved DNA-origami pyrochlore crystal imaged by scanning electron microscopy; the faceted habit and ordered surface pores follow the designed lattice. Topology and long-range order are established in the linked paper by small-angle X-ray scattering, following interaction design and coarse-grained modeling.",
+    source: {
+      publicationId: "pyrochlore-2024",
+      showDoi: true,
+    },
+  },
+  hexagonalDiamond: {
+    id: "hexagonal-diamond-public-evidence",
+    kind: "paper-figure",
+    src: "images/research/hexagonal-diamond-detail.webp",
+    width: 1640,
+    height: 560,
+    alt: "Scanning electron micrographs show a faceted DNA-origami hexagonal-diamond crystal and the ordered pattern resolved on its basal plane.",
+    caption:
+      "A detail from the preprint figure: the hexagonal habit and the ordered basal-plane pattern. In-plane order alone does not distinguish hexagonal from cubic diamond — the two differ only in stacking sequence, which the preprint resolves by small-angle X-ray scattering. The complete figure is in the linked preprint.",
+    source: {
+      publicationId: "tetrahedral-lattices-2026",
+      locator: "Figure 4f–g detail",
+    },
+  },
+  meteorCrater: {
+    id: "meteor-crater-field-photo",
+    kind: "photograph",
+    src: "images/research/meteor-crater.webp",
+    width: 1600,
+    height: 1200,
+    alt: "Wide view across Meteor Crater in northern Arizona.",
+    captionLabel: "Site.",
+    caption: "Meteor Crater, Arizona.",
+    credit: "Photo by Hao Liu, 2025.",
+  },
+  canyonDiablo: {
+    id: "canyon-diablo-specimen",
+    kind: "photograph",
+    src: "images/research/canyon-diablo-meteorite.webp",
+    width: 1200,
+    height: 900,
+    alt: "Canyon Diablo meteorite specimen displayed at the Meteor Crater visitor center.",
+    captionLabel: "Specimen.",
+    caption: "Canyon Diablo meteorite.",
+    credit: "Photo by Hao Liu, 2025.",
+  },
 } as const satisfies Record<string, ResearchFigureData>;
 
 export type ResearchFigureId = keyof typeof researchFigures;
@@ -53,7 +103,12 @@ export interface ResearchStoryData {
   description: string;
   paragraphs: readonly string[];
   photoFigureIds: readonly ResearchFigureId[];
-  paperFigureId: ResearchFigureId;
+  /*
+    Optional: a field note carries its own paper figure only when that figure
+    is not already shown by the group above it. Promoting the hexagonal-diamond
+    micrograph to a group figure means the note keeps just the photographs.
+  */
+  paperFigureId?: ResearchFigureId;
   historicalSources: readonly {
     label: string;
     href: string;
@@ -68,7 +123,12 @@ export interface ResearchScaleGroup {
   description: string;
   publications: readonly ResearchPublicationReference[];
   collaborations?: readonly ResearchCollaborationReference[];
-  figureId?: ResearchFigureId;
+  /*
+    A list, not a single id: a group that covers two papers should be able to
+    show the evidence for both. Open crystal lattices carries the pyrochlore
+    and hexagonal-diamond micrographs side by side.
+  */
+  figureIds?: readonly ResearchFigureId[];
   story?: ResearchStoryData;
 }
 
@@ -96,7 +156,7 @@ export const researchScaleGroups = [
         label: "conformational change in DNA nanostructures",
       },
     ],
-    figureId: "polycubes",
+    figureIds: ["polycubes"],
   },
   {
     id: "open-crystal-lattices",
@@ -115,5 +175,32 @@ export const researchScaleGroups = [
         role: "First and co-corresponding author",
       },
     ],
+    figureIds: ["pyrochlore", "hexagonalDiamond"],
+    story: {
+      id: "hexagonal-diamond-story",
+      eyebrow: "Field note",
+      title: "A hexagonal-diamond connection",
+      description:
+        "Natural-history context for the three-dimensional lattice work.",
+      paragraphs: [
+        "In 1967, a hexagonal polymorph of diamond was described in shock-transformed graphite inclusions from the Canyon Diablo iron meteorite, the body that formed Arizona’s Meteor Crater. Whether those grains are a distinct hexagonal phase or stacking-disordered cubic diamond has been debated, and the interpretation refined, ever since.",
+        "I visited the crater after leading a study that reports selective assembly of the same diamond network at the colloidal scale. The shared problem is polytype selection, not composition: cubic and hexagonal diamond differ only in stacking sequence, which is exactly what makes it hard to show that one has formed rather than the other. The meteoritic case is a long-running example of that difficulty in shock-transformed carbon; the laboratory crystal is assembled from DNA-origami tetrahedra, where the stacking is set by design and read out by scattering.",
+      ],
+      photoFigureIds: ["meteorCrater", "canyonDiablo"],
+      historicalSources: [
+        {
+          label: "Frondel & Marvin, Nature 1967",
+          href: "https://doi.org/10.1038/214587a0",
+        },
+        {
+          label: "Hanneman et al., Science 1967",
+          href: "https://doi.org/10.1126/science.155.3765.995",
+        },
+        {
+          label: "Németh et al., Phil. Trans. R. Soc. A 2023",
+          href: "https://doi.org/10.1098/rsta.2022.0344",
+        },
+      ],
+    },
   },
 ] as const satisfies readonly ResearchScaleGroup[];
