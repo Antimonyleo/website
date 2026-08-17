@@ -377,17 +377,6 @@ function validateResearchFigures(researchHtml) {
   const figures = researchFigures(researchHtml);
   const expectedFigureSources = new Map([
     ["polycubes-public-evidence", "10.26434/chemrxiv-2025-qbk3f"],
-    [
-      "tessellations-public-evidence",
-      "Journal of the American Chemical Society 2023",
-    ],
-    ["pyrochlore-published-evidence", "10.1126/science.adl5549"],
-    ["meteor-crater-field-photo", "Photo by Hao Liu"],
-    ["canyon-diablo-specimen", "Photo by Hao Liu"],
-    [
-      "hexagonal-diamond-public-evidence",
-      "10.26434/chemrxiv.15004426/v1",
-    ],
   ]);
   const figuresById = new Map();
   for (const [index, figure] of figures.entries()) {
@@ -513,7 +502,6 @@ function validateResearchFigures(researchHtml) {
     ),
   ].map((match) => match[1] ?? match[2]);
   const expectedAssemblyWorkIds = [
-    "dna-origami-tessellations-2023",
     "pyrochlore-2024",
     "polycubes-2025",
     "tetrahedral-lattices-2026",
@@ -523,8 +511,11 @@ function validateResearchFigures(researchHtml) {
     expectedAssemblyWorkIds.some((id) => !assemblyWorkIds.includes(id))
   ) {
     report(
-      `research page: expected four public assembly outcomes; found ${assemblyWorkIds.join(", ") || "none"}`,
+      `research page: expected the three primary-author assembly papers; found ${assemblyWorkIds.join(", ") || "none"}`,
     );
+  }
+  if (visibleResearch.includes("DNA Origami Tessellations")) {
+    report("research page: the secondary-author tessellation paper belongs in Publications, not the focused research narrative");
   }
   if (countMatches(researchHtml, /\bNot peer reviewed\b/gi) < 2) {
     report("research page: both assembly preprints need visible not-peer-reviewed labels");
@@ -1279,10 +1270,11 @@ if (/\bclass=(?:"[^"]*\bresearch-map\b[^"]*"|'[^']*\bresearch-map\b[^']*')/i.tes
 if (/\bclass=(?:"[^"]*\bselected-publication\b[^"]*"|'[^']*\bselected-publication\b[^']*')/i.test(homeHtml)) {
   report("index.html: detailed publication cards must remain off the concise homepage");
 }
-// One figure per scale group plus the three field-note images. A change here
-// usually means a scale group lost its figure and the page rhythm now skips.
-if (researchFigures(researchHtml).length !== 6) {
-  advise("Design audit: the Research page no longer renders the current six-figure composition");
+// The focused Research page deliberately uses one complete, light-ground
+// figure. Papers without a suitable web image remain text-led rather than
+// being cropped or cosmetically altered.
+if (researchFigures(researchHtml).length !== 1) {
+  advise("Design audit: the Research page changed from its single-figure composition");
 }
 
 const renderedStoryPreviews = [
@@ -1290,11 +1282,10 @@ const renderedStoryPreviews = [
     /\bdata-research-story-preview=(?:"([^"]+)"|'([^']+)')/gi,
   ),
 ].map((match) => match[1] ?? match[2]);
-const expectedHomeResearchRouteIds = [
-  "finite-assemblies",
-  "two-dimensional-arrays",
-  "open-crystal-lattices",
-];
+const expectedHomePrimaryPublicationIds = sourcePublications
+  .filter((record) => record.featured)
+  .sort((a, b) => (a.selectedOrder ?? 0) - (b.selectedOrder ?? 0))
+  .map((record) => record.id);
 if (renderedStoryPreviews.length !== 0) {
   report(
     `index.html: detailed research-story previews must remain on the Research page; found ${renderedStoryPreviews.join(", ")}`,
@@ -1310,40 +1301,51 @@ if (renderedSelectedPublicationIds.length !== 0) {
     `publications/index.html: selected papers must not duplicate the complete list; found ${renderedSelectedPublicationIds.join(", ")}`,
   );
 }
-const expectedSelectedPublicationIds = sourcePublications
-  .filter((publication) => publication.featured)
-  .sort((a, b) => a.selectedOrder - b.selectedOrder)
-  .slice(0, 3)
-  .map((publication) => publication.id);
 const renderedHomeSelectedPublicationIds = [
   ...homeHtml.matchAll(
     /\bdata-home-selected-publication=(?:"([^"]+)"|'([^']+)')/gi,
   ),
 ].map((match) => match[1] ?? match[2]);
+if (renderedHomeSelectedPublicationIds.length !== 0) {
+  report(
+    `index.html: publications belong on their dedicated page; found ${renderedHomeSelectedPublicationIds.join(", ")}`,
+  );
+}
+const renderedHomePrimaryPublicationIds = [
+  ...homeHtml.matchAll(
+    /\bdata-home-primary-publication=(?:"([^"]+)"|'([^']+)')/gi,
+  ),
+].map((match) => match[1] ?? match[2]);
 if (
-  renderedHomeSelectedPublicationIds.length !== expectedSelectedPublicationIds.length ||
-  expectedSelectedPublicationIds.some(
-    (id) => !renderedHomeSelectedPublicationIds.includes(id),
+  renderedHomePrimaryPublicationIds.length !==
+    expectedHomePrimaryPublicationIds.length ||
+  expectedHomePrimaryPublicationIds.some(
+    (id, index) => renderedHomePrimaryPublicationIds[index] !== id,
   )
 ) {
   report(
-    `index.html: expected the led Science paper and two current public manuscripts; found ${renderedHomeSelectedPublicationIds.join(", ") || "none"}`,
+    `index.html: homepage papers must match featured/selectedOrder in publications.json (${expectedHomePrimaryPublicationIds.join(", ")}); found ${renderedHomePrimaryPublicationIds.join(", ") || "none"}`,
   );
 }
-if (
-  countMatches(homeHtml, /\bdata-home-bio(?:=|\s|>)/gi) !== 1
-) {
-  report("index.html: the public prose biography is missing");
+if (countMatches(homeHtml, /\bdata-home-proposition(?:=|\s|>)/gi) !== 1) {
+  report("index.html: the homepage research proposition is missing");
 }
 if (decodeHtml(homeHtml).includes("Southern University of Science and Technology")) {
   report("index.html: early training details belong on the Experience page, not the concise homepage");
 }
-// The hero is a research micrograph used as a full-bleed field, with the
-// identity card — including the portrait — laid on top of it. Both images must
-// still carry descriptive alt text.
+// The hero is a 65/35 scientific diptych. The complete, light-ground polycube
+// plate avoids decorative scientific cropping; both images keep descriptive alt.
+if (
+  countMatches(
+    homeHtml,
+    /\bdata-home-hero-paper=(?:"polycubes-2025"|'polycubes-2025')/gi,
+  ) !== 1
+) {
+  report("index.html: the uncropped polycubes hero plate is missing");
+}
 for (const [className, label] of [
-  ["home-hero-field", "hero research figure"],
-  ["home-hero-masthead", "masthead portrait"],
+  ["home-hero-figure", "hero research figure"],
+  ["home-hero-portrait", "identity portrait"],
 ]) {
   const block = homeHtml.match(
     new RegExp(
@@ -1355,28 +1357,6 @@ for (const [className, label] of [
     report(`index.html: the ${label} or its descriptive alt text is missing`);
   }
 }
-const renderedHomeResearchRoutes = [
-  ...homeHtml.matchAll(
-    /\bdata-home-research-route=(?:"([^"]+)"|'([^']+)')/gi,
-  ),
-].map((match) => match[1] ?? match[2]);
-if (
-  renderedHomeResearchRoutes.length !== expectedHomeResearchRouteIds.length ||
-  expectedHomeResearchRouteIds.some(
-    (id) => !renderedHomeResearchRoutes.includes(id),
-  )
-) {
-  advise(
-    `Design audit: the concise Home research-route set changed; found ${renderedHomeResearchRoutes.join(", ") || "none"}`,
-  );
-}
-for (const storyId of expectedHomeResearchRouteIds) {
-  const target = `${basePath}research/#${storyId}`;
-  if (!decodeHtml(homeHtml).includes(`href="${target}"`)) {
-    advise(`Design audit: Home research route is missing for ${storyId}`);
-  }
-}
-
 const renderedPublicationCount = countMatches(
   publicationsHtml,
   /\bdata-publication-record(?:=|\s|>)/gi,

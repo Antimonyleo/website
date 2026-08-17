@@ -17,20 +17,24 @@ changes; implementation history belongs in Git.
 - **2026-07 — Authorship:** Contribution marks are shown on publications where
   Hao has a verified equal-contribution or corresponding-author role. When
   shown, every author sharing those marked roles on that paper is identified.
-- **2026-07 — Research organization:** The Research page follows structural
-  scale, keeping supporting collaborations subordinate to the main narrative.
-- **2026-07 — Field story:** The hexagonal-diamond field note belongs with the
-  three-dimensional lattice work because the connection is topology, not
-  composition. It remains subordinate to that research chapter rather than a
-  separate Homepage route or Notes section.
-- **2026-07 — Scientific visuals:** Use approved public paper figures and
-  authentic field photographs. Avoid generic AI scientific artwork and do not
-  publish private slide or research assets.
+- **2026-08 — Research organization:** The Homepage and Research page foreground
+  papers Hao led: finite three-dimensional assemblies, pyrochlore, and
+  tetrahedral crystal lattices. Secondary-author work remains in the complete
+  Publications record; supporting collaborations stay subordinate.
+- **2026-08 — Field story:** The hexagonal-diamond field note is not part of the
+  focused Research page. The primary paper narrative takes priority over
+  natural-history context.
+- **2026-08 — Scientific visuals:** Use approved public paper figures without
+  decorative cropping. Prefer a complete, light-ground figure; when the
+  available image is visually unsuitable, keep the paper text-led instead of
+  repainting scientific evidence. Avoid generic AI scientific artwork and do
+  not publish private slide or research assets.
 - **2026-07 — Portrait:** Prefer an authentic photograph over an AI-modified
   portrait. A stronger real portrait may replace the current image later.
-- **2026-07 — Visual system:** Use a restrained editorial academic layout with
-  a system font stack, one palette, and one spacing/grid system. This is a
-  current choice, not a permanent build invariant.
+- **2026-08 — Visual system:** Use one light, restrained editorial academic
+  layout across the site, with self-hosted serif/sans typography, one palette,
+  and one spacing/grid system. This is a current choice, not a permanent build
+  invariant.
 - **2026-07 — Content architecture:** Routine facts live in data or Markdown.
   If a routine update requires editing Astro markup, first check whether the
   data model is missing a field.

@@ -33,22 +33,21 @@
     Warm paper and a single deep green read as a specimen plate rather than a
     dashboard, which suits a site whose subject is physical structure.
   */
-  --bg: #f6f4ef;
-  --surface: #fffefb;
-  --surface-alt: #efebe1;
-  --ink: #16211d;
-  --muted: #5b665f;
-  --line: #ddd8cb;
-  --line-strong: #c6c0b0;
-  --accent: #2c5f57;
-  --oxide: #9b573b;
-  --oxide-soft: #ead8cd;
+  --bg: #f7f4ed;
+  --surface: #fffdf8;
+  --surface-alt: #efeade;
+  --ink: #171d19;
+  --muted: #57625b;
+  --line: #e0dbcf;
+  --line-strong: #c3bcab;
+  --accent: #1f5f52;
+  --oxide: #8f4f2e;
+  --oxide-soft: #f2e4da;
   --dark: #131d1a;
-  /* The field the paper card stands on. */
-  --frame: #232825;
   --dark-ink: #eae6dc;
   --dark-muted: #a4aea7;
-  /* Scientific figures are authored on white; they stay on white in dark mode. */
+  /* Figures are authored on white; they keep it, so they read as inserted
+     evidence against the warm page rather than blending into it. */
   --plate: #ffffff;
 
   --serif: "Source Serif 4", ui-serif, Georgia, "Times New Roman", serif;
@@ -81,26 +80,6 @@
   color-scheme: light;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #121614;
-    --surface: #191f1c;
-    --surface-alt: #212825;
-    --ink: #e9e6dd;
-    --muted: #9aa49d;
-    --line: #2c3531;
-    --line-strong: #3d4844;
-    --accent: #7cbfb2;
-    --oxide: #d39478;
-    --oxide-soft: #3b2b25;
-    --dark: #0d1210;
-    --frame: #0a0d0c;
-    --dark-ink: #e9e6dd;
-    --dark-muted: #9aa49d;
-    color-scheme: dark;
-  }
-}
-
 *,
 *::before,
 *::after {
@@ -109,7 +88,7 @@
 
 html {
   min-width: 320px;
-  background: var(--frame);
+  background: var(--bg);
   scroll-padding-top: 84px;
 }
 
@@ -121,7 +100,7 @@ html {
 body {
   margin: 0;
   position: relative;
-  background: var(--frame);
+  background: var(--bg);
   color: var(--ink);
   font-family: var(--serif);
   font-size: var(--step-body);
@@ -153,36 +132,6 @@ body::before {
     );
   content: "";
   opacity: 0.45;
-}
-
-/*
-  The card. Wide enough that publication figures still have room — this is not
-  a 500px column — but bounded, so the page reads as a document on a surface
-  instead of a browser window filled edge to edge.
-*/
-.site-frame {
-  position: relative;
-  z-index: 1;
-  width: min(100%, 1320px);
-  margin-inline: auto;
-  background-color: var(--bg);
-  background-image:
-    radial-gradient(
-      ellipse at 86% -12%,
-      color-mix(in srgb, var(--accent) 7%, transparent),
-      transparent 34rem
-    ),
-    radial-gradient(
-      ellipse at 3% 48%,
-      color-mix(in srgb, var(--oxide) 5%, transparent),
-      transparent 38rem
-    ),
-    linear-gradient(
-      180deg,
-      color-mix(in srgb, var(--surface) 24%, transparent),
-      transparent 24rem
-    );
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 12%, transparent);
 }
 
 main {
@@ -338,8 +287,6 @@ dl {
 .footer-meta,
 .footer-nav,
 .footer-role,
-.home-publication-meta,
-.home-publication-note,
 .home-research-route-label,
 .home-role,
 .mobile-nav,
@@ -516,158 +463,121 @@ dl {
 
 /* Home */
 
-/*
-  The image is the field, not a panel beside the text: it runs the full width of
-  the card and the content sits on top of it. That overlap is what the layout
-  borrows from the reference site — an image you look at, with the page laid on
-  it, rather than two columns sharing a band.
-*/
+/* One light editorial surface. The palette lives in :root and nowhere else. */
+.site-header {
+  background: color-mix(in srgb, var(--bg) 97%, transparent);
+}
+
+/* One clean grid replaces the full-width field and floating biography card. */
 .home-hero {
-  position: relative;
   display: grid;
-  /*
-    Both children start at the top rather than stretching. The card now carries
-    the biography too, so it is taller than the image band; letting it hang past
-    the band onto the paper keeps the band short instead of growing the hero to
-    match the text.
-  */
-  align-items: start;
-  border-bottom: 1px solid var(--line);
+  grid-template-columns: minmax(0, 1.45fr) minmax(360px, 1fr);
+  margin-top: clamp(24px, 3.4vw, 44px);
+  border-block: 1px solid var(--line-strong);
+  background: var(--surface);
 }
 
-.home-hero > * {
-  grid-area: 1 / 1;
-}
-
-.home-hero-field {
-  display: grid;
-  /*
-    A definite height for the image row, not min-height on the figure. With an
-    indefinite row the 1fr resolved to the image's own intrinsic height, so a
-    1200x900 source rendered 990px tall at desktop and the hero swallowed the
-    whole screen.
-  */
-  grid-template-rows: clamp(330px, 27vw, 400px) auto;
-  overflow: hidden;
-  margin: 0;
-}
-
-.home-hero-field img {
-  width: 100%;
-  height: 100%;
-  background: var(--surface-alt);
-  object-fit: cover;
-  /* Top-anchored: at this band ratio a centred crop lands entirely inside the
-     crystal face and reads as noise. The top edge keeps the silhouette. */
-  object-position: 50% 0%;
-  transform-origin: 50% 48%;
-  animation: home-hero-drift 24s ease-in-out infinite alternate;
-}
-
-@keyframes home-hero-drift {
-  from {
-    transform: scale(1.012) translate3d(0, 0, 0);
-  }
-
-  to {
-    transform: scale(1.025) translate3d(-0.35%, -0.2%, 0);
-  }
-}
-
-.home-hero-field figcaption {
+.home-hero-figure {
   display: flex;
+  min-width: 0;
+  flex-direction: column;
+  justify-content: center;
+  margin: 0;
+  border-right: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.home-hero-figure > img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+.home-hero-figure figcaption {
+  display: flex;
+  min-height: 42px;
   flex-wrap: wrap;
-  gap: 4px 16px;
-  justify-content: flex-end;
-  padding: 10px clamp(18px, 2vw, 30px) 0;
+  gap: 3px 16px;
+  justify-content: space-between;
+  padding: 9px 14px;
+  border-top: 1px solid var(--line);
+  background: var(--surface);
   color: var(--muted);
   font-family: var(--sans);
   font-size: var(--step-micro);
-  line-height: 1.48;
-  text-align: right;
+  line-height: 1.45;
 }
 
-.home-hero-field figcaption span {
-  max-width: 46ch;
-}
-
-.home-hero-field figcaption a {
-  font-weight: 600;
+.home-hero-figure figcaption a {
+  font-weight: 650;
   white-space: nowrap;
 }
 
-
-/*
-  The floating card. Held to a narrow measure so it reads as a panel set on the
-  micrograph, and pinned left so the crystal stays visible beside it.
-*/
-.home-hero-card {
-  z-index: 1;
-  width: min(468px, calc(100% - 2 * var(--gutter)));
-  justify-self: start;
-  /* Starts inside the band and runs past its lower edge onto the paper. */
-  margin-block: 96px 44px;
-  margin-inline-start: clamp(var(--gutter), 5vw, 70px);
-  border: 1px solid var(--line);
-  background: var(--surface);
-  box-shadow: 0 11px 30px color-mix(in srgb, var(--dark) 11%, transparent);
-}
-
-.home-hero-card:focus-within {
-  box-shadow: 0 14px 34px color-mix(in srgb, var(--dark) 15%, transparent);
-}
-
-.home-hero-masthead {
+.home-hero-identity {
   display: grid;
-  grid-template-columns: 128px minmax(0, 1fr);
+  min-width: 0;
+  grid-template-rows: auto auto 1fr auto;
+  align-content: stretch;
+  padding: clamp(24px, 3vw, 38px);
+  font-family: var(--sans);
+}
+
+.home-hero-person {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: 18px;
-  align-items: center;
-  padding: 18px 22px;
-  border-bottom: 1px solid var(--line);
-  background: var(--surface-alt);
+  align-items: start;
 }
 
 .home-hero-portrait {
-  width: 128px;
-  height: 128px;
+  width: min(100%, 264px);
+  aspect-ratio: 4 / 3;
   overflow: hidden;
-  border-radius: 2px;
+  border: 1px solid var(--line);
+  background: var(--surface-alt);
 }
 
 .home-hero-portrait img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 34% 42%;
-  transform: scale(1.08);
+  object-position: 50% 45%;
 }
 
-.home-hero-masthead .eyebrow {
-  margin-bottom: 4px;
+.home-hero-person .eyebrow {
+  margin-bottom: 5px;
 }
 
-.home-hero-card h1 {
-  margin-bottom: 0;
-  font-size: clamp(27px, 2.4vw, 33px);
-  line-height: 1.1;
-}
-
-.home-hero-card-body {
-  padding: 20px 22px 22px;
+.home-hero-identity h1 {
+  margin: 0;
+  font-size: clamp(31px, 3vw, 42px);
+  line-height: 1.02;
 }
 
 .home-role {
-  margin-bottom: 14px;
+  padding-top: 20px;
+  margin: 0;
   color: var(--muted);
   font-size: var(--step-micro);
-  font-weight: 500;
+  font-weight: 520;
+  line-height: 1.5;
 }
 
-.home-hero-statement {
-  margin-bottom: 16px;
+.home-hero-proposition {
+  align-self: center;
+  margin: 20px 0;
   color: var(--ink);
+  font-family: var(--serif);
   font-size: var(--step-lead);
-  line-height: 1.45;
+  line-height: 1.48;
+}
+
+.home-hero-proposition p {
+  margin: 0;
+}
+
+.home-hero-proposition p + p {
+  margin-top: 12px;
 }
 
 .home-identity-links {
@@ -675,13 +585,14 @@ dl {
   flex-wrap: wrap;
   gap: 2px 20px;
   align-items: center;
+  border-top: 1px solid var(--line);
 }
 
 .home-identity-links > a {
   display: inline-flex;
   min-height: 44px;
   align-items: center;
-  font-weight: 700;
+  font-weight: 650;
 }
 
 .social-links {
@@ -730,157 +641,104 @@ dl {
   display: none;
 }
 
-/*
-  The atlas keeps the route list readable while a single, stable plate gives
-  each scale a visual counterpart. On touch layouts the same figures move into
-  their route, so no hover-only information is lost.
-*/
-.home-research-atlas {
+.home-research {
+  padding-block: clamp(42px, 5vw, 62px) clamp(54px, 6vw, 74px);
+}
+
+.home-research-heading {
+  display: flex;
+  gap: 28px;
+  align-items: end;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.home-research-heading h2,
+.home-research-heading .eyebrow {
+  margin-bottom: 0;
+}
+
+.home-research-heading .eyebrow {
+  margin-bottom: 5px;
+}
+
+.home-research-heading .section-link {
+  flex: none;
+  margin-top: 0;
+}
+
+/* Paper-led, not category-led: each entry states the question, result, and
+   authorship without forcing unrelated scientific figures into card crops. */
+.home-paper-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
-  gap: clamp(38px, 5.5vw, 76px);
-  align-items: start;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--line-strong);
 }
 
-.home-research-route-list {
+.home-paper {
   display: grid;
-  grid-template-columns: 1fr;
-  padding: 0;
-  margin: 0;
-  list-style: none;
+  min-width: 0;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 14px;
+  padding: 20px clamp(20px, 2.5vw, 30px) 22px;
+  border-bottom: 1px solid var(--line-strong);
 }
 
-.home-research-route {
-  display: block;
-  padding: 16px 0 21px;
-  border-top: 1px solid var(--ink);
-  color: var(--ink);
-  text-decoration: none;
-  transition: padding-inline-start 280ms ease;
+.home-paper + .home-paper {
+  border-left: 1px solid var(--line);
 }
 
-.home-research-route:hover,
-.home-research-route:focus-visible {
-  padding-inline-start: 7px;
-}
-
-.home-research-route-index {
-  display: block;
-  margin-bottom: 10px;
+.home-paper-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
   color: var(--muted);
   font-family: var(--sans);
   font-size: var(--step-micro);
+  font-weight: 600;
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.1em;
+  line-height: 1.45;
 }
 
-.home-research-route-label {
-  display: block;
-  margin-bottom: 4px;
+.home-paper-meta span:first-child {
+  margin-right: auto;
   color: var(--accent);
-  font-size: var(--step-micro);
-  font-weight: 600;
   letter-spacing: 0.1em;
-  text-transform: uppercase;
 }
 
-.home-research-route strong {
-  display: block;
-  margin-bottom: 6px;
-  font-size: var(--step-3);
-  font-weight: 600;
-  letter-spacing: -0.014em;
-  line-height: 1.22;
+.home-paper h3 {
+  margin: 0;
+  font-size: clamp(19px, 1.6vw, 22px);
+  line-height: 1.24;
   text-wrap: balance;
 }
 
-.home-research-route-description {
-  display: block;
+.home-paper h3 a {
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.home-paper h3 a:is(:hover, :focus-visible) {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 0.16em;
+}
+
+.home-paper > p {
+  margin: 0;
   color: var(--muted);
+  font-family: var(--sans);
   font-size: var(--step-label);
   line-height: 1.55;
   text-wrap: pretty;
 }
 
-.home-research-route:hover strong {
-  color: var(--accent);
-  text-decoration: underline;
-  text-underline-offset: 0.18em;
-}
-
-.home-research-route-mobile-figure {
-  display: none;
-}
-
-.home-research-stage {
-  position: relative;
-  height: clamp(290px, 31vw, 410px);
-  min-height: 290px;
-  overflow: hidden;
-  border-top: 1px solid var(--line-strong);
-  background: var(--plate);
-}
-
-.home-research-stage-figure {
-  position: absolute;
-  inset: 0;
-  display: grid;
-  padding: clamp(16px, 2vw, 28px);
-  margin: 0;
-  opacity: 0;
-  place-items: center;
-  pointer-events: none;
-  transition: opacity 380ms ease;
-}
-
-.home-research-stage-figure:first-child {
-  opacity: 1;
-}
-
-.home-research-stage-figure img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-/* Browsers without :has keep the first (finite-systems) plate as the stable
-   fallback; supporting browsers crossfade the route that is being inspected. */
-@supports selector(.home-research-atlas:has(.home-research-route:hover)) {
-  .home-research-atlas:has(
-      .home-research-route:is(:hover, :focus-visible)
-    )
-    .home-research-stage-figure {
-    opacity: 0;
-  }
-
-  .home-research-atlas:has(
-      .home-research-route[data-home-research-route="finite-assemblies"]:is(
-        :hover,
-        :focus-visible
-      )
-    )
-    .home-research-stage-figure[data-atlas-figure="finite"],
-  .home-research-atlas:has(
-      .home-research-route[data-home-research-route="two-dimensional-arrays"]:is(
-        :hover,
-        :focus-visible
-      )
-    )
-    .home-research-stage-figure[data-atlas-figure="periodic"],
-  .home-research-atlas:has(
-      .home-research-route[data-home-research-route="open-crystal-lattices"]:is(
-        :hover,
-        :focus-visible
-      )
-    )
-    .home-research-stage-figure[data-atlas-figure="open"] {
-    opacity: 1;
-  }
-}
-
-.home-news {
-  padding-top: 54px;
+.home-paper .home-paper-venue {
+  padding-top: 11px;
   border-top: 1px solid var(--line);
+  color: var(--accent);
+  font-size: var(--step-micro);
+  font-weight: 650;
 }
 
 .news-card-grid {
@@ -956,56 +814,6 @@ dl {
   align-items: center;
   font-size: var(--step-label);
   font-weight: 650;
-}
-
-.home-publications {
-  padding-top: 54px;
-  border-top: 1px solid var(--line);
-}
-
-.home-publication-list {
-  padding: 0;
-  margin: 0;
-  border-top: 1px solid var(--ink);
-  list-style: none;
-}
-
-.home-publication-list > li {
-  display: grid;
-  grid-template-columns: 160px minmax(0, 1fr);
-  gap: 30px;
-  padding-block: 22px;
-  border-bottom: 1px solid var(--line);
-}
-
-.home-publication-meta {
-  margin: 2px 0 0;
-  color: var(--muted);
-  font-size: var(--step-label);
-  font-weight: 650;
-}
-
-.home-publication-list h3 {
-  max-width: var(--prose);
-  max-width: 66ch;
-  margin-bottom: 5px;
-  font-size: var(--step-lead);
-}
-
-.home-publication-list h3 a {
-  color: var(--ink);
-  text-decoration: none;
-}
-
-.home-publication-list h3 a:hover {
-  color: var(--accent);
-  text-decoration: underline;
-}
-
-.home-publication-note {
-  margin: 0;
-  color: var(--muted);
-  font-size: var(--step-label);
 }
 
 /* News */
@@ -1122,61 +930,6 @@ dl {
   color: var(--muted);
   font-size: var(--step-label);
 }
-
-/* Compact news rows: the same three-column grammar as the selected
-   publications list directly above them. */
-.home-news-list {
-  padding: 0;
-  margin: 0;
-  border-top: 1px solid var(--ink);
-  list-style: none;
-}
-
-.home-news-list > li {
-  display: grid;
-  grid-template-columns: 150px minmax(0, 1fr) 130px;
-  gap: 8px 26px;
-  padding-block: 18px;
-  border-bottom: 1px solid var(--line);
-}
-
-.home-news-date,
-.home-news-venue {
-  margin: 0;
-  color: var(--muted);
-  font-family: var(--sans);
-  font-size: var(--step-micro);
-}
-
-.home-news-venue {
-  text-align: right;
-}
-
-.home-news-list h3 {
-  max-width: var(--prose);
-  margin-bottom: 5px;
-  font-size: var(--step-lead);
-  line-height: 1.34;
-}
-
-.home-news-list h3 a {
-  color: var(--ink);
-  text-decoration: none;
-}
-
-.home-news-list h3 a:hover {
-  color: var(--accent);
-  text-decoration: underline;
-}
-
-.home-news-summary {
-  max-width: var(--prose);
-  margin: 0;
-  color: var(--muted);
-  font-size: var(--step-label);
-  line-height: 1.55;
-}
-
 
 /* Research */
 
@@ -2138,6 +1891,29 @@ dl {
   font-size: var(--step-label);
 }
 
+.home-page .site-footer {
+  background: var(--surface-alt);
+  color: var(--ink);
+}
+
+.home-page .footer-grid {
+  padding-block: 34px 28px;
+}
+
+.home-page .footer-name {
+  color: var(--ink);
+}
+
+.home-page :is(.footer-role, .footer-nav a, .footer-contact > a),
+.home-page .footer-contact .social-links a,
+.home-page .footer-meta {
+  color: var(--muted);
+}
+
+.home-page .footer-meta {
+  border-top-color: var(--line);
+}
+
 /* Tablet */
 
 @media (max-width: 900px) {
@@ -2206,36 +1982,6 @@ dl {
     border-bottom: 0;
   }
 
-
-  .home-research-route-list {
-    grid-template-columns: 1fr;
-  }
-
-  .home-research-route {
-    padding: 15px 0 20px;
-  }
-
-  .home-research-atlas {
-    display: block;
-  }
-
-  .home-research-stage {
-    display: none;
-  }
-
-  .home-research-route-mobile-figure {
-    display: grid;
-    padding: 12px;
-    margin: 17px 0 0;
-    border: 1px solid var(--line);
-    background: var(--plate);
-  }
-
-  .home-research-route-mobile-figure img {
-    width: 100%;
-    height: clamp(150px, 30vw, 240px);
-    object-fit: contain;
-  }
 
   .news-card-grid {
     grid-template-columns: 1fr;
@@ -2375,18 +2121,6 @@ dl {
   }
 
 
-  .home-hero-statement {
-    max-width: 34ch;
-    font-size: var(--step-lead);
-  }
-
-
-
-  .home-publication-list > li {
-    grid-template-columns: 1fr;
-    gap: 7px;
-  }
-
   .news-card {
     grid-template-columns: 1fr;
   }
@@ -2487,16 +2221,6 @@ dl {
     gap: 7px;
     padding-block: 17px;
   }
-  .home-news-list > li {
-    grid-template-columns: 1fr;
-    gap: 5px;
-  }
-
-  .home-news-venue {
-    text-align: left;
-  }
-
-
   /* On a phone the plates would add ~1,700px of scroll to a list that is
      already 7,000px tall, and the title alone identifies the paper. */
   .publication-figure {
@@ -2551,22 +2275,6 @@ dl {
     animation-iteration-count: 1 !important;
   }
 
-  .home-hero-field img {
-    animation: none !important;
-    transform: none !important;
-  }
-
-  .home-research-stage-figure {
-    transition: none !important;
-  }
-
-  .home-research-stage-figure:first-child {
-    opacity: 1 !important;
-  }
-
-  .home-research-stage-figure:not(:first-child) {
-    opacity: 0 !important;
-  }
 }
 
 @media (forced-colors: active) {
@@ -2574,47 +2282,109 @@ dl {
     display: none;
   }
 
-  .site-frame {
-    background-image: none;
-  }
 
-  .home-hero-card {
-    box-shadow: none;
-  }
 }
 
 /* Home responsive */
 
-/* Keep the portrait recognizably personal on a phone while preserving enough
-   measure for the identity text beside it. */
-@media (max-width: 640px) {
-  .home-hero-masthead {
-    grid-template-columns: 108px minmax(0, 1fr);
-    gap: 13px;
+@media (max-width: 900px) {
+  .home-hero {
+    grid-template-columns: minmax(0, 1.3fr) minmax(300px, 1fr);
+  }
+
+  .home-hero-identity {
+    padding: 24px;
+  }
+
+  .home-hero-person {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
   }
 
   .home-hero-portrait {
-    width: 108px;
-    height: 108px;
+    width: min(100%, 224px);
+  }
+
+  .home-hero-identity h1 {
+    font-size: clamp(29px, 4vw, 36px);
+  }
+
+  .home-paper-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .home-paper + .home-paper {
+    border-left: 0;
   }
 }
 
-/* Below this the floating card sits on a field barely twice its width and the
-   micrograph stops being readable, so the two stack instead. */
-@media (max-width: 900px) {
-  .home-hero > * {
-    grid-area: auto;
+@media (max-width: 720px) {
+  .home-hero {
+    min-height: 0;
+    grid-template-columns: 1fr;
+    margin-top: 0;
+    border-top: 0;
   }
 
-  .home-hero-field {
-    grid-template-rows: clamp(220px, 58vw, 340px) auto;
+  .home-hero-figure {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
   }
 
-  /* No overlap here: the only thing to overlap is the caption strip, and
-     covering the provenance line to save 40px is not a trade worth making. */
-  .home-hero-card {
-    width: auto;
-    margin: 26px var(--gutter) 0;
+  .home-hero-identity {
+    padding: 24px 20px 20px;
+  }
+
+  .home-hero-person {
+    grid-template-columns: 168px minmax(0, 1fr);
+    gap: 16px;
+    align-items: center;
+  }
+
+  .home-hero-portrait {
+    width: 168px;
+  }
+
+  .home-role {
+    padding-top: 17px;
+  }
+
+  .home-hero-proposition {
+    margin: 16px 0;
+  }
+
+  .home-research-heading {
+    align-items: start;
+  }
+
+  .home-paper {
+    gap: 11px;
+    padding-inline: 0;
+  }
+}
+
+@media (max-width: 420px) {
+  /* Below this the portrait and the eyebrow cannot share a row: the text
+     column drops to ~134px and "Nucleic acid nanotechnology" needs ~150px. */
+  .home-hero-person {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+  }
+
+  .home-hero-portrait {
+    width: min(100%, 200px);
+  }
+
+  .home-hero-identity h1 {
+    font-size: 29px;
+  }
+
+  .home-research-heading {
+    display: block;
+  }
+
+  .home-research-heading .section-link {
+    margin-top: 9px;
   }
 }
 
@@ -2656,7 +2426,6 @@ dl {
     --dark: #ffffff;
     --dark-ink: #000000;
     --dark-muted: #333333;
-    --frame: #ffffff;
     --section-space: 24px;
     --gutter: 0px;
   }
@@ -2665,9 +2434,6 @@ dl {
     display: none;
   }
 
-  .site-frame {
-    background-image: none;
-  }
 
   .site-header,
   .research-jump-bar,
@@ -2703,7 +2469,7 @@ dl {
     per record. The DOI line below each title carries the same URL, so printing
     it on the heading as well just doubles the noise.
   */
-  main a[href^="http"]:not(.publication-row h3 a):not(.home-publication-list h3 a)::after {
+  main a[href^="http"]:not(.publication-row h3 a)::after {
     content: " (" attr(href) ")";
     font-family: var(--mono);
     font-size: 0.82em;
@@ -2743,20 +2509,6 @@ dl {
 
   .home-hero {
     grid-template-columns: 1fr;
-  }
-
-  .home-hero-field img {
-    animation: none;
-    transform: none;
-  }
-
-  .home-research-route-mobile-figure,
-  .home-research-stage {
-    display: none;
-  }
-
-  .home-research-stage-figure {
-    transition: none;
   }
 
 }

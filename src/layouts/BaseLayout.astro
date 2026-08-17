@@ -29,7 +29,6 @@ const {
   noIndex = false,
   canonicalPath,
 } = Astro.props;
-
 const personData = await getPublicPerson();
 const canonical = canonicalPath
   ? new URL(withBase(canonicalPath), Astro.site ?? Astro.url)
@@ -96,8 +95,7 @@ const pageSchema = {
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
     {noIndex && <meta name="robots" content="noindex, nofollow" />}
-    <meta name="theme-color" content="#f6f4ef" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#121614" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f8faf8" />
     {/* Both faces are used above the fold on every page; the italic is not. */}
     <link rel="preload" href={serifFont} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={archivoFont} as="font" type="font/woff2" crossorigin />
@@ -119,17 +117,10 @@ const pageSchema = {
   </head>
   <body class:list={["site-v2", pageClass]}>
     <a class="skip-link" href="#main-content">Skip to content</a>
-    {/*
-      The whole site is a paper card standing on a dark field, rather than a
-      full-bleed page. It is the structural move that gives the layout an
-      identity — typography alone cannot do it.
-    */}
-    <div class="site-frame">
-      <SiteHeader />
-      <main id="main-content">
-        <slot />
-      </main>
-      <SiteFooter />
-    </div>
+    <SiteHeader />
+    <main id="main-content">
+      <slot />
+    </main>
+    <SiteFooter />
   </body>
 </html>
