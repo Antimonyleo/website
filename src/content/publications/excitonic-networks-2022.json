@@ -1,0 +1,65 @@
+{
+  "id": "excitonic-networks-2022",
+  "title": "Two-Dimensional Excitonic Networks Directed by DNA Templates as an Efficient Model Light-Harvesting and Energy Transfer System",
+  "authors": [
+    {
+      "name": "Xu Zhou"
+    },
+    {
+      "name": "Deeksha Satyabola"
+    },
+    {
+      "name": "Hao Liu",
+      "memberId": "hao-liu"
+    },
+    {
+      "name": "Shuoxing Jiang"
+    },
+    {
+      "name": "Xiaodong Qi"
+    },
+    {
+      "name": "Lu Yu"
+    },
+    {
+      "name": "Su Lin"
+    },
+    {
+      "name": "Yan Liu"
+    },
+    {
+      "name": "Neal W. Woodbury"
+    },
+    {
+      "name": "Hao Yan"
+    }
+  ],
+  "memberIds": [
+    "hao-liu"
+  ],
+  "year": 2022,
+  "venue": "Angewandte Chemie International Edition",
+  "volumePages": "61, e202211200",
+  "kind": "article",
+  "recordStatus": "peer-reviewed",
+  "doi": "10.1002/anie.202211200",
+  "url": "https://doi.org/10.1002/anie.202211200",
+  "featured": false,
+  "summary": "DNA templates organize K21 dye aggregates into branched complexes and two-dimensional excitonic networks.",
+  "topics": [
+    "energy transfer",
+    "DNA templating"
+  ],
+  "provenance": {
+    "canonicalSource": {
+      "label": "Publisher DOI record",
+      "url": "https://doi.org/10.1002/anie.202211200"
+    },
+    "sourceCheckedAt": "2026-07-29"
+  },
+  "image": {
+    "src": "images/publications/excitonic-networks-2022.webp",
+    "alt": "Network designs, atomic force micrographs, and measured energy-transfer efficiencies."
+  },
+  "order": 8
+}

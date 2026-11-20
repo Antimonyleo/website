@@ -1,0 +1,335 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Research page",
+  "description": "Mirrors the TypeScript shape in src/data/research.ts. npm run check:research (also run by npm test) is the real gate — it checks that every figureId and publicationId reference actually exists, which this schema alone cannot express. This file exists to give editors autocomplete and inline validation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "intro",
+    "foundations",
+    "directions",
+    "methods"
+  ],
+  "properties": {
+    "groups": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "$ref": "#/definitions/group"
+      }
+    },
+    "intro": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "title"
+      ]
+    },
+    "foundations": {
+      "type": "object",
+      "properties": {
+        "eyebrow": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "paragraphs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "publicationIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "eyebrow",
+        "title"
+      ]
+    },
+    "directions": {
+      "type": "object",
+      "properties": {
+        "eyebrow": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "paragraphs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "figureId": {
+          "type": "string",
+          "description": "Optional overview schematic shown under the philosophy and vision text."
+        }
+      },
+      "required": [
+        "eyebrow",
+        "title"
+      ]
+    },
+    "methods": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "paragraphs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "title"
+      ]
+    }
+  },
+  "definitions": {
+    "figureSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "publicationId"
+      ],
+      "properties": {
+        "publicationId": {
+          "$ref": "#/definitions/publicationId",
+          "description": "Must exist in src/data/publications.json."
+        },
+        "locator": {
+          "type": "string",
+          "description": "e.g. \"Figure 2\" or \"Figure 4f–g detail\"."
+        },
+        "showDoi": {
+          "type": "boolean"
+        }
+      }
+    },
+    "figure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "src",
+        "alt",
+        "caption"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "description": "Stable local kebab-case ID, distinct from the object key. Rendered as data-research-figure; never reuse or change once published."
+        },
+        "kind": {
+          "enum": [
+            "photograph",
+            "paper-figure",
+            "schematic"
+          ]
+        },
+        "src": {
+          "type": "string",
+          "description": "Path under public/, e.g. images/research/example.webp."
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "alt": {
+          "type": "string",
+          "minLength": 1
+        },
+        "caption": {
+          "type": "string",
+          "minLength": 1
+        },
+        "captionLabel": {
+          "type": "string",
+          "description": "Short bold prefix before the caption, e.g. \"Site.\""
+        },
+        "credit": {
+          "type": "string",
+          "description": "Required in spirit for an original photograph; a paper-figure instead sets source below."
+        },
+        "source": {
+          "$ref": "#/definitions/figureSource"
+        }
+      }
+    },
+    "publicationReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "publicationId",
+        "role"
+      ],
+      "properties": {
+        "publicationId": {
+          "$ref": "#/definitions/publicationId"
+        },
+        "role": {
+          "type": "string",
+          "description": "e.g. \"First author\" or \"Co-first and co-corresponding author\"."
+        }
+      }
+    },
+    "collaborationReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "publicationId",
+        "label"
+      ],
+      "properties": {
+        "publicationId": {
+          "$ref": "#/definitions/publicationId"
+        },
+        "label": {
+          "type": "string"
+        }
+      }
+    },
+    "story": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "eyebrow",
+        "title",
+        "description",
+        "paragraphs"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "eyebrow": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "paragraphs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string"
+          }
+        },
+        "photoFigureIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Research figure filenames."
+        },
+        "paperFigureId": {
+          "type": "string",
+          "description": "Optional: only when the note's own paper figure is not already shown by the group above it."
+        },
+        "historicalSources": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "label",
+              "href"
+            ],
+            "properties": {
+              "label": {
+                "type": "string"
+              },
+              "href": {
+                "type": "string",
+                "format": "uri"
+              }
+            }
+          }
+        }
+      }
+    },
+    "group": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "label",
+        "title",
+        "description"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "index": {
+          "type": "string",
+          "description": "e.g. \"01\"."
+        },
+        "label": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "publications": {
+          "type": "array",
+          "minItems": 0,
+          "items": {
+            "$ref": "#/definitions/publicationReference"
+          }
+        },
+        "collaborations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/collaborationReference"
+          }
+        },
+        "figureIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Research figure filenames selected from the figure library."
+        },
+        "story": {
+          "$ref": "#/definitions/story"
+        },
+        "anchor": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    },
+    "publicationId": {
+      "type": "string",
+      "description": "Publication filename chosen by Pages CMS."
+    }
+  }
+}

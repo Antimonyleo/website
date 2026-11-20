@@ -1,8 +1,12 @@
 {
   "json.schemas": [
     {
-      "fileMatch": ["src/data/publications.json"],
+      "fileMatch": ["src/content/publications/*.json"],
       "url": "./src/data/publications.schema.json"
+    },
+    {
+      "fileMatch": ["src/data/research.json"],
+      "url": "./src/data/research.schema.json"
     }
   ]
 }

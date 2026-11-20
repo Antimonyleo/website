@@ -1,0 +1,13 @@
+{
+  "id": "hexagonal-diamond-public-evidence",
+  "kind": "paper-figure",
+  "src": "images/research/hexagonal-diamond-detail.webp",
+  "width": 1640,
+  "height": 560,
+  "alt": "Scanning electron micrographs show a faceted DNA-origami hexagonal-diamond crystal and the ordered pattern resolved on its basal plane.",
+  "caption": "A detail from the preprint figure: the hexagonal habit and the ordered basal-plane pattern. In-plane order alone does not distinguish hexagonal from cubic diamond — the two differ only in stacking sequence, which the preprint resolves by small-angle X-ray scattering. The complete figure is in the linked preprint.",
+  "source": {
+    "publicationId": "tetrahedral-lattices-2026.json",
+    "locator": "Figure 4f–g detail"
+  }
+}

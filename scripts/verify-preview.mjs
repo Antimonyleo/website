@@ -11,11 +11,11 @@ const pollIntervalMs = 150;
 const routes = [
   { path: basePath, status: 200, marker: "<main" },
   { path: `${basePath}research/`, status: 200, marker: "<main" },
-  { path: `${basePath}news/`, status: 200, marker: "data-news-post" },
+  { path: `${basePath}news/`, status: 200, marker: "<main" },
   {
     path: `${basePath}publications/`,
     status: 200,
-    marker: "data-publication-record",
+    marker: "<main",
   },
   { path: `${basePath}experience/`, status: 200, marker: "<main" },
   { path: `${basePath}contact/`, status: 200, marker: "data-email-domain" },

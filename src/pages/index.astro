@@ -1,174 +1,129 @@
 ---
-import { getCollection } from "astro:content";
+import { getCollection, getEntry } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import EmailLink from "../components/EmailLink.astro";
 import SocialLinks from "../components/SocialLinks.astro";
-import { srcSetFor } from "../lib/images";
-import { displayName, getPublicPerson, primaryOrganization } from "../lib/person";
+import { researchScaleGroups } from "../data/research";
+import { imageAttributes } from "../lib/images";
+import { SITE } from "../config";
+import { getPublicPerson, primaryOrganization } from "../lib/person";
 import { withBase } from "../lib/urls";
 
-/*
-  The full-bleed pyrochlore micrograph, not the publication plate. The plate
-  versions of the crystal papers are single panels lifted from composite
-  figures: they carry clipped panel letters and baked-in white padding, so at
-  hero size the crystal sits small inside a white box. This one fills its
-  frame, and it is the same specimen the Research page presents as evidence —
-  shown wide here as the face of the work, shown with its full caption there.
-*/
-const heroImage = "images/research/pyrochlore-crystal.webp";
-const heroPaperId = "pyrochlore-2024";
-const portraitImage = "images/hao-liu-boston.webp";
 const person = await getPublicPerson();
+const experience = await getEntry("experience", "hao-liu");
+const career = [
+  ...(experience?.data.appointments ?? []).slice(0, 1),
+  ...(experience?.data.education ?? []).map((item) => ({ ...item, title: item.degree })),
+];
 const publications = await getCollection("publications");
-const publicationsById = new Map(
-  publications.map((publication) => [publication.id, publication]),
-);
-
-/*
-  Editorial copy only. Which papers appear here, and in what order, is decided
-  by `featured` and `selectedOrder` in publications.json — as
-  publications.schema.json documents — so changing the selection does not mean
-  editing markup.
-
-  Author roles are deliberately not shown here. The full author list, with Hao
-  highlighted, is on the Publications page; repeating "first and
-  co-corresponding author" beside every entry reads as a claim being pressed
-  rather than a result being described.
-*/
-const paperLeads: Record<string, { lead: string }> = {
-  "pyrochlore-2024": {
-    lead:
-      "Can interaction rules designed on a computer survive the wet lab? Modeling led to a DNA-origami pyrochlore lattice verified by scattering and microscopy.",
-  },
-  "tetrahedral-lattices-2026": {
-    lead:
-      "Can one nanoscale scaffold choose among several open crystals? Reprogramming only four sticky ends selects cubic diamond, hexagonal diamond, or ice 0.",
-  },
-  "polycubes-2025": {
-    lead:
-      "How few components are enough to build a chosen 3D object? Inverse design programs DNA-origami cubes while screening out competing assemblies.",
-  },
-};
-
+const researchByPaper = new Map(researchScaleGroups.flatMap((group) =>
+  group.publications.map((reference) => [reference.publicationId, { ...reference, groupId: group.id }] as const),
+));
+// Homepage selection and summaries come from the editable publication records.
 const selectedPapers = publications
   .filter((item) => item.data.featured)
-  .sort((a, b) => (a.data.selectedOrder ?? 0) - (b.data.selectedOrder ?? 0))
-  .map((publication) => {
-    const details = paperLeads[publication.id];
-    if (!details) {
-      throw new Error(
-        `Publication ${publication.id} is featured but has no homepage lead copy in paperLeads.`,
-      );
-    }
-    return { publication, id: publication.id, ...details };
-  });
-
-if (selectedPapers.length === 0) {
-  throw new Error("No featured publications found");
-}
+  .sort((a, b) => (a.data.selectedOrder ?? 9999) - (b.data.selectedOrder ?? 9999) || b.data.year - a.data.year || (a.data.order ?? 9999) - (b.data.order ?? 9999) || a.id.localeCompare(b.id));
+const methods = experience?.data.showCapabilities ? experience.data.capabilities : [];
 ---
 
 <BaseLayout pageClass="home-page" pageType="ProfilePage">
   <section class="home-hero shell" aria-labelledby="home-title">
-    <figure class="home-hero-figure" data-home-hero-paper={heroPaperId}>
-      <img
-        src={withBase(heroImage)}
-        srcset={srcSetFor(heroImage)}
-        sizes="(min-width: 1240px) 767px, (min-width: 721px) 62vw, 100vw"
-        alt="Scanning electron micrograph of a faceted, silica-preserved DNA-origami pyrochlore crystal, its surface showing the ordered pore pattern of the designed lattice."
-        width="1200"
-        height="900"
-        decoding="async"
-        loading="eager"
-        fetchpriority="high"
-      />
-      <figcaption>
-        <span>Design and experiment · DNA-origami pyrochlore crystal</span>
-        <a
-          href={publicationsById.get(heroPaperId)!.data.url}
-          target="_blank"
-          rel="noopener noreferrer"
-        >Read the paper ↗</a>
-      </figcaption>
-    </figure>
-
-    <div class="home-hero-identity">
+    <div class:list={["home-hero-identity", !person.portrait && "without-portrait"]}>
+      {person.portrait && <div class="home-hero-portrait">
+        <img
+          {...await imageAttributes(person.portrait.src)}
+          sizes="(max-width: 640px) 96px, (max-width: 900px) 176px, 232px"
+          alt={person.portrait.alt}
+          decoding="async"
+          loading="eager"
+          fetchpriority="high"
+        />
+      </div>}
       <div class="home-hero-person">
-        <div class="home-hero-portrait">
-          <img
-            src={withBase(portraitImage)}
-            srcset={srcSetFor(portraitImage)}
-            sizes="(max-width: 720px) 144px, 156px"
-            alt="Hao Liu at a boat railing on Boston Harbor, with the city skyline behind him."
-            width="1800"
-            height="1350"
-            decoding="async"
-            loading="eager"
-          />
-        </div>
-        <div>
-          <p class="eyebrow">Nucleic acid nanotechnology</p>
-          <h1 id="home-title">{displayName(person)}</h1>
-        </div>
+        <h1 id="home-title">{person.name}<span class="home-degree">, {person.degree}</span></h1>
+        <p class="home-role">
+          {person.role} · {primaryOrganization(person)}
+        </p>
       </div>
-
-      <p class="home-role">
-        {person.role} · {primaryOrganization(person)}
-      </p>
-      {/*
-        The first-person biography from src/content/people/hao-liu.md, which
-        was written and approved but rendered nowhere. It replaces the generic
-        tagline rather than sitting alongside it — two self-descriptions in the
-        same block is what made earlier versions feel repetitive.
-      */}
       <div class="home-hero-proposition" data-home-proposition data-home-bio>
         {person.bio.map((paragraph) => <p>{paragraph}</p>)}
       </div>
       <div class="home-identity-links">
+        <EmailLink />
         <SocialLinks />
-        <a class="text-link" href={withBase("contact/")}>Contact</a>
       </div>
     </div>
   </section>
 
-  <section class="home-research shell" aria-labelledby="home-research-title">
+  {selectedPapers.length > 0 && <section class="home-research shell" aria-labelledby="home-research-title">
     <header class="home-research-heading">
       <div>
-        <p class="eyebrow">Research</p>
-        <h2 id="home-research-title">Selected papers</h2>
+        <h2 id="home-research-title">{SITE.selectedPapersTitle}</h2>
       </div>
-      <a class="section-link" href={withBase("research/")}>Research overview</a>
+      <a class="section-link" href={withBase("publications/")}>All publications</a>
     </header>
 
-    <div class="home-paper-grid">
+    <ol class="home-paper-list">
       {
-        selectedPapers.map(({ publication, lead }, index) => (
-          <article
-            class="home-paper"
-            data-home-primary-publication={publication.id}
-          >
-            <div class="home-paper-meta">
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              <span>{publication.data.year}</span>
+        selectedPapers.map((publication, index) => {
+          const research = researchByPaper.get(publication.id);
+          const researchUrl = research ? withBase(`research/#${research.groupId}`) : publication.data.url;
+          return (
+          <li class="home-paper home-paper-compact" data-home-primary-publication={publication.id}>
+            <div class="home-paper-text">
+              <h3>
+                <a href={researchUrl}>{publication.data.title}</a>
+              </h3>
+              <p class="home-paper-summary">{publication.data.summary}</p>
             </div>
-            <h3>
-              <a
-                href={publication.data.url}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                {publication.data.title}<span class="external-arrow" aria-hidden="true">↗</span>
-                <span class="sr-only"> (opens in a new tab)</span>
-              </a>
-            </h3>
-            <p>{lead}</p>
-            <p class="home-paper-venue">
-              {publication.data.venue}
-              {publication.data.recordStatus === "preprint-not-peer-reviewed" &&
-                " · Preprint"}
-            </p>
-          </article>
-        ))
+            <div class="home-paper-context">
+              <p class="home-paper-meta paper-meta">
+                {publication.data.acceptedIn ? <>
+                  <span class="home-paper-venue is-accepted">{publication.data.acceptedIn} · Accepted</span>
+                  <a href={publication.data.url} aria-label={`Preprint of ${publication.data.title}`}>Preprint</a>
+                </> : <>
+                  <a class="home-paper-venue" href={publication.data.url} aria-label={`${publication.data.title} — ${publication.data.venue}, ${publication.data.year}`}>
+                    {publication.data.venue} · {publication.data.year}
+                  </a>
+                  {publication.data.kind === "preprint" && <span>Preprint</span>}
+                </>}
+              </p>
+            </div>
+          </li>
+          );
+        })
       }
+    </ol>
+  </section>}
+
+  {methods.length > 0 && <section class="home-methods shell" aria-labelledby="home-methods-title">
+    <header class="home-research-heading">
+      <h2 id="home-methods-title">Expertise</h2>
+    </header>
+    <div class="expertise-grid">
+      {methods.map((group) => (
+        <div class="expertise-group">
+          <h3>{group.title}</h3>
+          <ul>
+            {group.items.map((item) => <li>{item}</li>)}
+          </ul>
+        </div>
+      ))}
     </div>
-  </section>
+  </section>}
+
+  {career.length > 0 && <section class="home-experience shell" aria-labelledby="home-experience-title">
+    <header class="home-research-heading">
+      <h2 id="home-experience-title">Experience</h2>
+      <a class="section-link" href={withBase("experience/")}>Full experience</a>
+    </header>
+    <ol class="career-summary">
+      {career.map((item) => (
+        <li>
+          <span>{item.period}</span>
+          <div><h3>{item.title}</h3><p>{item.institution}</p></div>
+        </li>
+      ))}
+    </ol>
+  </section>}
 </BaseLayout>

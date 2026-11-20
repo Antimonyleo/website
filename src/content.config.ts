@@ -1,6 +1,11 @@
 import { defineCollection } from "astro:content";
-import { file, glob } from "astro/loaders";
+import { glob } from "astro/loaders";
 import { z } from "astro/zod";
+import { normalizePublication, referenceId } from "./lib/content-source";
+
+const imagePath = z.string().regex(/^\/?images\/[a-zA-Z0-9_./-]+\.(?:webp|png|jpe?g|avif|tiff?)$/i)
+  .refine((value) => !value.split("/").includes(".."), "Choose an image from the media library");
+const image = z.object({ src: imagePath, alt: z.string().min(1), caption: z.string().optional(), credit: z.string().optional(), sourceUrl: z.url().optional() });
 
 const people = defineCollection({
   loader: glob({ base: "./src/content/people", pattern: "**/*.md" }),
@@ -14,6 +19,7 @@ const people = defineCollection({
     orcid: z.url(),
     scholar: z.url(),
     bio: z.array(z.string()).min(1).max(4),
+    portrait: image.optional(),
   }),
 });
 
@@ -53,15 +59,10 @@ const isoDate = z.preprocess(
 );
 
 const newsFigure = z.object({
-  src: z
-    .string()
-    .regex(
-      /^\/?images\/(?:news|publications|research)\/[a-z0-9][a-z0-9-]*\.webp$/,
-      "Use a kebab-case WebP file from public/images/news, publications, or research",
-    ),
-  alt: z.string().min(20).max(240),
-  caption: z.string().min(20).max(300),
-  credit: z.string().min(3).max(160),
+  src: imagePath,
+  alt: z.string().min(1),
+  caption: z.string().min(1),
+  credit: z.string().min(1),
   sourceUrl: z.url().optional(),
   // Front Matter CMS writes this discriminator for a repeatable field group.
   fieldGroup: z.literal("newsFigure").optional(),
@@ -69,6 +70,7 @@ const newsFigure = z.object({
 
 const publicationBase = z.object({
   title: z.string(),
+  shortTitle: z.string().optional(),
   authors: z.array(publicationAuthor).min(1),
   memberIds: z.array(z.string()),
   year: z.number().int(),
@@ -77,17 +79,14 @@ const publicationBase = z.object({
   url: z.url(),
   featured: z.boolean(),
   selectedOrder: z.number().int().optional(),
+  order: z.number().int().optional(),
   researchStoryId: z
     .enum(["rna-strand-displacement", "programmable-assembly"])
     .optional(),
   summary: z.string(),
   significance: z.string().optional(),
-  image: z
-    .object({
-      src: z.string(),
-      alt: z.string().min(1),
-    })
-    .optional(),
+  image: image.optional(),
+  figures: z.array(newsFigure).optional(),
   topics: z.array(z.string()),
   relatedItems: z
     .array(
@@ -113,27 +112,30 @@ const publicationBase = z.object({
 });
 
 const publications = defineCollection({
-  loader: file("./src/data/publications.json"),
-  schema: z.discriminatedUnion("kind", [
+  loader: glob({ base: "./src/content/publications", pattern: "*.json", generateId: ({ entry }) => entry.replace(/\.json$/, "") }),
+  schema: z.preprocess(normalizePublication, z.discriminatedUnion("kind", [
     publicationBase.extend({
       kind: z.literal("article"),
       recordStatus: z.literal("peer-reviewed"),
       volumePages: z.string().min(1),
       manuscriptStatus: z.never().optional(),
+      acceptedIn: z.never().optional(),
     }),
     publicationBase.extend({
       kind: z.literal("commentary"),
       recordStatus: z.literal("editorial"),
       volumePages: z.string().min(1),
       manuscriptStatus: z.never().optional(),
+      acceptedIn: z.never().optional(),
     }),
     publicationBase.extend({
       kind: z.literal("preprint"),
-      recordStatus: z.literal("preprint-not-peer-reviewed"),
+      recordStatus: z.enum(["preprint-not-peer-reviewed", "accepted"]),
       volumePages: z.never().optional(),
       manuscriptStatus: z.enum(["Submitted", "In revision"]).optional(),
+      acceptedIn: z.string().min(1).optional(),
     }),
-  ]),
+  ])),
 });
 
 const news = defineCollection({
@@ -141,9 +143,10 @@ const news = defineCollection({
   schema: z.object({
     title: z.string().min(8).max(120),
     date: isoDate,
+    draft: z.boolean().default(false),
     summary: z.string().min(40).max(300),
-    publicationId: z.string().min(1).optional(),
-    figures: z.array(newsFigure).max(3).optional(),
+    publicationId: z.string().min(1).transform(referenceId).optional(),
+    figures: z.array(newsFigure).optional(),
   }),
 });
 
@@ -151,12 +154,15 @@ const experience = defineCollection({
   loader: glob({ base: "./src/content/experience", pattern: "**/*.md" }),
   schema: z.object({
     summary: z.string(),
+    showCapabilities: z.boolean().default(false),
     appointments: z.array(
       z.object({
         period: z.string(),
         title: z.string(),
         institution: z.string(),
         detail: z.string(),
+        highlights: z.array(z.string()).optional(),
+        figures: z.array(newsFigure).optional(),
         advisors: z
           .array(
             z.object({
@@ -166,28 +172,38 @@ const experience = defineCollection({
           )
           .optional(),
       }),
-    ),
+    ).default([]),
     education: z.array(
       z.object({
         period: z.string(),
         degree: z.string(),
         institution: z.string(),
         detail: z.string(),
+        advisors: z.array(z.object({ name: z.string(), url: z.url().optional() })).optional(),
+        figures: z.array(newsFigure).optional(),
       }),
-    ),
+    ).default([]),
     capabilities: z.array(
       z.object({
         title: z.string(),
         items: z.array(z.string()),
       }),
-    ),
+    ).default([]),
+    honors: z.array(
+      z.object({
+        year: z.number().int(),
+        title: z.string(),
+        organization: z.string(),
+      }),
+    ).default([]),
     presentations: z.array(
       z.object({
         year: z.number().int(),
         venue: z.string(),
         title: z.string(),
+        figures: z.array(newsFigure).optional(),
       }),
-    ),
+    ).default([]),
     provenance: z.object({
       source: z.literal("CV supplied privately by Hao Liu"),
       publicationPolicy: z.literal(

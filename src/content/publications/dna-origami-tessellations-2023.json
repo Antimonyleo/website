@@ -1,0 +1,63 @@
+{
+  "id": "dna-origami-tessellations-2023",
+  "title": "DNA Origami Tessellations",
+  "authors": [
+    {
+      "name": "Yue Tang"
+    },
+    {
+      "name": "Hao Liu",
+      "memberId": "hao-liu"
+    },
+    {
+      "name": "Qi Wang"
+    },
+    {
+      "name": "Xiaodong Qi"
+    },
+    {
+      "name": "Lu Yu"
+    },
+    {
+      "name": "Petr Šulc"
+    },
+    {
+      "name": "Fei Zhang"
+    },
+    {
+      "name": "Hao Yan"
+    },
+    {
+      "name": "Shuoxing Jiang"
+    }
+  ],
+  "memberIds": [
+    "hao-liu"
+  ],
+  "year": 2023,
+  "venue": "Journal of the American Chemical Society",
+  "volumePages": "145, 13858–13868",
+  "kind": "article",
+  "recordStatus": "peer-reviewed",
+  "doi": "10.1021/jacs.3c03044",
+  "url": "https://doi.org/10.1021/jacs.3c03044",
+  "featured": false,
+  "researchStoryId": "programmable-assembly",
+  "summary": "Programmable DNA-origami tiles assemble into extended two-dimensional tessellations.",
+  "topics": [
+    "2D assembly",
+    "DNA origami"
+  ],
+  "provenance": {
+    "canonicalSource": {
+      "label": "Publisher DOI record",
+      "url": "https://doi.org/10.1021/jacs.3c03044"
+    },
+    "sourceCheckedAt": "2026-07-29"
+  },
+  "image": {
+    "src": "images/publications/dna-origami-tessellations-2023.webp",
+    "alt": "Tile design strategy and atomic force micrographs of extended two-dimensional DNA-origami tessellations."
+  },
+  "order": 6
+}

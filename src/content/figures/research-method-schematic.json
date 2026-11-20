@@ -1,0 +1,10 @@
+{
+  "id": "research-method-schematic",
+  "kind": "schematic",
+  "src": "images/research/research-method-schematic.webp",
+  "width": 836,
+  "height": 438,
+  "alt": "Schematic of a design loop: computational design programs a wet-lab assembly, which is examined by structural characterization; an algorithm-optimization arrow returns from characterization to design, and material fabrication leads from the assembly to metamaterials and delivery platforms.",
+  "caption": "The design–build–test loop behind the studies below.",
+  "credit": "Schematic by Hao Liu."
+}

@@ -1,0 +1,40 @@
+{
+  "id": "nanoparticle-patterns-2025",
+  "title": "Programming precise nanoparticle patterns",
+  "authors": [
+    {
+      "name": "Hao Liu",
+      "memberId": "hao-liu"
+    },
+    {
+      "name": "Na Liu"
+    },
+    {
+      "name": "Hao Yan"
+    }
+  ],
+  "memberIds": [
+    "hao-liu"
+  ],
+  "year": 2025,
+  "venue": "Nature Materials",
+  "volumePages": "24, 1166–1167",
+  "kind": "commentary",
+  "recordStatus": "editorial",
+  "doi": "10.1038/s41563-025-02262-2",
+  "url": "https://doi.org/10.1038/s41563-025-02262-2",
+  "featured": false,
+  "summary": "An invited News & Views on inverse design and experimental realization of programmed nanoparticle architectures.",
+  "topics": [
+    "nanoparticles",
+    "inverse design"
+  ],
+  "provenance": {
+    "canonicalSource": {
+      "label": "Publisher DOI record",
+      "url": "https://doi.org/10.1038/s41563-025-02262-2"
+    },
+    "sourceCheckedAt": "2026-07-29"
+  },
+  "order": 3
+}

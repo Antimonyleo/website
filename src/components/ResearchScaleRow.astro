@@ -6,6 +6,7 @@ import {
   type ResearchScaleGroup,
 } from "../data/research";
 import ResearchFigure from "./ResearchFigure.astro";
+import { withBase } from "../lib/urls";
 
 interface Props {
   group: ResearchScaleGroup;
@@ -26,183 +27,52 @@ const sourcePublication = (figure: ResearchFigureData) =>
   figure.source ? publication(figure.source.publicationId) : undefined;
 
 const groupFigures = (group.figureIds ?? []).map((id) => researchFigures[id]);
+const studies = group.publications.map((reference) => ({
+  reference,
+  record: publication(reference.publicationId),
+  figures: groupFigures.filter((figure) => figure.source?.publicationId === reference.publicationId),
+}));
+const unassignedFigures = groupFigures.filter((figure) =>
+  !studies.some((study) => study.figures.includes(figure)),
+);
 ---
 
-<li id={group.id} class:list={["research-scale-row", group.story && "has-story"]}>
-  <div class="research-scale-index" aria-hidden="true">{group.index}</div>
-
-  <div
-    class:list={[
-      "research-scale-body",
-      groupFigures.length === 0 && "without-figure",
-    ]}
-  >
-    <div class="research-scale-main">
-      <div class="research-scale-copy">
-        <p class="research-scale-label">{group.label}</p>
-        <h3>{group.title}</h3>
-        <p>{group.description}</p>
+<li id={group.id} class="research-scale-row">
+  {studies.map(({ reference, record, figures }) => (
+    <article class:list={["research-study", figures.length === 0 && "without-figure"]} data-assembly-work={reference.publicationId}>
+      <div class="research-study-copy">
+        <h3>{record.data.shortTitle || record.data.title}</h3>
+        <p class="research-study-description">{record.data.significance || record.data.summary}</p>
+        <p class="research-paper-meta paper-meta">
+          {record.data.acceptedIn ? <>
+            <span class="is-accepted">{record.data.acceptedIn} · Accepted</span>
+            <a href={record.data.url} target="_blank" rel="noopener noreferrer">Preprint<span class="sr-only"> of {record.data.title} (opens in a new tab)</span></a>
+          </> : <>
+            <a href={record.data.url} target="_blank" rel="noopener noreferrer">{record.data.venue} · {record.data.year}<span class="sr-only"> — {record.data.title} (opens in a new tab)</span></a>
+            {record.data.kind === "preprint" && <span>Preprint</span>}
+          </>}
+        </p>
       </div>
-
-      <div class="research-scale-evidence">
-        {
-          group.publications.map((reference) => {
-            const record = publication(reference.publicationId);
-            const meta = [
-              record.data.venue,
-              record.data.year,
-              record.data.manuscriptStatus
-                ? `Preprint, ${record.data.manuscriptStatus.toLowerCase()}`
-                : undefined,
-            ]
-              .filter(Boolean)
-              .join(" · ");
-
-            return (
-              <article data-assembly-work={reference.publicationId}>
-                <p class="research-paper-meta">{meta}</p>
-                <h4>
-                  <a
-                    href={record.data.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {record.data.title}
-                    <span class="external-arrow" aria-hidden="true">↗</span>
-                    <span class="sr-only"> (opens in a new tab)</span>
-                  </a>
-                </h4>
-                <p class="research-paper-role">{reference.role}</p>
-              </article>
-            );
-          })
-        }
-
-        {
-          group.collaborations && group.collaborations.length > 0 && (
-            <p class="research-experience-note">
-              Additional collaborative experience:{" "}
-              {group.collaborations.map((reference, index) => {
-                const record = publication(reference.publicationId);
-                const separator =
-                  index === 0
-                    ? ""
-                    : index === group.collaborations!.length - 1
-                      ? " and "
-                      : ", ";
-
-                return (
-                  <>
-                    {separator}
-                    <a
-                      data-collaborative-work={reference.publicationId}
-                      href={record.data.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {reference.label}
-                    </a>
-                  </>
-                );
-              })}
-              .
-            </p>
-          )
-        }
-      </div>
-    </div>
-
-    {groupFigures.length > 0 && (
-      <div
-        class:list={[
-          "research-scale-figure",
-          groupFigures.length > 1 && "research-scale-figure-pair",
-        ]}
-      >
-        {groupFigures.map((figure) => (
-          <ResearchFigure
-            figure={figure}
-            sourcePublication={sourcePublication(figure)}
-          />
+      {figures.length > 0 && <div class="research-study-figures">
+        {figures.map((figure) => (
+          <ResearchFigure figure={figure} sourcePublication={record} quietCaption />
         ))}
-      </div>
-    )}
+      </div>}
+    </article>
+  ))}
 
-    {group.story && (
-      /*
-        Progressive disclosure. The field note is 843px of natural-history
-        context — worth keeping in full, but not worth 18% of the page before a
-        reader has finished the research itself. Open it and nothing is lost.
-      */
-      <details
-        class="research-story"
-        id={group.story.id}
-        aria-labelledby={`${group.story.id}-title`}
-      >
-        <summary class="research-story-heading">
-          <span class="eyebrow">{group.story.eyebrow}</span>
-          <h4 id={`${group.story.id}-title`}>{group.story.title}</h4>
-          <span class="research-story-description">
-            {group.story.description}
-          </span>
-          <span class="research-story-toggle" aria-hidden="true">
-            <span class="research-story-toggle-closed">Read the note</span>
-            <span class="research-story-toggle-open">Hide the note</span>
-          </span>
-        </summary>
+  {unassignedFigures.length > 0 && <div class="research-additional-figures">
+    {unassignedFigures.map((figure) => (
+      <ResearchFigure figure={figure} sourcePublication={sourcePublication(figure)} quietCaption />
+    ))}
+  </div>}
 
-        <div class="research-story-layout">
-          <div class="research-story-copy">
-            {group.story.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
-            <p class="research-story-sources">
-              Historical context:{" "}
-              {
-                group.story.historicalSources.map((source, index, sources) => (
-                  <>
-                    {index > 0 &&
-                      (index === sources.length - 1 ? ", and " : ", ")}
-                    <a
-                      href={source.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      {source.label}
-                    </a>
-                  </>
-                ))
-              }
-              .
-            </p>
-          </div>
-
-          <div class="research-story-visuals">
-            <div class="research-story-photos">
-              {
-                group.story.photoFigureIds.map((figureId) => {
-                  const figure = researchFigures[figureId];
-                  return (
-                    <ResearchFigure
-                      figure={figure}
-                      sourcePublication={sourcePublication(figure)}
-                    />
-                  );
-                })
-              }
-            </div>
-
-            {group.story.paperFigureId && (
-              <div class="research-story-paper-figure">
-                <ResearchFigure
-                  figure={researchFigures[group.story.paperFigureId]}
-                  sourcePublication={sourcePublication(
-                    researchFigures[group.story.paperFigureId],
-                  )}
-                />
-              </div>
-            )}
-          </div>
-        </div>
-      </details>
-    )}
-  </div>
+  {group.story && <p class="research-story-hook" id={group.story.id}>
+    <a href={withBase(`research/${group.story.id}/`)}>
+      {group.story.description}
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12h14m-6-6 6 6-6 6" />
+      </svg>
+    </a>
+  </p>}
 </li>

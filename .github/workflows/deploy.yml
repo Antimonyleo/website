@@ -1,21 +1,24 @@
-name: Deploy to GitHub Pages
+name: Validate and publish website
 
 on:
   push:
+    branches: [main, "content/**"]
+  pull_request:
     branches: [main]
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: pages
+  group: website-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
   build:
+    permissions:
+      contents: read
+      pages: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -26,33 +29,54 @@ jobs:
           node-version: 24
           cache: npm
       - name: Configure GitHub Pages
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
         uses: actions/configure-pages@v6
       - name: Install dependencies
         run: npm ci
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
       - name: Report content-maintenance reminders
         continue-on-error: true
         run: npm run maintenance
       - name: Check Astro project
         run: npm run check
+      - name: Check research source
+        run: npm run check:research
       - name: Build site
         run: npm run build
       - name: Check generated image variants
         run: node scripts/build-image-variants.mjs --check
       - name: Validate built site
         run: npm run validate
+      - name: Check accessibility (axe-core)
+        run: npm run check:a11y
+      - name: Check content editing and draft safety
+        run: npm run check:editing
+      - name: Check compact layout and keyboard navigation
+        run: npm run check:layout
+      - name: Check performance budgets
+        run: npm run check:performance
       - name: Verify production preview
         run: npm run verify:preview
       - name: Upload GitHub Pages artifact
+        if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
         uses: actions/upload-pages-artifact@v5
         with:
           path: ./dist
 
   deploy:
+    if: github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main'
     needs: build
+    permissions:
+      pages: write
+      id-token: write
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
+    concurrency:
+      group: github-pages-deployment
+      cancel-in-progress: false
     steps:
       - name: Deploy to GitHub Pages
         id: deployment

@@ -2,13 +2,13 @@
 import SiteFooter from "../components/SiteFooter.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import { SITE } from "../config";
+import { getEntry } from "astro:content";
 import { getPublicPerson } from "../lib/person";
 import { withBase } from "../lib/urls";
 import "../styles/global.css";
 // Imported rather than referenced by path so Vite emits hashed, immutable
 // filenames and rewrites them for whatever `base` the site is deployed under.
 import archivoFont from "../assets/fonts/archivo.woff2";
-import serifFont from "../assets/fonts/source-serif-4.woff2";
 
 interface Props {
   title?: string;
@@ -30,6 +30,7 @@ const {
   canonicalPath,
 } = Astro.props;
 const personData = await getPublicPerson();
+const experienceData = (await getEntry("experience", "hao-liu"))?.data;
 const canonical = canonicalPath
   ? new URL(withBase(canonicalPath), Astro.site ?? Astro.url)
   : Astro.site
@@ -48,6 +49,12 @@ const personSchema = {
     "@type": "ResearchOrganization",
     name,
   })),
+  ...(personData.portrait ? { image: new URL(withBase(personData.portrait.src), Astro.site ?? Astro.url).href } : {}),
+  alumniOf: [...new Set((experienceData?.education ?? []).map((item) => item.institution))].map((name) => ({
+    "@type": "CollegeOrUniversity",
+    name,
+  })),
+  ...(experienceData?.honors.length ? { award: experienceData.honors.map((honor) => `${honor.title} (${honor.year})`) } : {}),
   sameAs: [personData.orcid, personData.scholar, SITE.github],
   knowsAbout: [
     "Nucleic acid nanotechnology",
@@ -91,13 +98,12 @@ const pageSchema = {
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="generator" content={Astro.generator} />
     <meta name="description" content={description} />
     {noIndex && <meta name="robots" content="noindex, nofollow" />}
-    <meta name="theme-color" content="#f8faf8" />
-    {/* Both faces are used above the fold on every page; the italic is not. */}
-    <link rel="preload" href={serifFont} as="font" type="font/woff2" crossorigin />
+    <meta name="theme-color" content="#ffffff" />
+    {/* The one face, used above the fold on every page. */}
     <link rel="preload" href={archivoFont} as="font" type="font/woff2" crossorigin />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
@@ -112,6 +118,12 @@ const pageSchema = {
     <meta name="twitter:image" content={socialImageUrl} />
     <link rel="canonical" href={canonical} />
     <link rel="icon" href={withBase("favicon.svg")} type="image/svg+xml" />
+    <link
+      rel="alternate"
+      type="application/rss+xml"
+      title={`${personData.name} — News`}
+      href={withBase("news/rss.xml")}
+    />
     <title>{title}</title>
     <script is:inline type="application/ld+json" set:html={JSON.stringify(pageSchema)} />
   </head>
@@ -122,79 +134,5 @@ const pageSchema = {
       <slot />
     </main>
     <SiteFooter />
-    <script>
-      /*
-        Content settles in as it is scrolled to. Progressive enhancement in
-        both directions: the hiding styles are scoped to `.js-reveal`, which
-        only this script adds, so with JavaScript disabled — or when the reader
-        prefers reduced motion — every element keeps its ordinary static
-        styles and nothing is ever left invisible.
-      */
-      const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-
-      if (!reduced.matches) {
-        /*
-          Repeating items and the headings that introduce them. Deliberately
-          not whole sections: on most pages the section element is also the
-          shell, so fading a section would fade a full screen of content at
-          once, which reads as the page loading slowly rather than as content
-          arriving.
-        */
-        const targets = document.querySelectorAll<HTMLElement>(
-          [
-            ".section-heading",
-            ".home-paper",
-            ".publication-row",
-            ".research-scale-row",
-            ".news-card",
-            ".timeline > li",
-          ].join(", "),
-        );
-
-        if (targets.length && "IntersectionObserver" in window) {
-          document.documentElement.classList.add("js-reveal");
-
-          const observer = new IntersectionObserver(
-            (entries) => {
-              for (const entry of entries) {
-                if (!entry.isIntersecting) continue;
-                // One-shot: scrolling back up must not replay it.
-                entry.target.classList.add("is-revealed");
-                observer.unobserve(entry.target);
-              }
-            },
-            // Fires slightly before the element reaches the viewport edge, so
-            // the transition is finishing rather than starting as it arrives.
-            { rootMargin: "0px 0px -8% 0px", threshold: 0.01 },
-          );
-
-          for (const [index, target] of targets.entries()) {
-            target.classList.add("reveal");
-            /*
-              Items in the same group arrive in sequence rather than together.
-              Capped at four steps so a long publication list never leaves the
-              reader waiting on a queue.
-            */
-            target.style.transitionDelay = `${Math.min(index, 4) * 70}ms`;
-            observer.observe(target);
-          }
-
-          /*
-            Anything already on screen at load reveals immediately, and the
-            hero keeps no delay — the first paint should not look staged.
-          */
-          requestAnimationFrame(() => {
-            for (const target of targets) {
-              const box = target.getBoundingClientRect();
-              if (box.top < window.innerHeight) {
-                target.style.transitionDelay = "0ms";
-                target.classList.add("is-revealed");
-                observer.unobserve(target);
-              }
-            }
-          });
-        }
-      }
-    </script>
   </body>
 </html>

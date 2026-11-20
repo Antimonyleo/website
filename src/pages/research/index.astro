@@ -1,183 +1,82 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import PageIntro from "../../components/PageIntro.astro";
 import ResearchScaleRow from "../../components/ResearchScaleRow.astro";
-import SectionHeading from "../../components/SectionHeading.astro";
-import { researchScaleGroups } from "../../data/research";
+import { researchScaleGroups, researchPage, researchFigures } from "../../data/research";
 import { getPublicPerson } from "../../lib/person";
+import { imageAttributes } from "../../lib/images";
+import { withBase } from "../../lib/urls";
 
 const person = await getPublicPerson();
 const publications = await getCollection("publications");
-const publicationsById = new Map(
-  publications.map((publication) => [publication.id, publication]),
-);
-
+const publicationsById = new Map(publications.map((publication) => [publication.id, publication]));
 const publication = (id: string) => {
   const record = publicationsById.get(id);
-  if (!record) {
-    throw new Error(`Missing publication record: ${id}`);
-  }
+  if (!record) throw new Error(`Missing publication record: ${id}`);
   return record;
 };
-
-const rnaKinetics = publication("rna-strand-displacement-2021");
-const finiteStateMachine = publication("finite-state-machine-2022");
+const foundationPapers = (researchPage.foundations.publicationIds ?? []).map(publication);
+const collaborations = researchScaleGroups.flatMap((group) => group.collaborations ?? []);
+const { directions, methods } = researchPage;
+const overviewFigure = directions.figureId ? researchFigures[directions.figureId] : undefined;
+if (directions.figureId && !overviewFigure) throw new Error(`Missing overview figure: ${directions.figureId}`);
+const overviewImage = overviewFigure ? await imageAttributes(overviewFigure.src) : undefined;
 ---
 
 <BaseLayout
   title={`Research — ${person.name}`}
   description={`Research by ${person.name} in inverse design, molecular modeling, and programmable nucleic acid assembly.`}
+  pageClass="research-page"
 >
-  <PageIntro
-    eyebrow="Research"
-    title="Programmable nucleic acid assembly"
-    description="I design interaction rules, screen them across patchy-particle and nucleotide-level models, and carry the surviving designs into experiments. The work moves from finite three-dimensional objects to open crystal lattices."
-  />
+  <header class="page-intro shell research-intro">
+    <h1>{researchPage.intro.title}</h1>
+  </header>
 
-  <div class="research-jump-bar">
-    <nav class="research-jump shell" aria-label="Research sections">
-      <span>Research at a glance</span>
-      <a href="#finite-assemblies">Finite 3D assemblies</a>
-      <a href="#open-crystal-lattices">Open crystal lattices</a>
-    </nav>
-  </div>
+  <section class="shell research-section research-philosophy" id="research-directions" aria-labelledby="philosophy-title">
+    <h2 class="research-section-title" id="philosophy-title">{directions.title}</h2>
+    {directions.paragraphs.map((paragraph, index) => <p class:list={[index === 0 && "research-lede"]}>{paragraph}</p>)}
+    {overviewFigure && overviewImage && <figure class="research-overview-figure" data-research-figure={overviewFigure.id} data-figure-kind={overviewFigure.kind}>
+      <a class="research-overview-frame" href={withBase(overviewFigure.src)} target="_blank" rel="noopener noreferrer" aria-label="Open the full-size schematic (opens in a new tab)">
+        <img {...overviewImage} sizes="(max-width: 720px) 92vw, 640px" alt={overviewFigure.alt} loading="eager" decoding="async" />
+      </a>
+      <figcaption>{overviewFigure.caption}</figcaption>
+    </figure>}
+  </section>
 
-  <section
-    class="section shell research-program"
-    id="programmable-assembly"
-    data-research-chapter="programmable-assembly"
-    aria-labelledby="assembly-scales-title"
-  >
-    <h2 class="sr-only" id="assembly-scales-title">
-      Assembly across structural scales
-    </h2>
+  <section class="shell research-section research-program" id="programmable-assembly" data-research-chapter="programmable-assembly" aria-labelledby="methods-title">
+    <h2 class="research-section-title" id="methods-title">{methods.title}</h2>
+    {methods.paragraphs.map((paragraph) => <p class="research-methods-text">{paragraph}</p>)}
     <ol class="research-scale-list">
-      {
-        researchScaleGroups.map((group) => (
-          <ResearchScaleRow
-            group={group}
-            publicationsById={publicationsById}
-          />
-        ))
-      }
+      {researchScaleGroups.map((group) => (
+        <ResearchScaleRow group={group} publicationsById={publicationsById} />
+      ))}
     </ol>
   </section>
 
-  <section
-    class="section shell research-foundations"
-    id="molecular-programming-foundations"
-    data-research-chapter="rna-strand-displacement"
-    aria-labelledby="foundations-title"
-  >
-    <SectionHeading
-      eyebrow="Earlier work"
-      title="Molecular programming foundations"
-      headingId="foundations-title"
-    />
-    <div class="research-foundations-copy">
-      <p>
-        Work on RNA and RNA:DNA strand displacement tested how toehold
-        length, substrate-end placement, and mismatch position affect reaction
-        kinetics. It established an experimental foundation for reasoning
-        about sequence, dynamics, and off-target behavior.
-      </p>
-      <p>
-        I also contributed to a localized DNA reaction network that implemented
-        state transitions with temporal resolution.
-      </p>
-    </div>
-    <div class="research-foundation-links">
-      <a
-        href={rnaKinetics.data.url}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        {rnaKinetics.data.venue} {rnaKinetics.data.year} ·
-        doi:{rnaKinetics.data.doi} ↗
-      </a>
-      <a
-        data-collaborative-work="finite-state-machine-2022"
-        href={finiteStateMachine.data.url}
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        {finiteStateMachine.data.venue} {finiteStateMachine.data.year} ·
-        doi:{finiteStateMachine.data.doi} ↗
-      </a>
-    </div>
-  </section>
-
-  <section
-    class="section shell research-directions"
-    id="research-directions"
-    aria-labelledby="directions-title"
-  >
-    <SectionHeading
-      eyebrow="Directions"
-      title="Placing matter on purpose"
-      headingId="directions-title"
-    />
-    <div class="research-directions-copy">
-      <p>
-        Programmable self-assembly is a way to place matter deliberately. When
-        the interaction rules between components are designed rather than
-        discovered, a nanoscale building block can be told where to sit
-        relative to its neighbors, and the same block can be reprogrammed to
-        produce a different target. The work above moves from target-specific
-        constructions toward a reusable process: specify a structure, encode it
-        as interaction rules, screen those rules against the structures that
-        compete with them, and build what survives.
-      </p>
-      <p>
-        Two things follow from precise placement. Components positioned by
-        design — chromophores, proteins, inorganic particles — interact
-        according to where they sit, which is how a designed arrangement
-        becomes a designed function. And the arrangement itself can be
-        transferred: silica preservation turns a soft nucleic acid lattice into
-        a robust inorganic replica, a step toward using these structures as
-        templates for functional metamaterials, where geometry rather than
-        composition sets the optical or transport response. Making that route
-        more general and more predictable is the direction I want to keep
-        working in.
-      </p>
-    </div>
-  </section>
-
-  <script>
-    // Marks the section list entry for whatever the reader is currently in.
-    // Progressive enhancement: without it the links are ordinary anchors.
-    const links = Array.from(
-      document.querySelectorAll<HTMLAnchorElement>(".research-jump a"),
-    );
-    const targets = links
-      .map((link) => {
-        const target = document.querySelector(link.hash);
-        return target ? { link, target } : null;
-      })
-      .filter((entry): entry is { link: HTMLAnchorElement; target: Element } =>
-        entry !== null,
-      );
-
-    if (targets.length) {
-      const visible = new Set<Element>();
-      const observer = new IntersectionObserver(
-        (entries) => {
-          for (const entry of entries) {
-            if (entry.isIntersecting) visible.add(entry.target);
-            else visible.delete(entry.target);
-          }
-          // targets is in document order, so the topmost section on screen wins.
-          const current = targets.find((entry) => visible.has(entry.target));
-          for (const entry of targets) {
-            if (entry === current) entry.link.setAttribute("aria-current", "true");
-            else entry.link.removeAttribute("aria-current");
-          }
-        },
-        // Discount the sticky header and section bar at the top of the viewport.
-        { rootMargin: "-136px 0px -55% 0px" },
-      );
-      for (const { target } of targets) observer.observe(target);
-    }
-  </script>
+  <div class="research-background shell">
+    <details class="research-note research-foundations" id="molecular-programming-foundations" data-research-chapter="rna-strand-displacement" aria-labelledby="foundations-title">
+      <summary><h2 class="research-section-title" id="foundations-title">{researchPage.foundations.title}</h2></summary>
+      <div class="research-note-body">
+        {researchPage.foundations.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+        <div class="research-foundation-links">
+          {foundationPapers.map((paper) => (
+            <a data-collaborative-work={paper.id} href={paper.data.url} target="_blank" rel="noopener noreferrer">
+              {paper.data.venue} · {paper.data.year}<span class="sr-only"> — {paper.data.title} (opens in a new tab)</span>
+            </a>
+          ))}
+        </div>
+        {collaborations.length > 0 && <p>
+          Related collaborations:{" "}
+          {collaborations.map((reference, index) => (
+            <>
+              {index > 0 && (index === collaborations.length - 1 ? " and " : ", ")}
+              <a data-collaborative-work={reference.publicationId} href={publication(reference.publicationId).data.url} target="_blank" rel="noopener noreferrer">
+                {reference.label}<span class="sr-only"> (opens in a new tab)</span>
+              </a>
+            </>
+          ))}.
+        </p>}
+      </div>
+    </details>
+  </div>
 </BaseLayout>

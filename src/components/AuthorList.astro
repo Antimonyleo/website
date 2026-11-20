@@ -29,29 +29,6 @@ function isHao(author: StructuredAuthor) {
   return author.memberId === "hao-liu";
 }
 
-const contributionRoles = structuredAuthors
-  ? new Set(
-      structuredAuthors.flatMap((author) =>
-        (author.contributions ?? []).map((contribution) => contribution.role),
-      ),
-    )
-  : new Set<string>();
-function contributionMark(author: StructuredAuthor) {
-  const roles = new Set(
-    (author.contributions ?? []).map((contribution) => contribution.role),
-  );
-  return `${roles.has("equal-contribution") ? "†" : ""}${roles.has("corresponding-author") ? "*" : ""}`;
-}
-
-function contributionDescription(author: StructuredAuthor) {
-  return (author.contributions ?? [])
-    .map((contribution) =>
-      contribution.role === "equal-contribution"
-        ? "equal contribution"
-        : "corresponding author",
-    )
-    .join(" and ");
-}
 ---
 
 <>
@@ -59,7 +36,6 @@ function contributionDescription(author: StructuredAuthor) {
     {
       structuredAuthors
         ? structuredAuthors.map((author, index) => {
-            const mark = contributionMark(author);
             const name = isHao(author) ? (
               <strong>{authorName(author)}</strong>
             ) : (
@@ -69,40 +45,11 @@ function contributionDescription(author: StructuredAuthor) {
               <>
                 {index > 0 &&
                   (index === structuredAuthors.length - 1 ? ", and " : ", ")}
-                {mark ? (
-                  <span
-                    data-contribution-author={authorName(author)}
-                    data-contribution-roles={(author.contributions ?? [])
-                      .map((contribution) => contribution.role)
-                      .join(" ")}
-                  >
-                    {name}
-                    <sup aria-hidden="true">{mark}</sup>
-                    <span class="sr-only">
-                      {` (${contributionDescription(author)})`}
-                    </span>
-                  </span>
-                ) : (
-                  name
-                )}
+                {name}
               </>
             );
           })
         : authors
     }
   </span>
-  {
-    contributionRoles.size > 0 && (
-      <>
-        <br />
-        <span class="publication-contribution" data-authorship-legend>
-          {contributionRoles.has("equal-contribution") && "† Equal contribution"}
-          {contributionRoles.has("equal-contribution") &&
-            contributionRoles.has("corresponding-author") &&
-            " · "}
-          {contributionRoles.has("corresponding-author") && "* Corresponding author"}
-        </span>
-      </>
-    )
-  }
 </>

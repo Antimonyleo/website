@@ -2,14 +2,14 @@
 import { render } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PageIntro from "../../components/PageIntro.astro";
-import { srcSetFor } from "../../lib/images";
+import { imageAttributes } from "../../lib/images";
+import ContentFigure from "../../components/ContentFigure.astro";
 import {
   formatNewsDate,
   getNewsItems,
   type NewsItem,
 } from "../../lib/news";
 import { getPublicPerson } from "../../lib/person";
-import { withBase } from "../../lib/urls";
 
 export async function getStaticPaths() {
   const items = await getNewsItems();
@@ -28,12 +28,10 @@ const figureSources = new Set(
   figures.map((figure) => figure.src.replace(/^\/+/, "")),
 );
 const publicationImageSrc = image?.src.replace(/^\/+/, "");
-/*
-  The venue kind, not a review verdict. A published research article carries no
-  badge at all, so the record-status branches collapse to two named cases.
-*/
 const publicationStatus =
-  publication?.data.recordStatus === "preprint-not-peer-reviewed"
+  publication?.data.acceptedIn
+    ? `Accepted in ${publication.data.acceptedIn}`
+    : publication?.data.recordStatus === "preprint-not-peer-reviewed"
     ? ["Preprint", publication.data.manuscriptStatus].filter(Boolean).join(" · ")
     : publication?.data.recordStatus === "editorial"
       ? "Commentary"
@@ -46,8 +44,8 @@ const publicationStatus =
   canonicalPath={`news/${post.id}/`}
 >
   <PageIntro
-    eyebrow={`News · ${formatNewsDate(post.data.date)}`}
     title={post.data.title}
+    date={formatNewsDate(post.data.date)}
     description={post.data.summary}
   />
 
@@ -61,41 +59,7 @@ const publicationStatus =
   >
     <div class="news-article-body">
       <Content />
-      {
-        figures.map((figure) => {
-          const src = figure.src.replace(/^\/+/, "");
-          return (
-            <figure class="news-article-figure">
-              <div class="news-article-figure-frame">
-                <img
-                  src={withBase(src)}
-                  srcset={srcSetFor(src)}
-                  sizes="(max-width: 640px) calc(100vw - 40px), (max-width: 900px) 600px, 720px"
-                  alt={figure.alt}
-                  width="1200"
-                  height="800"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-              <figcaption>
-                <span>{figure.caption}</span>
-                <span class="news-figure-credit">
-                  {figure.sourceUrl ? (
-                    <a href={figure.sourceUrl} target="_blank" rel="noopener noreferrer">
-                      {figure.credit}
-                      <span class="external-arrow" aria-hidden="true">↗</span>
-                      <span class="sr-only"> (opens in a new tab)</span>
-                    </a>
-                  ) : (
-                    figure.credit
-                  )}
-                </span>
-              </figcaption>
-            </figure>
-          );
-        })
-      }
+      {figures.map((figure) => <ContentFigure figure={figure} />)}
     </div>
 
     {
@@ -103,16 +67,12 @@ const publicationStatus =
         <aside class="news-related-publication" aria-labelledby="related-publication-title">
           {image && publicationImageSrc && !figureSources.has(publicationImageSrc) && (
             <img
-              src={withBase(publicationImageSrc)}
-              srcset={srcSetFor(publicationImageSrc)}
+              {...await imageAttributes(publicationImageSrc)}
               sizes="(max-width: 640px) calc(100vw - 40px), (max-width: 900px) 600px, 380px"
               alt={image.alt}
-              width="900"
-              height="600"
               decoding="async"
             />
           )}
-          <p class="eyebrow">Related {publication.data.kind}</p>
           <h2 id="related-publication-title">
             <a href={publication.data.url} target="_blank" rel="noopener noreferrer">
               {publication.data.title}

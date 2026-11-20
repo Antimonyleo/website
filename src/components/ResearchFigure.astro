@@ -1,20 +1,24 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import type { ResearchFigureData } from "../data/research";
-import { srcSetFor } from "../lib/images";
+import { imageAttributes } from "../lib/images";
 import { withBase } from "../lib/urls";
 
 interface Props {
   figure: ResearchFigureData;
   sourcePublication?: CollectionEntry<"publications">;
   loading?: "eager" | "lazy";
+  /** Caption stays for screen readers and print; the surrounding text explains the figure on screen. */
+  quietCaption?: boolean;
 }
 
 const {
   figure,
   sourcePublication,
   loading = "lazy",
+  quietCaption = false,
 } = Astro.props;
+const attributes = await imageAttributes(figure.src);
 
 if (figure.source && !sourcePublication) {
   throw new Error(
@@ -39,40 +43,39 @@ const sourceLabel =
   data-research-figure={figure.id}
   data-figure-kind={figure.kind}
 >
-  <div
+  <a
     class="research-figure-frame"
-    style={`--research-figure-ratio: ${figure.width} / ${figure.height}`}
+    href={withBase(figure.src)}
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label={`Open full-size image: ${figure.alt} (opens in a new tab)`}
   >
     <img
-      src={withBase(figure.src)}
-      srcset={srcSetFor(figure.src)}
-      sizes="(max-width: 900px) 92vw, 480px"
+      {...attributes}
+      sizes="(max-width: 700px) 90vw, 420px"
       alt={figure.alt}
-      width={figure.width}
-      height={figure.height}
       loading={loading}
       decoding="async"
     />
-  </div>
-  <figcaption>
-    <span>
-      {figure.captionLabel && <strong>{figure.captionLabel}</strong>}
-      {figure.captionLabel && " "}
-      {figure.caption}
-    </span>
-    {figure.credit && <span>{figure.credit}</span>}
-    {
-      figure.source && sourcePublication && sourceLabel && (
-        <a
-          data-figure-source
-          href={sourcePublication.data.url}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          {sourceLabel} ↗
-          <span class="sr-only"> (opens in a new tab)</span>
-        </a>
-      )
-    }
+  </a>
+  <figcaption class:list={[quietCaption && "research-figure-quiet-caption"]}>
+    <div class="research-figure-notes">
+      <div class="research-figure-caption">
+        <span>
+          {figure.captionLabel && <strong>{figure.captionLabel}</strong>}
+          {figure.captionLabel && " "}
+          {figure.caption}
+        </span>
+        {figure.credit && <span>{figure.credit}</span>}
+        {
+          figure.source && sourcePublication && sourceLabel && (
+            <a data-figure-source href={sourcePublication.data.url} target="_blank" rel="noopener noreferrer">
+              {sourceLabel} ↗
+              <span class="sr-only"> (opens in a new tab)</span>
+            </a>
+          )
+        }
+      </div>
+    </div>
   </figcaption>
 </figure>

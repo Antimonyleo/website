@@ -1,0 +1,109 @@
+{
+  "id": "tetrahedral-lattices-2026",
+  "title": "Programmable selection of tetrahedral crystal lattices from a single nanoscale scaffold",
+  "authors": [
+    {
+      "name": "Hao Liu",
+      "memberId": "hao-liu",
+      "contributions": [
+        {
+          "role": "corresponding-author",
+          "basis": "explicit-corresponding-author-note",
+          "sourceUrl": "https://doi.org/10.26434/chemrxiv.15004426/v1"
+        }
+      ]
+    },
+    {
+      "name": "Camilla Beneduce"
+    },
+    {
+      "name": "Andreas Neophytou"
+    },
+    {
+      "name": "Daniel Podbielski"
+    },
+    {
+      "name": "Sneha Vaidyanathan"
+    },
+    {
+      "name": "Rachel Reyes De Los Santos"
+    },
+    {
+      "name": "Byeongdu Lee"
+    },
+    {
+      "name": "Rui Zhang"
+    },
+    {
+      "name": "Thong Diep"
+    },
+    {
+      "name": "Soyoung E. Seo"
+    },
+    {
+      "name": "Lorenzo Rovigatti"
+    },
+    {
+      "name": "Lukáš Kroc"
+    },
+    {
+      "name": "Flavio Romano"
+    },
+    {
+      "name": "Francesco Sciortino"
+    },
+    {
+      "name": "John Russo",
+      "contributions": [
+        {
+          "role": "corresponding-author",
+          "basis": "explicit-corresponding-author-note",
+          "sourceUrl": "https://doi.org/10.26434/chemrxiv.15004426/v1"
+        }
+      ]
+    },
+    {
+      "name": "Petr Šulc",
+      "contributions": [
+        {
+          "role": "corresponding-author",
+          "basis": "explicit-corresponding-author-note",
+          "sourceUrl": "https://doi.org/10.26434/chemrxiv.15004426/v1"
+        }
+      ]
+    }
+  ],
+  "memberIds": [
+    "hao-liu"
+  ],
+  "year": 2026,
+  "venue": "ChemRxiv",
+  "kind": "preprint",
+  "recordStatus": "preprint-not-peer-reviewed",
+  "manuscriptStatus": "Submitted",
+  "doi": "10.26434/chemrxiv.15004426/v1",
+  "url": "https://doi.org/10.26434/chemrxiv.15004426/v1",
+  "featured": true,
+  "selectedOrder": 2,
+  "researchStoryId": "programmable-assembly",
+  "summary": "Changing four sticky ends on one DNA-origami building block selects cubic diamond, hexagonal diamond, or ice 0.",
+  "significance": "Changing the programmed vertex interactions of a single DNA-origami tetrahedron selects cubic diamond, hexagonal diamond, or ice 0, without redesigning the scaffold. The two diamonds differ only in stacking sequence, so the hexagonal crystal’s habit and ordered basal plane are not proof on their own; small-angle X-ray scattering resolves the stacking.",
+  "topics": [
+    "inverse design",
+    "self-assembly",
+    "superlattices"
+  ],
+  "provenance": {
+    "canonicalSource": {
+      "label": "ChemRxiv DOI record",
+      "url": "https://doi.org/10.26434/chemrxiv.15004426/v1"
+    },
+    "sourceCheckedAt": "2026-07-29"
+  },
+  "image": {
+    "src": "images/publications/tetrahedral-lattices-2026.webp",
+    "alt": "The tetrahedral DNA origami, the cubic diamond, hexagonal diamond, and ice 0 lattices it can form, and the SAT-based positive and negative design workflow."
+  },
+  "order": 1,
+  "shortTitle": "Three crystal lattices from one scaffold"
+}

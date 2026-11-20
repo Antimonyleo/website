@@ -1,9 +1,10 @@
 ---
 import { NAV_ITEMS } from "../config";
-import { getPublicPerson } from "../lib/person";
 import { withBase } from "../lib/urls";
+import { getPublicPerson } from "../lib/person";
 
 const person = await getPublicPerson();
+
 const currentPath = Astro.url.pathname;
 
 function isCurrent(path: string) {
@@ -14,7 +15,7 @@ function isCurrent(path: string) {
 
 <header class="site-header">
   <div class="shell header-inner">
-    <a class="wordmark" href={withBase()} aria-label={`${person.name} home`}>
+    <a class="wordmark" href={withBase()} aria-current={currentPath === withBase() ? "page" : undefined}>
       <span class="wordmark-name">{person.name}</span>
     </a>
 
@@ -54,3 +55,13 @@ function isCurrent(path: string) {
     </details>
   </div>
 </header>
+
+<script>
+  const menu = document.querySelector<HTMLDetailsElement>(".mobile-nav");
+  menu?.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && menu.open) {
+      menu.open = false;
+      menu.querySelector("summary")?.focus();
+    }
+  });
+</script>

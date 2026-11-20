@@ -4,25 +4,37 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prebuild": "npm run images",
+    "predev": "npm run images",
     "add-pub": "node scripts/add-publication.mjs",
-    "build": "ASTRO_TELEMETRY_DISABLED=1 astro build",
+    "build": "ASTRO_TELEMETRY_DISABLED=1 astro build --force",
     "check": "ASTRO_TELEMETRY_DISABLED=1 astro check",
+    "check:a11y": "node scripts/check-a11y.mjs",
+    "check:editing": "node scripts/check-content-editing.mjs",
+    "check:layout": "node scripts/check-compact-layout.mjs",
+    "check:performance": "node scripts/check-performance.mjs",
+    "check:research": "node scripts/validate-research.mjs",
     "dev": "ASTRO_TELEMETRY_DISABLED=1 astro dev",
     "images": "node scripts/build-image-variants.mjs",
     "maintenance": "node scripts/maintenance-report.mjs",
     "preview": "ASTRO_TELEMETRY_DISABLED=1 astro preview",
-    "test": "npm run check && npm run build && node scripts/build-image-variants.mjs --check && npm run validate && npm run verify:preview",
+    "test": "npm run check && npm run check:research && npm run build && node scripts/build-image-variants.mjs --check && npm run validate && npm run check:editing && npm run check:layout && npm run check:a11y && npm run check:performance && npm run verify:preview",
     "test:preview": "npm run build && npm run validate && npm run verify:preview",
     "test:template": "npm run check && npm run build",
     "validate": "node scripts/validate-editor-config.mjs && node scripts/validate-build.mjs",
     "verify:preview": "node scripts/verify-preview.mjs"
   },
   "dependencies": {
+    "@astrojs/rss": "^4.0.19",
     "@astrojs/sitemap": "^3.7.3",
     "astro": "^7.1.6"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
-    "typescript": "^6.0.0"
+    "@axe-core/playwright": "^4.13.0",
+    "playwright": "^1.63.0",
+    "sharp": "^0.35.3",
+    "typescript": "^6.0.0",
+    "yaml": "^2.9.0"
   }
 }

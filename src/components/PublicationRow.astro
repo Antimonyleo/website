@@ -1,7 +1,7 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import AuthorList from "./AuthorList.astro";
-import { srcSetFor } from "../lib/images";
+import ContentFigure from "./ContentFigure.astro";
 import {
   formatCitation,
   researchStoryAnchors,
@@ -35,7 +35,7 @@ interface StructuredAuthor {
 
 interface ExtendedPublication {
   authors: string | StructuredAuthor[];
-  recordStatus?: "peer-reviewed" | "editorial" | "preprint-not-peer-reviewed";
+  recordStatus?: "peer-reviewed" | "editorial" | "preprint-not-peer-reviewed" | "accepted";
   manuscriptStatus?: "Submitted" | "In revision";
   relatedItems?: RelatedWork[];
   researchStoryId?: ResearchStoryId;
@@ -48,11 +48,13 @@ interface Props {
 const { publication } = Astro.props;
 const data = publication.data as typeof publication.data & ExtendedPublication;
 const kindLabel =
-  data.recordStatus === "preprint-not-peer-reviewed"
+  data.acceptedIn
+    ? `Accepted in ${data.acceptedIn}`
+    : data.recordStatus === "preprint-not-peer-reviewed"
     ? `${data.venue} preprint`
     : data.recordStatus === "editorial"
       ? "Commentary"
-      : "Research article";
+      : null; // A research article is the default record; it carries no label.
 const corrections = (data.relatedItems ?? []).filter(
   (item) =>
     item.relation.toLowerCase().includes("correction") && item.counted === false,
@@ -66,48 +68,41 @@ const citation = Array.isArray(data.authors)
       venue: data.venue,
       volumePages: data.volumePages,
       doi: data.doi,
+      acceptedIn: data.acceptedIn,
     })
   : "";
 ---
 
 <article
-  class:list={["publication-row", !data.image && "publication-row-text-only"]}
+  class="publication-row"
   data-publication-record
   data-publication-id={publication.id}
 >
-  <div class="publication-year">{data.year}</div>
-  {
-    data.image && (
-      <div class="publication-figure">
-        <img
-          class="publication-thumb"
-          src={withBase(data.image.src)}
-          srcset={srcSetFor(data.image.src)}
-          sizes="(max-width: 900px) 230px, 420px"
-          alt={data.image.alt}
-          width="900"
-          height="600"
-          loading="lazy"
-          decoding="async"
-        />
-      </div>
-    )
-  }
   <div class="publication-citation">
-    <div class="publication-meta">
-      <span>{kindLabel}</span>
-      {data.manuscriptStatus && <span>{data.manuscriptStatus}</span>}
-      {data.kind !== "preprint" && <span>{data.venue}</span>}
-      {data.volumePages && <span>{data.volumePages}</span>}
-    </div>
     <h3>
       <a href={data.url} target="_blank" rel="noopener noreferrer">
-        {data.title}<span class="external-arrow" aria-hidden="true">↗</span>
+        {data.title}
         <span class="sr-only"> (opens in a new tab)</span>
       </a>
     </h3>
-    <p class="publication-authors"><AuthorList authors={data.authors} /></p>
     {data.summary && <p class="publication-summary">{data.summary}</p>}
+    <p class="publication-authors"><AuthorList authors={data.authors} /></p>
+    <div class="publication-meta">
+      {kindLabel && <span class="publication-badge">{kindLabel}</span>}
+      {
+        data.manuscriptStatus && (
+          <span class="publication-badge publication-badge-status">
+            {data.manuscriptStatus}
+          </span>
+        )
+      }
+      {data.kind !== "preprint" && <span>{data.venue}</span>}
+      {data.volumePages && <span>{data.volumePages}</span>}
+    </div>
+    {data.figures && data.figures.length > 0 && <details class="publication-figures">
+      <summary>View figures ({data.figures.length})</summary>
+      {data.figures.map((figure) => <ContentFigure figure={figure} />)}
+    </details>}
     {
       corrections.map((correction) => (
         <p class="related-correction" data-related-correction>
@@ -139,7 +134,7 @@ const citation = Array.isArray(data.authors)
       )
     }
     <a href={data.url} target="_blank" rel="noopener noreferrer">
-      DOI
+      {data.kind === "preprint" ? "Preprint DOI" : "DOI"}
       <span class="sr-only"> for {data.title} (opens in a new tab)</span>
     </a>
     {

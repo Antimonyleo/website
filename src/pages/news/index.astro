@@ -6,13 +6,14 @@ import { getNewsItems } from "../../lib/news";
 import { getPublicPerson } from "../../lib/person";
 import { withBase } from "../../lib/urls";
 
+import { SITE } from "../../config";
 const person = await getPublicPerson();
 const newsItems = await getNewsItems();
 ---
 
 <BaseLayout
   title={`News — ${person.name}`}
-  description={`Research updates and short notes from ${person.name}.`}
+  description={SITE.newsDescription}
   pageType="CollectionPage"
   itemList={newsItems.map(({ post }) => ({
     name: post.data.title,
@@ -20,10 +21,17 @@ const newsItems = await getNewsItems();
   }))}
 >
   <PageIntro
-    eyebrow="Updates"
     title="News"
-    description="Short notes on new papers and research developments."
   />
+
+  <section class="news-tools shell" aria-label="News feed links">
+    <p>{newsItems.length} update{newsItems.length === 1 ? "" : "s"}</p>
+    <div>
+      <a class="rss-link" href={withBase("news/rss.xml")}>
+        RSS feed
+      </a>
+    </div>
+  </section>
 
   <section class="section shell news-index" aria-labelledby="news-list-title">
     <h2 class="sr-only" id="news-list-title">News, newest first</h2>

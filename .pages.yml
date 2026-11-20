@@ -1,0 +1,1083 @@
+settings:
+  hide: true
+  content:
+    merge: false
+media:
+  - name: images
+    label: Public images
+    input: public/images
+    output: /images
+    extensions:
+      - jpg
+      - jpeg
+      - png
+      - webp
+      - avif
+      - tif
+      - tiff
+    rename: random
+content:
+  - name: profile
+    label: Profile and portrait
+    type: file
+    path: src/content/people/hao-liu.md
+    format: yaml-frontmatter
+    operations:
+      create: false
+      rename: false
+      delete: false
+    fields:
+      - name: name
+        type: string
+        label: Name
+        required: true
+      - name: degree
+        type: string
+        label: Degree
+        required: true
+      - name: role
+        type: string
+        label: Current role
+        required: true
+      - name: organizations
+        type: string
+        label: Affiliations (department, institute, university)
+        list: true
+        required: true
+      - name: location
+        type: string
+        label: Location
+        required: true
+      - name: email
+        type: string
+        label: Public email
+        required: true
+      - name: orcid
+        type: string
+        label: ORCID URL
+        required: true
+      - name: scholar
+        type: string
+        label: Google Scholar URL
+        required: true
+      - name: bio
+        type: text
+        label: Biography paragraphs
+        list: true
+        required: true
+        description: Keep this concise and public. One to four paragraphs; no private application material.
+      - name: portrait
+        label: Portrait (optional)
+        type: object
+        fields:
+          - name: src
+            label: Upload or choose image
+            type: image
+            options:
+              media: images
+              path: public/images/uploads
+              rename: random
+            required: true
+          - name: alt
+            type: string
+            label: Image description
+            required: true
+  - name: site
+    label: Website and contact page
+    type: file
+    path: src/data/site.json
+    format: json
+    operations:
+      create: false
+      rename: false
+      delete: false
+    fields:
+      - name: name
+        type: string
+        label: Site name
+        required: true
+      - name: title
+        type: string
+        label: Browser/search title
+        required: true
+      - name: description
+        type: text
+        label: Search description
+        required: true
+      - name: github
+        type: string
+        label: GitHub profile link
+        required: true
+      - name: selectedPapersTitle
+        type: string
+        label: Homepage selected-work heading
+        required: true
+      - name: newsDescription
+        type: text
+        label: News introduction
+        required: true
+      - name: contactDescription
+        type: text
+        label: Contact introduction
+        required: true
+  - name: experience
+    label: Experience
+    type: file
+    path: src/content/experience/hao-liu.md
+    format: yaml-frontmatter
+    operations:
+      create: false
+      rename: false
+      delete: false
+    fields:
+      - name: summary
+        type: text
+        label: Page introduction
+        required: true
+      - name: appointments
+        label: Appointments
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{title}"
+        fields:
+          - name: period
+            type: string
+            label: Period
+            required: true
+          - name: title
+            type: string
+            label: Position
+            required: true
+          - name: institution
+            type: string
+            label: Institution
+            required: true
+          - name: detail
+            type: text
+            label: Description
+            required: true
+          - name: highlights
+            type: string
+            label: Selected contributions (verified facts only)
+            list: true
+          - name: advisors
+            label: Advisors (optional)
+            type: object
+            list:
+              collapsible:
+                collapsed: true
+                summary: "{name}"
+            fields:
+              - name: name
+                type: string
+                label: Name
+                required: true
+              - name: url
+                type: string
+                label: Profile link
+                required: true
+          - name: figures
+            label: Figures — add, remove, or reorder
+            type: object
+            list:
+              collapsible:
+                collapsed: true
+                summary: "{caption}"
+            fields:
+              - name: src
+                label: Upload or choose image
+                type: image
+                options:
+                  media: images
+                  path: public/images/uploads
+                  rename: random
+                required: true
+              - name: alt
+                type: text
+                label: Image description (for screen readers)
+                required: true
+                description: Describe the visible evidence; you do not need to enter image dimensions.
+              - name: caption
+                type: text
+                label: Caption
+                required: true
+              - name: credit
+                type: string
+                label: Credit / permission
+                required: true
+              - name: sourceUrl
+                type: string
+                label: Public source link (optional)
+              - name: fieldGroup
+                type: string
+                hidden: true
+      - name: education
+        label: Education
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{period}"
+        fields:
+          - name: period
+            type: string
+            label: Period
+            required: true
+          - name: degree
+            type: string
+            label: Degree
+            required: true
+          - name: institution
+            type: string
+            label: Institution
+            required: true
+          - name: detail
+            type: text
+            label: Description
+            required: true
+          - name: advisors
+            label: Advisors (optional)
+            type: object
+            list: true
+            fields:
+              - name: name
+                type: string
+                label: Name
+                required: true
+              - name: url
+                type: string
+                label: Profile link (optional)
+          - name: figures
+            label: Figures — add, remove, or reorder
+            type: object
+            list:
+              collapsible:
+                collapsed: true
+                summary: "{caption}"
+            fields:
+              - name: src
+                label: Upload or choose image
+                type: image
+                options:
+                  media: images
+                  path: public/images/uploads
+                  rename: random
+                required: true
+              - name: alt
+                type: text
+                label: Image description (for screen readers)
+                required: true
+                description: Describe the visible evidence; you do not need to enter image dimensions.
+              - name: caption
+                type: text
+                label: Caption
+                required: true
+              - name: credit
+                type: string
+                label: Credit / permission
+                required: true
+              - name: sourceUrl
+                type: string
+                label: Public source link (optional)
+              - name: fieldGroup
+                type: string
+                hidden: true
+      - name: presentations
+        label: Presentations
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{title}"
+        fields:
+          - name: year
+            type: number
+            label: Year
+            required: true
+          - name: venue
+            type: string
+            label: Event
+            required: true
+          - name: title
+            type: string
+            label: Title
+            required: true
+          - name: figures
+            label: Figures — add, remove, or reorder
+            type: object
+            list:
+              collapsible:
+                collapsed: true
+                summary: "{caption}"
+            fields:
+              - name: src
+                label: Upload or choose image
+                type: image
+                options:
+                  media: images
+                  path: public/images/uploads
+                  rename: random
+                required: true
+              - name: alt
+                type: text
+                label: Image description (for screen readers)
+                required: true
+                description: Describe the visible evidence; you do not need to enter image dimensions.
+              - name: caption
+                type: text
+                label: Caption
+                required: true
+              - name: credit
+                type: string
+                label: Credit / permission
+                required: true
+              - name: sourceUrl
+                type: string
+                label: Public source link (optional)
+              - name: fieldGroup
+                type: string
+                hidden: true
+      - name: showCapabilities
+        type: boolean
+        label: Show expertise on the homepage
+        default: false
+      - name: capabilities
+        label: Capabilities
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{title}"
+        fields:
+          - name: title
+            type: string
+            label: Category
+            required: true
+          - name: items
+            type: string
+            label: Skills / methods
+            required: true
+            list: true
+      - name: honors
+        label: Honors and awards
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{year} — {title}"
+        fields:
+          - name: year
+            type: number
+            label: Year
+            required: true
+          - name: title
+            type: string
+            label: Award
+            required: true
+          - name: organization
+            type: string
+            label: Awarding body / event
+            required: true
+      - name: provenance
+        label: Original source record
+        type: object
+        fields:
+          - name: source
+            type: string
+            label: Source
+          - name: publicationPolicy
+            type: string
+            label: Publication policy
+          - name: sourceCheckedAt
+            type: string
+            label: Checked on
+        hidden: true
+  - name: publications
+    label: Publications — complete entries
+    type: collection
+    path: src/content/publications
+    format: json
+    filename:
+      template: "{fields.fileId}.json"
+      field: false
+    subfolders: false
+    operations:
+      create: true
+      rename: false
+      delete: true
+    view:
+      primary: title
+      fields:
+        - title
+      sort:
+        - title
+    fields:
+      - name: fileId
+        type: uuid
+        hidden: true
+        options:
+          editable: false
+          generate: false
+      - name: id
+        type: string
+        hidden: true
+      - name: title
+        type: string
+        label: Title
+        required: true
+      - name: shortTitle
+        type: string
+        label: Short display title (optional)
+        description: A concise title for Research. Home and Publications use the full article title.
+      - name: summary
+        type: text
+        label: One-sentence summary
+        required: true
+      - name: authors
+        label: Authors — in publication order
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{name}"
+        fields:
+          - name: name
+            type: string
+            label: Full name
+            required: true
+          - name: memberId
+            type: string
+            label: Internal profile link
+            hidden: true
+          - name: contributions
+            label: Authorship marks (only as stated in the paper)
+            type: object
+            list:
+              collapsible:
+                collapsed: true
+                summary: "{role}"
+            fields:
+              - name: role
+                label: Verified role
+                type: select
+                options:
+                  values:
+                    - name: equal-contribution
+                      label: Equal contribution
+                    - name: corresponding-author
+                      label: Corresponding author
+                required: true
+              - name: basis
+                type: string
+                label: Evidence type
+                hidden: true
+              - name: sourceUrl
+                type: string
+                label: Evidence link (leave blank to use this paper's DOI)
+      - name: year
+        type: number
+        label: Year
+        required: true
+      - name: venue
+        type: string
+        label: Journal / preprint server
+        required: true
+      - name: kind
+        label: Publication type
+        type: select
+        options:
+          values:
+            - name: article
+              label: Journal article
+            - name: commentary
+              label: Commentary
+            - name: preprint
+              label: Public preprint
+        required: true
+      - name: volumePages
+        type: string
+        label: Volume and pages / article number (published papers)
+      - name: manuscriptStatus
+        label: Preprint status (optional)
+        type: select
+        options:
+          values:
+            - Submitted
+            - In revision
+      - name: acceptedIn
+        label: Accepted in (optional)
+        type: string
+        description: Confirmed journal acceptance while the DOI still links to a preprint. Replaces the preprint workflow status; keep the preprint venue and year until the journal record is published.
+      - name: doi
+        type: string
+        label: DOI or DOI link
+        required: true
+        description: Paste either 10.… or the full https://doi.org/… link. The site formats it.
+      - name: featured
+        type: boolean
+        label: Show on homepage
+        default: false
+      - name: selectedOrder
+        type: number
+        label: Homepage position
+        description: "Optional: smaller numbers come first. No need to clear this when hiding a paper."
+      - name: order
+        type: number
+        label: Order within a year
+        description: Optional; smaller numbers first. Years are sorted automatically.
+      - name: researchStoryId
+        label: Related research section
+        type: select
+        options:
+          values:
+            - name: programmable-assembly
+              label: Programmable assembly
+            - name: rna-strand-displacement
+              label: Molecular programming foundations
+      - name: image
+        label: Related-news image (optional)
+        type: object
+        fields:
+          - name: src
+            label: Upload or choose image
+            type: image
+            options:
+              media: images
+              path: public/images/uploads
+              rename: random
+            required: true
+          - name: alt
+            type: string
+            label: Image description
+            required: true
+      - name: figures
+        label: Figures — add, remove, or reorder
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{caption}"
+        fields:
+          - name: src
+            label: Upload or choose image
+            type: image
+            options:
+              media: images
+              path: public/images/uploads
+              rename: random
+            required: true
+          - name: alt
+            type: text
+            label: Image description (for screen readers)
+            required: true
+            description: Describe the visible evidence; you do not need to enter image dimensions.
+          - name: caption
+            type: text
+            label: Caption
+            required: true
+          - name: credit
+            type: string
+            label: Credit / permission
+            required: true
+          - name: sourceUrl
+            type: string
+            label: Public source link (optional)
+          - name: fieldGroup
+            type: string
+            hidden: true
+      - name: relatedItems
+        label: Corrections — add or remove
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{title}"
+        fields:
+          - name: title
+            type: string
+            label: Correction title
+            required: true
+          - name: year
+            type: number
+            label: Year
+            required: true
+          - name: venue
+            type: string
+            label: Journal
+            required: true
+          - name: volumePages
+            type: string
+            label: Volume and pages
+            required: true
+          - name: doi
+            type: string
+            label: DOI or DOI link
+            required: true
+          - name: relation
+            type: string
+            label: Relationship
+            hidden: true
+          - name: url
+            type: string
+            label: Generated link
+            hidden: true
+          - name: counted
+            type: boolean
+            hidden: true
+      - name: provenance
+        label: Source check
+        type: object
+        fields:
+          - name: sourceCheckedAt
+            label: When did you check the public record?
+            type: date
+            required: true
+            options:
+              format: yyyy-MM-dd
+          - name: canonicalSource
+            label: Source
+            type: object
+            fields:
+              - name: label
+                type: string
+                label: Source description
+              - name: url
+                type: string
+                label: Generated source link
+                hidden: true
+      - name: memberIds
+        type: string
+        label: Profile links
+        list: true
+        hidden: true
+      - name: recordStatus
+        type: string
+        label: Generated status
+        hidden: true
+      - name: url
+        type: string
+        label: Generated DOI link
+        hidden: true
+      - name: significance
+        type: text
+        label: Significance (optional)
+        description: A brief result paragraph for Research. Uses the summary when empty.
+      - name: topics
+        type: string
+        label: Topics (retained metadata)
+        list: true
+        hidden: true
+  - name: research
+    label: Research page
+    type: file
+    path: src/data/research.json
+    format: json
+    operations:
+      create: false
+      rename: false
+      delete: false
+    fields:
+      - name: intro
+        label: Page introduction
+        type: object
+        fields:
+          - name: title
+            type: string
+            label: Title
+            required: true
+        required: true
+      - name: methods
+        label: Methods and workflow
+        type: object
+        fields:
+          - name: title
+            type: string
+            label: Heading
+            required: true
+          - name: paragraphs
+            type: text
+            label: Paragraphs
+            list: true
+        required: true
+      - name: groups
+        label: Research themes — add, remove, or reorder
+        description: The studies under Methods and workflow. Groups set the study order and keep existing links working. Theme titles and descriptions organize the editor; the page shows each paper's short title and significance.
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{title}"
+        fields:
+          - name: anchor
+            type: uuid
+            hidden: true
+            options:
+              editable: false
+              generate: false
+          - name: id
+            type: string
+            hidden: true
+          - name: label
+            type: string
+            label: Short theme label
+            required: true
+          - name: title
+            type: string
+            label: Title
+            required: true
+          - name: description
+            type: text
+            label: Description
+            required: true
+          - name: index
+            type: string
+            label: Automatic numbering
+            hidden: true
+          - name: publications
+            label: Main papers
+            type: object
+            list:
+              collapsible:
+                collapsed: true
+                summary: "{publicationId}"
+            fields:
+              - name: publicationId
+                label: Select paper
+                type: reference
+                options:
+                  collection: publications
+                  search: title
+                  value: "{name}"
+                  label: "{fields.title}"
+                  multiple: false
+              - name: role
+                type: string
+                label: Your role
+                required: true
+          - name: collaborations
+            label: Related collaborations
+            type: object
+            list:
+              collapsible:
+                collapsed: true
+                summary: "{label}"
+            fields:
+              - name: publicationId
+                label: Select paper
+                type: reference
+                options:
+                  collection: publications
+                  search: title
+                  value: "{name}"
+                  label: "{fields.title}"
+                  multiple: false
+              - name: label
+                type: string
+                label: Link text
+                required: true
+          - name: figureIds
+            label: Choose figures
+            type: reference
+            options:
+              collection: figures
+              search: caption
+              value: "{name}"
+              label: "{fields.caption}"
+              multiple: true
+          - name: story
+            label: Optional linked note
+            description: A short link below this group's studies opens the full note on its own page.
+            type: object
+            fields:
+              - name: id
+                type: string
+                hidden: true
+              - name: eyebrow
+                type: string
+                label: Short label
+                required: true
+              - name: title
+                type: string
+                label: Title
+                required: true
+              - name: description
+                type: text
+                label: One-line link text
+                required: true
+              - name: paragraphs
+                type: text
+                label: Paragraphs
+                list: true
+              - name: photoFigureIds
+                label: Photographs
+                type: reference
+                options:
+                  collection: figures
+                  search: caption
+                  value: "{name}"
+                  label: "{fields.caption}"
+                  multiple: true
+              - name: paperFigureId
+                label: Additional paper figure
+                type: reference
+                options:
+                  collection: figures
+                  search: caption
+                  value: "{name}"
+                  label: "{fields.caption}"
+                  multiple: false
+              - name: historicalSources
+                label: Sources
+                type: object
+                list:
+                  collapsible:
+                    collapsed: true
+                    summary: "{label}"
+                fields:
+                  - name: label
+                    type: string
+                    label: Link text
+                    required: true
+                  - name: href
+                    type: string
+                    label: Public link
+                    required: true
+      - name: foundations
+        label: Earlier work
+        type: object
+        fields:
+          - name: eyebrow
+            type: string
+            label: Short label
+            required: true
+          - name: title
+            type: string
+            label: Title
+            required: true
+          - name: paragraphs
+            type: text
+            label: Paragraphs
+            list: true
+          - name: publicationIds
+            label: Related papers
+            type: reference
+            options:
+              collection: publications
+              search: title
+              value: "{name}"
+              label: "{fields.title}"
+              multiple: true
+        required: true
+      - name: directions
+        label: Philosophy and vision
+        type: object
+        fields:
+          - name: eyebrow
+            type: string
+            label: Short label (not shown)
+            required: true
+          - name: title
+            type: string
+            label: Heading
+            required: true
+          - name: paragraphs
+            type: text
+            label: Paragraphs
+            list: true
+          - name: figureId
+            label: Overview schematic (optional)
+            type: reference
+            options:
+              collection: figures
+              search: caption
+              value: "{name}"
+              label: "{fields.caption}"
+        required: true
+  - name: figures
+    label: Research figure library
+    type: collection
+    path: src/content/figures
+    format: json
+    filename:
+      template: "{fields.fileId}.json"
+      field: false
+    subfolders: false
+    operations:
+      create: true
+      rename: false
+      delete: true
+    view:
+      primary: caption
+      fields:
+        - caption
+      sort:
+        - caption
+    fields:
+      - name: fileId
+        type: uuid
+        hidden: true
+        options:
+          editable: false
+          generate: false
+      - name: id
+        type: string
+        hidden: true
+      - name: kind
+        label: Figure type
+        type: select
+        options:
+          values:
+            - name: paper-figure
+              label: Scientific figure
+            - name: photograph
+              label: Photograph
+            - name: schematic
+              label: Schematic
+        required: true
+      - name: src
+        label: Upload or choose image
+        type: image
+        options:
+          media: images
+          path: public/images/uploads
+          rename: random
+        required: true
+      - name: alt
+        type: text
+        label: Image description
+        required: true
+      - name: caption
+        type: text
+        label: Caption
+        required: true
+      - name: captionLabel
+        type: string
+        label: Short caption prefix (optional)
+      - name: credit
+        type: string
+        label: Credit / permission
+      - name: source
+        label: Related paper (optional)
+        type: object
+        fields:
+          - name: publicationId
+            label: Select paper
+            type: reference
+            options:
+              collection: publications
+              search: title
+              value: "{name}"
+              label: "{fields.title}"
+              multiple: false
+          - name: locator
+            type: string
+            label: Figure / panel label
+          - name: showDoi
+            type: boolean
+            label: Show DOI in caption
+      - name: width
+        type: number
+        label: Legacy width (automatically detected)
+        hidden: true
+      - name: height
+        type: number
+        label: Legacy height (automatically detected)
+        hidden: true
+  - name: news
+    label: News
+    type: collection
+    path: src/content/news
+    format: yaml-frontmatter
+    filename:
+      template: "{primary}.md"
+      field: false
+    subfolders: false
+    operations:
+      create: true
+      rename: false
+      delete: true
+    view:
+      primary: title
+      fields:
+        - title
+        - date
+        - draft
+      sort:
+        - date
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        type: string
+        label: Headline
+        required: true
+      - name: date
+        label: Announcement date
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+      - name: draft
+        type: boolean
+        label: Draft — hide from website and RSS
+        default: true
+      - name: summary
+        type: text
+        label: Summary
+        required: true
+      - name: publicationId
+        label: Related publication (optional)
+        type: reference
+        options:
+          collection: publications
+          search: title
+          value: "{name}"
+          label: "{fields.title}"
+          multiple: false
+      - name: body
+        label: Update
+        type: rich-text
+        options:
+          format: markdown
+          switcher: false
+          media: false
+        description: Use the formatting toolbar. Add scientific images with Figures below, so captions and
+          credits are kept together.
+      - name: figures
+        label: Figures — add, remove, or reorder
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{caption}"
+        fields:
+          - name: src
+            label: Upload or choose image
+            type: image
+            options:
+              media: images
+              path: public/images/uploads
+              rename: random
+            required: true
+          - name: alt
+            type: text
+            label: Image description (for screen readers)
+            required: true
+            description: Describe the visible evidence; you do not need to enter image dimensions.
+          - name: caption
+            type: text
+            label: Caption
+            required: true
+          - name: credit
+            type: string
+            label: Credit / permission
+            required: true
+          - name: sourceUrl
+            type: string
+            label: Public source link (optional)
+          - name: fieldGroup
+            type: string
+            hidden: true

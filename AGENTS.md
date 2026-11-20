@@ -21,7 +21,7 @@ page, PI/lab site, or recruiting site.
   statements, unpublished work, private figures, local paths, or target journals.
 - Keep future-research language broad and scoop-safe.
 - Do not invent scientific claims, contributions, authorship, or publication
-  status. Use `src/data/publications.json` and approved public sources.
+  status. Use `src/content/publications/*.json` and approved public sources.
 - Do not add awards, recruiting language, or PI/group-site features unless the
   user explicitly requests them.
 - Prefer authentic, reusable scientific figures. Avoid generic or scientifically
@@ -44,9 +44,10 @@ page, PI/lab site, or recruiting site.
 
 - Identity and public contact: `src/content/people/hao-liu.md`
 - Experience: `src/content/experience/hao-liu.md`
-- Publications and authorship metadata: `src/data/publications.json`
-- Research narrative and figure metadata: `src/data/research.ts`
-- Site-wide configuration: `src/config.ts`
+- Publications and authorship metadata: `src/content/publications/*.json`
+- Research narrative: `src/data/research.json`; figures: `src/content/figures/*.json`
+- Site/contact copy: `src/data/site.json`; navigation: `src/config.ts`
+- Browser editing forms: `.pages.yml` (all stored fields must be represented)
 - Public/privacy/build contract: `scripts/validate-build.mjs`
 
 For routine changes, follow `CONTENT.md`; for the rationale behind durable

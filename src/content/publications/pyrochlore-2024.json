@@ -1,0 +1,79 @@
+{
+  "id": "pyrochlore-2024",
+  "title": "Inverse design of a pyrochlore lattice of DNA origami through model-driven experiments",
+  "authors": [
+    {
+      "name": "Hao Liu",
+      "memberId": "hao-liu"
+    },
+    {
+      "name": "Michael Matthies"
+    },
+    {
+      "name": "John Russo"
+    },
+    {
+      "name": "Lorenzo Rovigatti"
+    },
+    {
+      "name": "Raghu Pradeep Narayanan"
+    },
+    {
+      "name": "Thong Diep"
+    },
+    {
+      "name": "Daniel McKeen"
+    },
+    {
+      "name": "Oleg Gang"
+    },
+    {
+      "name": "Nicholas Stephanopoulos"
+    },
+    {
+      "name": "Francesco Sciortino"
+    },
+    {
+      "name": "Hao Yan"
+    },
+    {
+      "name": "Flavio Romano"
+    },
+    {
+      "name": "Petr Šulc"
+    }
+  ],
+  "memberIds": [
+    "hao-liu"
+  ],
+  "year": 2024,
+  "venue": "Science",
+  "volumePages": "384, 776–781",
+  "kind": "article",
+  "recordStatus": "peer-reviewed",
+  "doi": "10.1126/science.adl5549",
+  "url": "https://doi.org/10.1126/science.adl5549",
+  "featured": true,
+  "selectedOrder": 1,
+  "researchStoryId": "programmable-assembly",
+  "summary": "Computationally designed interactions guide DNA origami into a pyrochlore lattice, verified by scattering and microscopy.",
+  "significance": "Designed particle-interaction rules lead from computational models to an experimentally realized DNA-origami pyrochlore lattice. Small-angle X-ray scattering establishes its topology and long-range order; a silica-preserved crystal, imaged by electron microscopy, shows facets and surface pores that follow the designed lattice.",
+  "topics": [
+    "inverse design",
+    "superlattices",
+    "DNA origami"
+  ],
+  "provenance": {
+    "canonicalSource": {
+      "label": "Publisher DOI record",
+      "url": "https://doi.org/10.1126/science.adl5549"
+    },
+    "sourceCheckedAt": "2026-07-29"
+  },
+  "image": {
+    "src": "images/publications/pyrochlore-2024.webp",
+    "alt": "Scanning electron micrograph of a silica-preserved DNA-origami pyrochlore crystal."
+  },
+  "order": 4,
+  "shortTitle": "A DNA-origami pyrochlore lattice"
+}

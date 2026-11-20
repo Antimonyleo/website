@@ -1,57 +1,52 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import PageIntro from "../../components/PageIntro.astro";
 import PublicationRow from "../../components/PublicationRow.astro";
 import SocialLinks from "../../components/SocialLinks.astro";
-import publicationSource from "../../data/publications.json";
 import { getPublicPerson } from "../../lib/person";
 import { withBase } from "../../lib/urls";
 
 const person = await getPublicPerson();
-const sourceOrder = new Map(
-  publicationSource.map((publication, index) => [publication.id, index]),
-);
 const publications = (await getCollection("publications")).sort(
   (a, b) =>
     b.data.year - a.data.year ||
-    (sourceOrder.get(a.id) ?? Number.MAX_SAFE_INTEGER) -
-      (sourceOrder.get(b.id) ?? Number.MAX_SAFE_INTEGER),
+    (a.data.order ?? 9999) - (b.data.order ?? 9999) || a.id.localeCompare(b.id),
 );
+const years = [...new Set(publications.map((publication) => publication.data.year))];
 ---
 
 <BaseLayout
   title={`Publications — ${person.name}`}
   description={`Journal articles and preprints by ${person.name} in nucleic acid nanotechnology, self-assembly, molecular programming, and nanomaterials.`}
   pageType="CollectionPage"
+  pageClass="publications-page"
   itemList={publications.map((publication) => ({
     name: publication.data.title,
     url: publication.data.url,
   }))}
 >
-  <PageIntro
-    eyebrow="Research output"
-    title="Publications"
-    description="Journal articles, preprints, and commentary."
-  />
-
-  <section class="publication-tools shell" aria-label="Publication links">
-    <p>{publications.length} publications and preprints</p>
-    <div>
-      <SocialLinks />
-      {
-        publications.length > 0 && (
-          <a
-            class="bibtex-link"
-            href={withBase("publications/hao-liu-publications.bib")}
-            download="hao-liu-publications.bib"
-          >
-            Download BibTeX
-          </a>
-        )
-      }
+  <header class="page-intro publication-intro shell">
+    <h1>Publications</h1>
+    <div class="publication-tools" aria-label="Publication links">
+      <p>{publications.length} publications and preprints</p>
+      <div>
+        <a class="text-link" href={person.scholar} target="_blank" rel="noopener noreferrer">
+          Google Scholar<span class="sr-only"> (opens in a new tab)</span>
+        </a>
+        {
+          publications.length > 0 && (
+            <a
+              class="bibtex-link"
+              href={withBase("publications/hao-liu-publications.bib")}
+              download="hao-liu-publications.bib"
+            >
+              Download BibTeX
+            </a>
+          )
+        }
+      </div>
     </div>
-  </section>
+  </header>
 
   {
     publications.length === 0 ? (
@@ -61,13 +56,16 @@ const publications = (await getCollection("publications")).sort(
         <SocialLinks />
       </section>
     ) : (
-      <section class="section shell publication-record" aria-labelledby="publication-list-title">
-        <h2 class="sr-only" id="publication-list-title">
-          Publications, newest first
-        </h2>
-        <div class="publication-rows">
-          {publications.map((publication) => <PublicationRow publication={publication} />)}
-        </div>
+      <section class="section shell publication-record" aria-label="Publications, newest first">
+        {years.map((year) => (
+          <section class="publication-year-group" aria-labelledby={`year-${year}`} data-publication-year={year}>
+            <h2 id={`year-${year}`}>{year}</h2>
+            <div class="publication-rows">
+              {publications.filter((publication) => publication.data.year === year)
+                .map((publication) => <PublicationRow publication={publication} />)}
+            </div>
+          </section>
+        ))}
       </section>
     )
   }

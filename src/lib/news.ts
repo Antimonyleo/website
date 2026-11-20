@@ -7,7 +7,7 @@ export interface NewsItem {
 
 export async function getNewsItems(): Promise<NewsItem[]> {
   const [posts, publications] = await Promise.all([
-    getCollection("news"),
+    getCollection("news", ({ data }) => !data.draft),
     getCollection("publications"),
   ]);
   const publicationsById = new Map(

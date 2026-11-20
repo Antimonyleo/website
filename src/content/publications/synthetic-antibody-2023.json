@@ -1,0 +1,87 @@
+{
+  "id": "synthetic-antibody-2023",
+  "title": "IgG-inspired, multivalent protein-DNA nanostructures for high-affinity, tunable, and reversible binding to biomolecular targets",
+  "authors": [
+    {
+      "name": "Rong Zheng"
+    },
+    {
+      "name": "Yang Xu"
+    },
+    {
+      "name": "Abhay Prasad"
+    },
+    {
+      "name": "Minghui Liu"
+    },
+    {
+      "name": "Zijian Wan"
+    },
+    {
+      "name": "Jiapei Jiang"
+    },
+    {
+      "name": "Xiaoyan Zhou"
+    },
+    {
+      "name": "Ryan M. Porter"
+    },
+    {
+      "name": "Matthew Sample"
+    },
+    {
+      "name": "Erik Poppleton"
+    },
+    {
+      "name": "Jonah Procyk"
+    },
+    {
+      "name": "Hao Liu",
+      "memberId": "hao-liu"
+    },
+    {
+      "name": "Adam Doherty"
+    },
+    {
+      "name": "Pranish Nyaupane"
+    },
+    {
+      "name": "Yize Li"
+    },
+    {
+      "name": "Shaopeng Wang"
+    },
+    {
+      "name": "Hao Yan"
+    },
+    {
+      "name": "Petr Šulc"
+    },
+    {
+      "name": "Nicholas Stephanopoulos"
+    }
+  ],
+  "memberIds": [
+    "hao-liu"
+  ],
+  "year": 2023,
+  "venue": "bioRxiv",
+  "kind": "preprint",
+  "recordStatus": "preprint-not-peer-reviewed",
+  "doi": "10.1101/2023.09.18.558353",
+  "url": "https://doi.org/10.1101/2023.09.18.558353",
+  "featured": false,
+  "summary": "An IgG-inspired protein–DNA nanostructure uses multivalency to bind biomolecular targets with high affinity, tunable strength, and reversibility.",
+  "topics": [
+    "biomolecular engineering",
+    "multivalency"
+  ],
+  "provenance": {
+    "canonicalSource": {
+      "label": "bioRxiv DOI record",
+      "url": "https://doi.org/10.1101/2023.09.18.558353"
+    },
+    "sourceCheckedAt": "2026-08-01"
+  },
+  "order": 7
+}

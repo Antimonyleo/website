@@ -10,11 +10,11 @@
  *   node scripts/build-image-variants.mjs          # write variants + manifest
  *   node scripts/build-image-variants.mjs --check  # fail if either is stale
  *
- * Variants are committed rather than generated during the build so the deploy
- * workflow stays a plain `astro build`.
+ * npm build/dev prepare images automatically. Existing WebP variants stay
+ * supported; new CMS uploads get disposable, content-hashed web copies.
  */
 import { createHash } from "node:crypto";
-import { readdir, readFile, writeFile } from "node:fs/promises";
+import { readdir, readFile, writeFile, mkdir } from "node:fs/promises";
 import { existsSync } from "node:fs";
 import { basename, dirname, extname, join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -39,7 +39,7 @@ async function* walk(dir) {
   for (const entry of await readdir(dir, { withFileTypes: true })) {
     const full = join(dir, entry.name);
     if (entry.isDirectory()) yield* walk(full);
-    else if (entry.isFile() && extname(entry.name) === ".webp") yield full;
+    else if (entry.isFile() && /\.(?:webp|png|jpe?g|avif|tiff?)$/i.test(entry.name)) yield full;
   }
 }
 
@@ -59,6 +59,32 @@ try {
 
 for await (const file of walk(imagesDir)) {
   if (VARIANT_PATTERN.test(file)) continue;
+  if (file.startsWith(join(imagesDir, "processed") + "/")) continue;
+
+  // CMS originals stay untouched. Content-hashed browser copies are disposable;
+  // a normal build handles orientation, dimensions, format and responsive sizes.
+  if (extname(file).toLowerCase() !== ".webp" || file.startsWith(join(imagesDir, "uploads") + "/")) {
+    const bytes = await readFile(file);
+    const hash = createHash("sha256").update(bytes).update("cms-images-v1").digest("hex").slice(0, 20);
+    const key = relative(join(root, "public"), file).split(/[\\/]/).join("/");
+    const { width, height, orientation } = await sharp(bytes).metadata();
+    const rotated = orientation && orientation >= 5;
+    const naturalWidth = rotated ? height : width;
+    if (!naturalWidth) throw new Error(`Cannot read image dimensions: ${key}`);
+    const widths = [...new Set([600, 900, 1600].map((w) => Math.min(w, naturalWidth)))];
+    manifest[key] = [];
+    if (!check) await mkdir(join(imagesDir, "processed"), { recursive: true });
+    for (const target of widths) {
+      const src = `images/processed/${hash}.w${target}.webp`;
+      const out = join(root, "public", src);
+      if (!existsSync(out)) {
+        if (check) { console.error(`missing CMS image: ${src}`); process.exitCode = 1; }
+        else { await sharp(bytes).rotate().resize({ width: target }).webp(WEBP_OPTIONS).toFile(out); written.push(src); }
+      }
+      manifest[key].push({ src, width: target });
+    }
+    continue;
+  }
 
   const image = sharp(file);
   const { width } = await image.metadata();

@@ -1,7 +1,7 @@
 ---
 import type { NewsItem } from "../lib/news";
 import { formatNewsDate } from "../lib/news";
-import { srcSetFor } from "../lib/images";
+import { imageAttributes } from "../lib/images";
 import { withBase } from "../lib/urls";
 
 interface Props extends NewsItem {}
@@ -11,13 +11,10 @@ const postUrl = withBase(`news/${post.id}/`);
 const newsFigure = post.data.figures?.[0];
 const image = newsFigure ?? publication?.data.image;
 const imageSrc = image?.src.replace(/^\/+/, "");
-/*
-  The venue kind, not a review verdict. "Preprint" and "Commentary" describe
-  where the work sits; a published research article needs no badge, so it gets
-  none rather than a "Peer reviewed" stamp.
-*/
 const publicationStatus =
-  publication?.data.recordStatus === "preprint-not-peer-reviewed"
+  publication?.data.acceptedIn
+    ? `Accepted in ${publication.data.acceptedIn}`
+    : publication?.data.recordStatus === "preprint-not-peer-reviewed"
     ? "Preprint"
     : publication?.data.recordStatus === "editorial"
       ? "Commentary"
@@ -29,12 +26,9 @@ const publicationStatus =
     image && imageSrc && (
       <a class="news-card-figure" href={postUrl} tabindex="-1" aria-hidden="true">
         <img
-          src={withBase(imageSrc)}
-          srcset={srcSetFor(imageSrc)}
+          {...await imageAttributes(imageSrc)}
           sizes="(max-width: 640px) calc(100vw - 40px), (max-width: 900px) 220px, 190px"
           alt=""
-          width="900"
-          height="600"
           decoding="async"
           loading="lazy"
         />

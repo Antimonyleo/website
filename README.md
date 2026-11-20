@@ -5,9 +5,11 @@ and contact details.
 
 **Live site:** https://antimonyleo.github.io/website/
 
-It is a small static site — no database, no CMS, no tracking. The content lives
-in a few data files and the pages are generated from them by
-[Astro](https://astro.build). Pushing to `main` rebuilds and republishes it.
+It is a small static site with no runtime database or tracking. The content
+lives in data files and Markdown, rendered by [Astro](https://astro.build).
+The GitHub-backed browser editor and activation steps are described in
+[CONTENT.md](CONTENT.md). Pushes validate changes; publishing is a separate,
+manually triggered workflow after approval.
 
 How I update it day to day is in [CONTENT.md](CONTENT.md). The choices behind how
 it is put together are recorded in [DECISIONS.md](DECISIONS.md).
@@ -17,18 +19,17 @@ it is put together are recorded in [DECISIONS.md](DECISIONS.md).
 ## Using this as a template for your own site
 
 You are welcome to fork this and make it yours. The design is deliberately quiet
-— one accent colour, two typefaces, no animation — so it should suit most
+— one accent colour, one typeface, no animation — so it should suit most
 researchers without much fiddling.
 
-The two typefaces ([Source Serif 4](https://github.com/adobe-fonts/source-serif)
-and [Archivo](https://github.com/Omnibus-Type/Archivo)) are self-hosted in
-`src/assets/fonts/`, so the site makes no third-party requests. Both are under
-the SIL Open Font License; the licences sit beside them. Swap them by replacing
-the files and the `@font-face` blocks at the top of `src/styles/global.css`.
+The active typeface, [Archivo](https://github.com/Omnibus-Type/Archivo), is
+self-hosted in `src/assets/fonts/` under the SIL Open Font License; its licence
+sits beside it. Update the font and its `@font-face` block in
+`src/styles/global.css` together.
 
 ### 1. Get it running
 
-You need [Node.js](https://nodejs.org) 20 or newer.
+Use [Node.js](https://nodejs.org) 24, matching the CI configuration.
 
 ```bash
 git clone https://github.com/Antimonyleo/website.git my-website
@@ -52,22 +53,23 @@ If you publish at `https://YOUR-USERNAME.github.io` itself, set `base: "/"`.
 
 ### 3. Replace the content
 
-Almost everything you need to change is in six places.
+Routine content has seven sources of truth; Pages CMS supplies forms for all of them.
 
 | What | File |
 | --- | --- |
-| Site name, page title, description | `src/config.ts` |
+| Site/search/contact copy | `src/data/site.json` |
 | Your name, role, affiliation, bio, links | `src/content/people/hao-liu.md` |
 | Appointments, education, talks | `src/content/experience/hao-liu.md` |
 | News posts | `src/content/news/*.md` |
-| Publications | `src/data/publications.json` |
-| Research sections and figures | `src/data/research.ts` |
+| Publications | `src/content/publications/*.json` |
+| Research page | `src/data/research.json` |
+| Research figure library | `src/content/figures/*.json` |
 
 Rename both files in `src/content/` to your own slug (for example
 `jane-doe.md`), then update the two places that look them up by name:
 `src/lib/person.ts` and `src/pages/experience/index.astro`.
 
-Put your photo and figures in `public/images/`.
+Use the image picker to upload a photo or figure. The build detects dimensions and generates responsive web copies automatically.
 
 ### 4. Adding a publication
 
@@ -80,20 +82,20 @@ npm run add-pub -- 10.1126/science.adl5549
 
 It fills in the title, journal, year, page numbers, and the full author list,
 and files the entry in the right place. You then write the one-sentence summary
-yourself, and run `npm run build` to check it.
+yourself, and run `npm test` to check it.
 
 ### 5. Publish it
 
-Push to `main`, then in your repository go to **Settings → Pages** and set
-**Source** to **GitHub Actions**. The included workflow builds and publishes on
-every push. This only has to be done once — until it is, the deploy step fails
-with a 404.
+In **Settings → Pages**, set **Source** to **GitHub Actions** once. Review the
+changes and passing checks, then, with approval, use **Actions → Validate and
+publish website → Run workflow** on **main**. Pushes to `main` and `content/**`,
+and pull requests to `main`, run checks without deployment. CMS setup and a
+review-branch editing exercise are in [CONTENT.md](CONTENT.md#one-time-activation-owner).
 
 ### A note on the checks
 
 `npm test` runs a validation script that is specific to *my* site. It asserts
-things like my email address, my publication IDs, and particular wording, so it
-will fail on your content. That is expected.
+the public base URL, personal-site/privacy rules and metadata consistency. Adapt those policies for your fork; publication counts and research text are data-driven.
 
 For your own fork use:
 

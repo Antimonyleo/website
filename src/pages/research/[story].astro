@@ -1,0 +1,38 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ResearchStory from "../../components/ResearchStory.astro";
+import { researchScaleGroups, type ResearchScaleGroup, type ResearchStoryData } from "../../data/research";
+import { getPublicPerson } from "../../lib/person";
+import { withBase } from "../../lib/urls";
+
+export function getStaticPaths() {
+  return researchScaleGroups.flatMap((group) => group.story ? [{
+    params: { story: group.story.id },
+    props: { group, story: group.story },
+  }] : []);
+}
+
+interface Props {
+  group: ResearchScaleGroup;
+  story: ResearchStoryData;
+}
+
+const { group, story } = Astro.props;
+const person = await getPublicPerson();
+const publications = await getCollection("publications");
+const publicationsById = new Map(publications.map((publication) => [publication.id, publication]));
+---
+
+<BaseLayout title={`${story.title} — ${person.name}`} description={story.description} pageClass="research-story-page">
+  <header class="page-intro shell">
+    <a class="research-story-back" href={withBase(`research/#${group.id}`)}>
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5m6-6-6 6 6 6" />
+      </svg>
+      {group.label}
+    </a>
+    <h1 id="research-story-title">{story.title}</h1>
+  </header>
+  <ResearchStory story={story} publicationsById={publicationsById} />
+</BaseLayout>

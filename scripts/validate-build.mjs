@@ -1,73 +1,27 @@
 import { access, readFile, readdir } from "node:fs/promises";
 import { extname, join, relative, resolve, sep } from "node:path";
+import { loadResearchSource } from "./lib/research-source.mjs";
+import { readPublications, referenceId } from "../src/lib/content-source.ts";
+import { parse as parseYaml } from "yaml";
 
 const rootDir = resolve(".");
 const distDir = resolve("dist");
 const sourceDirs = [resolve("src"), resolve("public")];
-const publicationsFile = resolve("src/data/publications.json");
 const basePath = "/website/";
 const publicOrigin = "https://antimonyleo.github.io";
 const publicBase = `${publicOrigin}${basePath}`;
 const doiPattern = /^10\.\d{4,9}\/[-._;()/:A-Z0-9]+$/i;
 const isoDatePattern = /^\d{4}-\d{2}-\d{2}$/;
-const knownPublicationTitle =
-  "Inverse design of a pyrochlore lattice of DNA origami through model-driven experiments";
-const correctionDoi = "10.1038/s41557-020-00611-z";
-const publicationBibFile = resolve(
-  "dist/publications/hao-liu-publications.bib",
-);
-const expectedResearchStories = new Map([
-  ["tetrahedral-lattices-2026", "programmable-assembly"],
-  ["polycubes-2025", "programmable-assembly"],
-  ["pyrochlore-2024", "programmable-assembly"],
-  ["dna-origami-tessellations-2023", "programmable-assembly"],
-  ["rna-strand-displacement-2021", "rna-strand-displacement"],
-]);
-const expectedFeaturedSignificance = new Map([
-  [
-    "pyrochlore-2024",
-    "It demonstrates a model-driven route for carrying designed particle-interaction rules into the experimental realization of a complex three-dimensional DNA-origami lattice.",
-  ],
-  [
-    "tetrahedral-lattices-2026",
-    "It shows that changing only the programmed vertex interactions of one DNA-origami tetrahedron can select distinct open crystal topologies without redesigning the scaffold itself.",
-  ],
-  [
-    "polycubes-2025",
-    "It provides an inverse-design route to finite objects and extended lattices using a minimal target-specific set of DNA-origami cube types while explicitly avoiding competing assemblies.",
-  ],
-  [
-    "rna-strand-displacement-2021",
-    "It supplies experimentally grounded design guidance for tuning RNA:RNA strand-displacement kinetics through toehold length, substrate-end placement, and mismatch position.",
-  ],
-]);
-const approvedContributions = new Map([
-  [
-    "tetrahedral-lattices-2026",
-    new Map([
-      ["Hao Liu", ["corresponding-author"]],
-      ["John Russo", ["corresponding-author"]],
-      ["Petr Šulc", ["corresponding-author"]],
-    ]),
-  ],
-  [
-    "polycubes-2025",
-    new Map([
-      ["Thong Diep", ["equal-contribution"]],
-      ["Hao Liu", ["equal-contribution", "corresponding-author"]],
-      ["Hao Yan", ["corresponding-author"]],
-      ["Petr Šulc", ["corresponding-author"]],
-    ]),
-  ],
-]);
-const scholarUrl =
-  "https://scholar.google.com/citations?hl=en&user=Yo-IDJwAAAAJ&view_op=list_works&sortby=pubdate";
-const publicEmail = "leoliuh127@gmail.com";
+const publicationBibFile = resolve("dist/publications/hao-liu-publications.bib");
+const identitySource = await readFile(resolve("src/content/people/hao-liu.md"), "utf8");
+const publicIdentity = parseYaml(identitySource.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/)?.[1] ?? "");
+const scholarUrl = publicIdentity.scholar;
+const publicEmail = publicIdentity.email;
 const errors = [];
 const warnings = [];
 let sourcePublications = [];
-let sourceResearchFigureIds = [];
 let sourceResearchGroups = [];
+let sourceOverviewFigureId;
 const defaultPrivateGuardFile = resolve("files/site-private-guard-terms.txt");
 
 const expectedRoutes = new Map([
@@ -374,223 +328,29 @@ function researchFigures(html) {
   )].map((match) => match[0]);
 }
 
+function validateResearchFigureSelection(html, expected, label) {
+  const rendered = researchFigures(html);
+  const ids = rendered.map((figure) => attribute(figure.match(/<figure\b[^>]*>/i)?.[0] ?? "", "data-research-figure"));
+  if (JSON.stringify([...ids].sort()) !== JSON.stringify([...expected].sort())) {
+    report(`${label}: figures must match the selections in the editor`);
+  }
+  for (const figure of rendered) {
+    if (!/<figcaption\b/i.test(figure) || !/<img\b[^>]*\balt=(?:"[^"]+"|'[^']+')/i.test(figure)) {
+      report(`${label}: every figure needs a caption and image description`);
+    }
+  }
+}
+
 function validateResearchFigures(researchHtml) {
-  const figures = researchFigures(researchHtml);
-  const expectedFigureSources = new Map([
-    ["polycubes-public-evidence", "10.26434/chemrxiv-2025-qbk3f"],
-    ["pyrochlore-published-evidence", "10.1126/science.adl5549"],
-    ["hexagonal-diamond-public-evidence", "10.26434/chemrxiv.15004426/v1"],
-    ["meteor-crater-field-photo", "Photo by Hao Liu"],
-    ["canyon-diablo-specimen", "Photo by Hao Liu"],
-  ]);
-  const figuresById = new Map();
-  for (const [index, figure] of figures.entries()) {
-    const opening = figure.match(/<figure\b[^>]*>/i)?.[0] ?? "";
-    const figureId = attribute(opening, "data-research-figure");
-    if (!figureId) {
-      report(`research figure ${index + 1}: data-research-figure needs a stable value`);
-    } else {
-      if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(figureId)) {
-        report(
-          `research figure ${figureId}: data-research-figure must be a local kebab-case ID`,
-        );
+  validateResearchFigureSelection(researchHtml, [...(sourceOverviewFigureId ? [sourceOverviewFigureId] : []), ...sourceResearchGroups.flatMap((group) => group.figureIds ?? [])], "research page");
+  for (const group of sourceResearchGroups) {
+    for (const reference of group.publications ?? []) {
+      const record = sourcePublications.find((paper) => paper.id === reference.publicationId);
+      const work = researchHtml.match(new RegExp('<article\\b[^>]*data-assembly-work="' + escapeRegExp(reference.publicationId) + '"[^>]*>[\\s\\S]*?<\\/article>'))?.[0] ?? "";
+      if (!record || !decodeHtml(work).includes(record.title)) {
+        report("research page: missing configured paper for " + reference.publicationId);
       }
-      const occurrences = figuresById.get(figureId) ?? [];
-      occurrences.push(figure);
-      figuresById.set(figureId, occurrences);
-    }
-    if (!/<figcaption\b/i.test(figure)) {
-      report(`research figure ${figureId ?? index + 1}: missing figcaption`);
-    }
-    const hasTextAlternative =
-      /\bdata-figure-description(?:=|\s|>)/i.test(figure) ||
-      /<img\b[^>]*\balt=(?:"[^"]+"|'[^']+')/i.test(figure) ||
-      /<svg\b[^>]*(?:\baria-label=(?:"[^"]+"|'[^']+')|\baria-labelledby=(?:"[^"]+"|'[^']+'))/i.test(
-        figure,
-      );
-    if (!hasTextAlternative) {
-      report(
-        `research figure ${figureId ?? index + 1}: missing a non-empty text alternative`,
-      );
-    }
-  }
-
-  for (const [figureId, occurrences] of figuresById) {
-    if (occurrences.length !== 1) {
-      report(
-        `research page: data-research-figure="${figureId}" must occur exactly once`,
-      );
-    }
-  }
-
-  const uniqueFigureIds = new Set(figuresById.keys());
-  if (
-    sourceResearchFigureIds.length > 0 &&
-    (uniqueFigureIds.size !== sourceResearchFigureIds.length ||
-      sourceResearchFigureIds.some((id) => !uniqueFigureIds.has(id)))
-  ) {
-    report(
-      "research page: rendered figure ids must match src/data/research.ts",
-    );
-  }
-  if (
-    uniqueFigureIds.size !== expectedFigureSources.size ||
-    [...expectedFigureSources.keys()].some((id) => !uniqueFigureIds.has(id))
-  ) {
-    advise(
-      `Design audit: the Research page changed from the approved evidence/field figure set; found ${[
-        ...uniqueFigureIds,
-      ].join(", ") || "none"}`,
-    );
-  }
-
-  const visibleResearch = decodeHtml(visibleHtml(researchHtml));
-  if (!visibleResearch.includes("10.1021/acssynbio.1c00336")) {
-    report("research page: strand-displacement source DOI is missing");
-  }
-  for (const term of [
-    "toehold length",
-    "substrate-end placement",
-    "mismatch position",
-    "RNA:DNA",
-  ]) {
-    if (!visibleResearch.toLowerCase().includes(term.toLowerCase())) {
-      report(`research page: missing tested strand-displacement variable “${term}”`);
-    }
-  }
-
-  for (const [figureId, sourceMarker] of expectedFigureSources) {
-    const figure = figuresById.get(figureId)?.[0];
-    if (!figure) {
-      continue;
-    }
-    if (!decodeHtml(figure).includes(sourceMarker)) {
-      report(`${figureId}: approved source marker is missing`);
-    }
-    if (!/<img\b[^>]*\balt=(?:"[^"]+"|'[^']+')/i.test(figure)) {
-      report(`${figureId}: figure needs descriptive alt text`);
-    }
-  }
-
-  const chapterIds = [
-    ...researchHtml.matchAll(
-      /\bdata-research-chapter=(?:"([^"]+)"|'([^']+)')/gi,
-    ),
-  ].map((match) => match[1] ?? match[2]);
-  const expectedChapterIds = [
-    "programmable-assembly",
-    "rna-strand-displacement",
-  ];
-  if (
-    chapterIds.length !== expectedChapterIds.length ||
-    expectedChapterIds.some((id, index) => chapterIds[index] !== id)
-  ) {
-    report(
-      `research page: assembly must lead the two research chapters; found ${chapterIds.join(", ") || "none"}`,
-    );
-  }
-
-  const excludedResearchTopics = [
-    "excitonic",
-    "light harvesting",
-    "synthetic antibody",
-  ];
-  for (const term of excludedResearchTopics) {
-    if (visibleResearch.toLowerCase().includes(term)) {
-      report(`research page: “${term}” must remain off the focused research-program page`);
-    }
-  }
-
-  const assemblyWorkIds = [
-    ...researchHtml.matchAll(
-      /\bdata-assembly-work=(?:"([^"]+)"|'([^']+)')/gi,
-    ),
-  ].map((match) => match[1] ?? match[2]);
-  const expectedAssemblyWorkIds = [
-    "pyrochlore-2024",
-    "polycubes-2025",
-    "tetrahedral-lattices-2026",
-  ];
-  if (
-    assemblyWorkIds.length !== expectedAssemblyWorkIds.length ||
-    expectedAssemblyWorkIds.some((id) => !assemblyWorkIds.includes(id))
-  ) {
-    report(
-      `research page: expected the three primary-author assembly papers; found ${assemblyWorkIds.join(", ") || "none"}`,
-    );
-  }
-  if (visibleResearch.includes("DNA Origami Tessellations")) {
-    report("research page: the secondary-author tessellation paper belongs in Publications, not the focused research narrative");
-  }
-  /*
-    Review-status wording was removed from the interface at the author's
-    request. Unpublished work must still be identifiable, so the guard now
-    checks for the venue fact — "Preprint" — instead of a review verdict.
-  */
-  if (countMatches(researchHtml, /\bPreprint\b/gi) < 2) {
-    report("research page: both assembly preprints need a visible preprint label");
-  }
-
-  const collaborativeWorkIds = [
-    ...researchHtml.matchAll(
-      /\bdata-collaborative-work=(?:"([^"]+)"|'([^']+)')/gi,
-    ),
-  ].map((match) => match[1] ?? match[2]);
-  const expectedCollaborativeWorkIds = [
-    "meta-dna-2020",
-    "hairygami-2024",
-    "finite-state-machine-2022",
-  ];
-  if (
-    collaborativeWorkIds.length !== expectedCollaborativeWorkIds.length ||
-    expectedCollaborativeWorkIds.some(
-      (id) => !collaborativeWorkIds.includes(id),
-    )
-  ) {
-    report(
-      `research page: collaborative experience labels are incomplete; found ${collaborativeWorkIds.join(", ") || "none"}`,
-    );
-  }
-
-  for (const id of approvedContributions.keys()) {
-    const publication = sourcePublications.find((item) => item.id === id);
-    const haoAuthor = publication?.authors?.find((author) => author.memberId === "hao-liu");
-    const haoRoles = new Set(
-      (haoAuthor?.contributions ?? []).map((contribution) => contribution.role),
-    );
-    const authorshipLabel = haoRoles.has("equal-contribution")
-      ? "Co-first and co-corresponding author"
-      : "First and co-corresponding author";
-    const escapedId = id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const work = researchHtml.match(
-      new RegExp(
-        `<article\\b[^>]*\\bdata-assembly-work=(?:"${escapedId}"|'${escapedId}')[^>]*>[\\s\\S]*?<\\/article>`,
-        "i",
-      ),
-    )?.[0];
-    if (
-      !work ||
-      !decodeHtml(work).includes(authorshipLabel) ||
-      (publication?.manuscriptStatus &&
-        !decodeHtml(work)
-          .toLowerCase()
-          .includes(publication.manuscriptStatus.toLowerCase()))
-    ) {
-      report(`${id}: Research page is missing the approved authorship or manuscript status`);
-    }
-  }
-
-  // The research page must still name the design-through-experiment chain.
-  // Wording may evolve; these are the load-bearing methods, not fixed phrasing.
-  for (const term of [
-    "negative design",
-    "patchy-particle",
-    "DNA origami",
-    "scattering",
-    "microscopy",
-  ]) {
-    if (!visibleResearch.toLowerCase().includes(term.toLowerCase())) {
-      report(`research page: methods narrative is missing “${term}”`);
+      if (record?.kind === "preprint" && !/preprint/i.test(work)) report(reference.publicationId + ": missing preprint label");
     }
   }
 }
@@ -613,116 +373,21 @@ function validateResearchPublicationReferences(researchHtml) {
 }
 
 async function validateResearchSource() {
-  const researchFile = resolve("src/data/research.ts");
-  if (!(await exists(researchFile))) {
-    report("research source is missing: src/data/research.ts");
-    return;
-  }
-
-  let research;
-  try {
-    research = await import(new URL("../src/data/research.ts", import.meta.url));
-  } catch (error) {
-    report(`research source could not be loaded (${error.message})`);
-    return;
-  }
-
-  const figures =
-    research.researchFigures &&
-    typeof research.researchFigures === "object"
-      ? Object.entries(research.researchFigures)
-      : [];
-  const groups = Array.isArray(research.researchScaleGroups)
-    ? research.researchScaleGroups
-    : [];
-  sourceResearchGroups = groups;
-  if (figures.length === 0) {
-    report("research source: researchFigures must be a non-empty record");
-  }
-  if (groups.length === 0) {
-    report("research source: researchScaleGroups must be a non-empty array");
-  }
-
   const publicationIds = new Set(
     sourcePublications.map((publication) => publication.id),
   );
-  const figureKeys = new Set(figures.map(([key]) => key));
-  const figureIds = figures.map(([, figure]) => figure?.id);
-  sourceResearchFigureIds = figureIds.filter(
-    (id) => typeof id === "string" && id,
-  );
-
-  for (const [key, figure] of figures) {
-    if (
-      typeof figure?.id !== "string" ||
-      !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(figure.id)
-    ) {
-      report(`research source: figure ${key} needs a local kebab-case id`);
-    }
-    if (
-      figure?.source?.publicationId &&
-      !publicationIds.has(figure.source.publicationId)
-    ) {
-      report(
-        `research source: figure ${key} references missing publication ${figure.source.publicationId}`,
-      );
-    }
-  }
-  if (new Set(sourceResearchFigureIds).size !== sourceResearchFigureIds.length) {
-    report("research source: figure ids must be unique");
-  }
-
-  const groupIds = groups.map((group) => group?.id);
-  if (
-    groupIds.some(
-      (id) =>
-        typeof id !== "string" ||
-        !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id),
-    )
-  ) {
-    report("research source: every research group needs a local kebab-case id");
-  }
-  if (new Set(groupIds).size !== groupIds.length) {
-    report("research source: research group ids must be unique");
-  }
-
-  for (const group of groups) {
-    const referencedFigureKeys = [
-      ...(group?.figureIds ?? []),
-      ...(group?.story?.photoFigureIds ?? []),
-      group?.story?.paperFigureId,
-    ].filter(Boolean);
-    for (const figureKey of referencedFigureKeys) {
-      if (!figureKeys.has(figureKey)) {
-        report(
-          `research source: group ${group?.id ?? "unknown"} references missing figure ${figureKey}`,
-        );
-      }
-    }
-
-    const referencedPublicationIds = [
-      ...(group?.publications ?? []).map((item) => item?.publicationId),
-      ...(group?.collaborations ?? []).map((item) => item?.publicationId),
-    ].filter(Boolean);
-    for (const publicationId of referencedPublicationIds) {
-      if (!publicationIds.has(publicationId)) {
-        report(
-          `research source: group ${group?.id ?? "unknown"} references missing publication ${publicationId}`,
-        );
-      }
-    }
-  }
+  const { groups, overviewFigureId } = await loadResearchSource({
+    report,
+    publicationIds,
+  });
+  sourceResearchGroups = groups;
+  sourceOverviewFigureId = overviewFigureId;
 }
 
 async function validatePublicationSource() {
-  if (!(await exists(publicationsFile))) {
-    report("publication source is missing");
-    return;
-  }
-
   let publications;
   try {
-    publications = JSON.parse(await readFile(publicationsFile, "utf8"));
+    publications = readPublications();
   } catch (error) {
     report(`publication source is not valid JSON (${error.message})`);
     return;
@@ -733,9 +398,6 @@ async function validatePublicationSource() {
     return;
   }
   sourcePublications = publications;
-  if (publications.length === 0) {
-    report("publication source is empty");
-  }
   const ids = publications.map((publication) => publication.id);
   const dois = publications.map((publication) => publication.doi?.toLowerCase());
   if (ids.some((id) => typeof id !== "string" || !id.trim())) {
@@ -750,41 +412,18 @@ async function validatePublicationSource() {
   if (new Set(dois).size !== dois.length) {
     report("publication source: substantive publication DOIs must be unique");
   }
-  const featuredPublications = publications.filter((publication) => publication.featured);
-  if (
-    featuredPublications.some(
-      (publication) => !Number.isInteger(publication.selectedOrder),
-    )
-  ) {
-    report("publication source: every featured record needs an integer selectedOrder");
-  }
-  const selectedOrders = featuredPublications.map(
-    (publication) => publication.selectedOrder,
-  );
-  if (new Set(selectedOrders).size !== selectedOrders.length) {
-    report("publication source: featured selectedOrder values must be unique");
-  }
-  if (
-    publications.some(
-      (publication) => !publication.featured && publication.selectedOrder !== undefined,
-    )
-  ) {
-    report("publication source: non-featured records must not define selectedOrder");
-  }
-  if (!publications.some((publication) => publication.title === knownPublicationTitle)) {
-    report(`publication source: known title is missing: ${knownPublicationTitle}`);
-  }
-  if (publications.some((publication) => publication.doi?.toLowerCase() === correctionDoi)) {
-    report("publication source: Meta-DNA Author Correction must not be a substantive record");
-  }
-  for (let index = 1; index < publications.length; index += 1) {
-    if (publications[index].year > publications[index - 1].year) {
-      report("publication source: records must remain newest to oldest");
-      break;
-    }
-  }
 
+  const correctionDois = new Set(publications.flatMap((paper) => (paper.relatedItems ?? []).map((item) => item.doi.toLowerCase())));
+  if (publications.some((paper) => correctionDois.has(paper.doi.toLowerCase()))) {
+    report("publication source: corrections belong inside their parent, not in the main publication list");
+  }
   for (const publication of publications) {
+    for (const image of [publication.image, ...(publication.figures ?? [])].filter(Boolean)) {
+      const path = resolve("public", image.src.replace(/^[/]+/, ""));
+      if (!path.startsWith(resolve("public/images") + sep) || !(await exists(path))) {
+        report(`${publication.id}: choose an existing public image for this publication`);
+      }
+    }
     const doi = publication.doi;
     if (typeof doi !== "string" || !doiPattern.test(doi)) {
       report(`${publication.id}: DOI syntax is invalid`);
@@ -824,12 +463,19 @@ async function validatePublicationSource() {
         publication.manuscriptStatus === undefined) ||
       (publication.kind === "preprint" &&
         publication.recordStatus === "preprint-not-peer-reviewed" &&
+        publication.acceptedIn === undefined &&
         publication.volumePages === undefined &&
         (publication.manuscriptStatus === undefined ||
-          ["Submitted", "In revision"].includes(publication.manuscriptStatus)));
+          ["Submitted", "In revision"].includes(publication.manuscriptStatus))) ||
+      (publication.kind === "preprint" &&
+        publication.recordStatus === "accepted" &&
+        typeof publication.acceptedIn === "string" &&
+        publication.acceptedIn.trim() &&
+        publication.volumePages === undefined &&
+        publication.manuscriptStatus === undefined);
     if (!validRecordShape) {
       report(
-        `${publication.id}: kind, recordStatus, volumePages, and manuscriptStatus form an inconsistent publication state`,
+        `${publication.id}: kind, recordStatus, volumePages, manuscriptStatus, and acceptedIn form an inconsistent publication state`,
       );
     }
 
@@ -867,11 +513,9 @@ async function validatePublicationSource() {
     if (haoEntries.length !== 1) {
       report(`${publication.id}: expected exactly one structured Hao Liu author entry`);
     }
-    const expectedAuthorContributions = approvedContributions.get(publication.id);
     for (const author of publication.authors) {
       const contributions = author?.contributions ?? [];
       const actualRoles = contributions.map((item) => item.role).sort();
-      const expectedRoles = [...(expectedAuthorContributions?.get(author.name) ?? [])].sort();
       if (new Set(actualRoles).size !== actualRoles.length) {
         report(`${publication.id}: ${author.name} has duplicate contribution roles`);
       }
@@ -886,71 +530,13 @@ async function validatePublicationSource() {
           !expectedBasis ||
           contribution.basis !== expectedBasis ||
           typeof contribution.sourceUrl !== "string" ||
-          !/^https:\/\//.test(contribution.sourceUrl) ||
-          contribution.sourceUrl !== publication.url
+          !/^https:\/\//.test(contribution.sourceUrl)
         ) {
           report(
             `${publication.id}: ${author.name} contribution metadata needs a supported role, matching evidence basis, and public HTTPS source`,
           );
         }
       }
-      if (
-        expectedAuthorContributions &&
-        (actualRoles.length !== expectedRoles.length ||
-          actualRoles.some((role, index) => role !== expectedRoles[index]))
-      ) {
-        report(`${publication.id}: ${author.name} contribution marks do not match the approved public manuscript`);
-      }
-    }
-    for (const authorName of expectedAuthorContributions?.keys() ?? []) {
-      if (!publication.authors.some((author) => author.name === authorName)) {
-        report(`${publication.id}: approved contributing author is missing: ${authorName}`);
-      }
-    }
-
-    const expectedStory = expectedResearchStories.get(publication.id);
-    if (expectedStory) {
-      if (publication.researchStoryId !== expectedStory) {
-        report(
-          `${publication.id}: researchStoryId must be exactly ${expectedStory}`,
-        );
-      }
-    } else if (publication.researchStoryId !== undefined) {
-      report(
-        `${publication.id}: researchStoryId is not approved without an exact on-site evidence story`,
-      );
-    }
-
-    const expectedSignificance = expectedFeaturedSignificance.get(publication.id);
-    if (expectedSignificance) {
-      if (publication.significance !== expectedSignificance) {
-        report(
-          `${publication.id}: featured significance must match the science-reviewed public-evidence wording`,
-        );
-      }
-    } else if (publication.significance !== undefined) {
-      report(
-        `${publication.id}: significance copy requires an explicit science review`,
-      );
-    }
-  }
-
-  const metaDna = publications.find((publication) => publication.id === "meta-dna-2020");
-  if (!metaDna) {
-    report("publication source: Meta-DNA record is missing");
-  } else {
-    const correctionItems = (metaDna.relatedItems ?? []).filter(
-      (item) => item.doi?.toLowerCase() === correctionDoi,
-    );
-    if (correctionItems.length !== 1) {
-      report("publication source: Meta-DNA must nest exactly one Author Correction");
-    } else if (
-      correctionItems[0].relation !== "author-correction" ||
-      correctionItems[0].counted !== false
-    ) {
-      report(
-        "publication source: Meta-DNA Author Correction must use relation=author-correction and counted=false",
-      );
     }
   }
 }
@@ -1123,13 +709,18 @@ async function validateCssOverflowGuards() {
   if (/fonts\.(?:googleapis|gstatic)\.com|use\.typekit|fonts\.bunny\.net/i.test(css)) {
     report("CSS privacy guard: fonts must be self-hosted, not loaded from a third party");
   }
-  for (const family of ["Source Serif 4", "Archivo"]) {
-    if (!new RegExp(`@font-face[^}]*font-family:\\s*"${family}"`, "is").test(css)) {
-      report(`CSS typography guard: the self-hosted ${family} @font-face rule is missing`);
-    }
+  /*
+    One self-hosted face, since the 2026-09 compact visual system retired the
+    serif/sans pairing. What this guard protects is unchanged in substance —
+    the type system is deliberate and ships with the site — so it still
+    requires the face to be declared locally and the tokens to exist; it no
+    longer requires a second family the design does not use.
+  */
+  if (!/@font-face[^}]*font-family:\s*"Archivo"/is.test(css)) {
+    report("CSS typography guard: the self-hosted Archivo @font-face rule is missing");
   }
   if (!/--serif\s*:/.test(css) || !/--sans\s*:/.test(css)) {
-    report("CSS typography guard: the serif/sans pairing tokens are missing");
+    report("CSS typography guard: the type-voice tokens are missing");
   }
   if (/\bInter\b|font-weight\s*:\s*720\b/i.test(css)) {
     advise("Design audit: Inter or a 720 weight appears in the current type system");
@@ -1306,8 +897,7 @@ if (/\bclass=(?:"[^"]*\bselected-publication\b[^"]*"|'[^']*\bselected-publicatio
   list above; a count adds nothing but a false alarm.
 */
 for (const group of sourceResearchGroups) {
-  const figureCount =
-    (group?.figureIds?.length ?? 0) + (group?.story?.photoFigureIds?.length ?? 0);
+  const figureCount = group?.figureIds?.length ?? 0;
   if ((group?.publications?.length ?? 0) > 0 && figureCount === 0) {
     advise(
       `Design audit: research group “${group?.id ?? "unknown"}” cites ${group.publications.length} paper(s) but shows no figure`,
@@ -1322,11 +912,11 @@ const renderedStoryPreviews = [
 ].map((match) => match[1] ?? match[2]);
 const expectedHomePrimaryPublicationIds = sourcePublications
   .filter((record) => record.featured)
-  .sort((a, b) => (a.selectedOrder ?? 0) - (b.selectedOrder ?? 0))
+  .sort((a, b) => (a.selectedOrder ?? 9999) - (b.selectedOrder ?? 9999) || b.year - a.year || (a.order ?? 9999) - (b.order ?? 9999) || a.id.localeCompare(b.id))
   .map((record) => record.id);
 if (renderedStoryPreviews.length !== 0) {
   report(
-    `index.html: detailed research-story previews must remain on the Research page; found ${renderedStoryPreviews.join(", ")}`,
+    `index.html: detailed research-story previews must remain off the concise homepage; found ${renderedStoryPreviews.join(", ")}`,
   );
 }
 const renderedSelectedPublicationIds = [
@@ -1362,33 +952,27 @@ if (
   )
 ) {
   report(
-    `index.html: homepage papers must match featured/selectedOrder in publications.json (${expectedHomePrimaryPublicationIds.join(", ")}); found ${renderedHomePrimaryPublicationIds.join(", ") || "none"}`,
+    `index.html: homepage papers must match featured/selectedOrder in src/content/publications/ (${expectedHomePrimaryPublicationIds.join(", ")}); found ${renderedHomePrimaryPublicationIds.join(", ") || "none"}`,
   );
 }
 if (countMatches(homeHtml, /\bdata-home-proposition(?:=|\s|>)/gi) !== 1) {
   report("index.html: the homepage research proposition is missing");
 }
-if (decodeHtml(homeHtml).includes("Southern University of Science and Technology")) {
-  report("index.html: early training details belong on the Experience page, not the concise homepage");
-}
 /*
-  The hero must be a complete published plate belonging to a featured paper —
-  the intent is "no decorative cropping, and the image is evidence the reader
-  can go and check", not one particular paper. Naming a single id here meant
-  changing the hero tripped a failure that read like a missing file.
+  A homepage research figure is optional in the minimal layout. When present,
+  its source must still be one of the selected public papers.
 */
 const heroPaperId = [
   ...homeHtml.matchAll(/\bdata-home-hero-paper=(?:"([^"]+)"|'([^']+)')/gi),
 ].map((match) => match[1] ?? match[2]);
-if (heroPaperId.length !== 1) {
-  report("index.html: the hero figure must name exactly one source paper");
-} else if (!expectedHomePrimaryPublicationIds.includes(heroPaperId[0])) {
+if (heroPaperId.length > 1) {
+  report("index.html: the hero figure must name at most one source paper");
+} else if (heroPaperId.length === 1 && !expectedHomePrimaryPublicationIds.includes(heroPaperId[0])) {
   report(
     `index.html: hero paper ${heroPaperId[0]} is not a featured publication`,
   );
 }
 for (const [className, label] of [
-  ["home-hero-figure", "hero research figure"],
   ["home-hero-portrait", "identity portrait"],
 ]) {
   const block = homeHtml.match(
@@ -1405,9 +989,6 @@ const renderedPublicationCount = countMatches(
   publicationsHtml,
   /\bdata-publication-record(?:=|\s|>)/gi,
 );
-if (renderedPublicationCount === 0) {
-  report("publications/index.html: rendered publication collection is empty");
-}
 if (renderedPublicationCount !== sourcePublications.length) {
   report(
     `publications/index.html: expected ${sourcePublications.length} rendered publication records, found ${renderedPublicationCount}`,
@@ -1429,9 +1010,7 @@ if (
 ) {
   report("publications/index.html: records must render once in newest-to-oldest source order");
 }
-if (!decodeHtml(publicationsHtml).includes(knownPublicationTitle)) {
-  report(`publications/index.html: known title is missing: ${knownPublicationTitle}`);
-}
+
 if (
   countMatches(
     publicationsHtml,
@@ -1442,8 +1021,26 @@ if (
     `publications/index.html: expected ${sourcePublications.length} progressive-enhancement copy-citation controls`,
   );
 }
-if (!decodeHtml(publicationsHtml).includes("Download BibTeX")) {
+if (sourcePublications.length > 0 && !decodeHtml(publicationsHtml).includes("Download BibTeX")) {
   report("publications/index.html: BibTeX download action is missing");
+}
+// Authorship roles stay in the content files but are not shown on the site.
+if (/\bdata-authorship-legend\b|\bdata-contribution-author\b|<sup\b/i.test(publicationsHtml)) {
+  report("publications/index.html: authorship marks and their legend are not shown");
+}
+const renderedYears = [...publicationsHtml.matchAll(/data-publication-year="(\d+)"/g)]
+  .map((match) => Number(match[1]));
+const expectedYears = [...new Set(sourcePublications.map((publication) => publication.year))]
+  .sort((a, b) => b - a);
+if (JSON.stringify(renderedYears) !== JSON.stringify(expectedYears)) {
+  report("publications/index.html: visible year groups must follow newest-to-oldest order");
+}
+for (const group of sourceResearchGroups.filter((group) => group.publications.some((reference) =>
+  sourcePublications.some((publication) => publication.featured && publication.id === reference.publicationId),
+))) {
+  if (!homeHtml.includes(`href="${basePath}research/#${group.id}"`)) {
+    report(`index.html: selected work needs its research link for ${group.id}`);
+  }
 }
 for (const publication of sourcePublications) {
   if (typeof publication.id !== "string" || !publication.id) {
@@ -1460,10 +1057,18 @@ for (const publication of sourcePublications) {
     report(`publications/index.html: rendered record is missing for ${publication.id}`);
     continue;
   }
+  const summary = record.match(/<\/h3>\s*<p class="publication-summary">([\s\S]*?)<\/p>/i)?.[1];
+  if (decodeHtml(summary ?? "") !== publication.summary) {
+    report(`${publication.id}: the complete summary must appear immediately below the title`);
+  }
   if (!/<strong\b[^>]*>\s*Hao Liu\s*<\/strong>/i.test(record)) {
     report(`${publication.id}: rendered author list must structurally highlight Hao Liu`);
   }
-  if (publication.recordStatus === "preprint-not-peer-reviewed") {
+  if (publication.acceptedIn) {
+    if (!decodeHtml(record).includes(`Accepted in ${publication.acceptedIn}`) || !/Preprint DOI/.test(record)) {
+      report(`${publication.id}: show confirmed journal acceptance and identify the linked preprint`);
+    }
+  } else if (publication.recordStatus === "preprint-not-peer-reviewed") {
     if (!/\bPreprint\b/i.test(record)) {
       report(`${publication.id}: rendered preprint status is missing`);
     }
@@ -1471,8 +1076,8 @@ for (const publication of sourcePublications) {
     if (!/\b(?:Commentary|News &amp; Views|News & Views)\b/i.test(record)) {
       report(`${publication.id}: rendered editorial/commentary status is missing`);
     }
-  } else if (!/\bResearch article\b/i.test(record)) {
-    report(`${publication.id}: rendered research-article status is missing`);
+  } else if (/\bResearch article\b/i.test(record) || !decodeHtml(record).includes(publication.venue)) {
+    report(`${publication.id}: a research article shows its journal, without a redundant "Research article" label`);
   }
   if (
     publication.manuscriptStatus &&
@@ -1481,65 +1086,10 @@ for (const publication of sourcePublications) {
     report(`${publication.id}: approved manuscript workflow status did not render`);
   }
 
-  const contributingAuthors = publication.authors.filter(
-    (author) => (author.contributions ?? []).length > 0,
-  );
-  const legendCount = countMatches(
-    record,
-    /\bdata-authorship-legend(?:=|\s|>)/gi,
-  );
-  if (contributingAuthors.length > 0) {
-    if (legendCount !== 1) {
-      report(`${publication.id}: expected one accessible authorship legend`);
-    }
-    const decodedRecord = decodeHtml(record);
-    const roles = new Set(
-      contributingAuthors.flatMap((author) =>
-        author.contributions.map((contribution) => contribution.role),
-      ),
-    );
-    if (roles.has("equal-contribution") && !decodedRecord.includes("† Equal contribution")) {
-      report(`${publication.id}: equal-contribution legend is missing`);
-    }
-    if (roles.has("corresponding-author") && !decodedRecord.includes("* Corresponding author")) {
-      report(`${publication.id}: corresponding-author legend is missing`);
-    }
-    for (const author of contributingAuthors) {
-      const escapedName = author.name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-      const expectedRoles = author.contributions.map((item) => item.role).join(" ");
-      const markedAuthor = record.match(
-        new RegExp(
-          `<span\\b[^>]*data-contribution-author=(?:"${escapedName}"|'${escapedName}')[^>]*>[\\s\\S]*?<\\/span>`,
-          "i",
-        ),
-      )?.[0];
-      if (
-        !markedAuthor ||
-        !markedAuthor.includes(`data-contribution-roles="${expectedRoles}"`)
-      ) {
-        report(`${publication.id}: authorship marks are incomplete for ${author.name}`);
-      }
-      for (const contribution of author.contributions) {
-        if (!decodedRecord.includes(contribution.sourceUrl)) {
-          report(`${publication.id}: authorship evidence link is missing for ${author.name}`);
-        }
-      }
-    }
-  } else if (legendCount !== 0) {
-    report(`${publication.id}: unsupported authorship legend rendered`);
-  }
 }
 
-for (const advisor of [
-  {
-    name: "Prof. Petr Šulc",
-    url: "https://search.asu.edu/profile/3160408",
-  },
-  {
-    name: "Prof. Hao Yan",
-    url: "https://search.asu.edu/profile/734863",
-  },
-]) {
+const experienceSource = parseYaml((await readFile(resolve("src/content/experience/hao-liu.md"), "utf8")).split("---")[1]);
+for (const advisor of (experienceSource.appointments ?? []).flatMap((item) => item.advisors ?? [])) {
   const advisorAnchor = decodeHtml(experienceHtml).match(
     new RegExp(
       `<a\\b[^>]*href="${advisor.url.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}"[^>]*>[\\s\\S]*?${advisor.name}[\\s\\S]*?<\\/a>`,
@@ -1551,24 +1101,12 @@ for (const advisor of [
   }
 }
 
-const metaDnaRecord = publicationsHtml.match(
-  /<article\b[^>]*\bdata-publication-id=(?:"meta-dna-2020"|'meta-dna-2020')[^>]*>[\s\S]*?<\/article>/i,
-)?.[0];
-if (!metaDnaRecord) {
-  report("publications/index.html: Meta-DNA publication record is missing");
-} else {
-  if (!/\bdata-related-correction(?:=|\s|>)/i.test(metaDnaRecord)) {
-    report("publications/index.html: Meta-DNA correction must be visibly nested in its record");
-  }
-  if (!metaDnaRecord.toLowerCase().includes(correctionDoi)) {
-    report("publications/index.html: Meta-DNA correction DOI is missing");
-  }
-  if (!/\bAuthor Correction\b/i.test(metaDnaRecord)) {
-    report("publications/index.html: Meta-DNA relationship must be labeled Author Correction");
-  }
+const correctionDois = sourcePublications.flatMap((paper) => (paper.relatedItems ?? []).map((item) => item.doi.toLowerCase()));
+if (countMatches(publicationsHtml, /\bdata-related-correction(?:=|\s|>)/gi) !== correctionDois.length) {
+  report("publications/index.html: corrections must be nested in their parent records");
 }
-if (countMatches(publicationsHtml, /\bdata-related-correction(?:=|\s|>)/gi) !== 1) {
-  report("publications/index.html: expected exactly one related correction");
+for (const doi of correctionDois) if (!publicationsHtml.toLowerCase().includes(doi)) {
+  report("publications/index.html: missing correction DOI: " + doi);
 }
 
 if (!(await exists(publicationBibFile))) {
@@ -1581,7 +1119,7 @@ if (!(await exists(publicationBibFile))) {
       `publications/hao-liu-publications.bib: expected ${sourcePublications.length} entries, found ${entryCount}`,
     );
   }
-  if (bibliography.toLowerCase().includes(correctionDoi)) {
+  if (correctionDois.some((doi) => bibliography.toLowerCase().includes(doi))) {
     report(
       "publications/hao-liu-publications.bib: non-counted Author Correction must remain nested under its parent record",
     );
@@ -1595,9 +1133,9 @@ const publicationJsonLd = jsonLdObjects(
 const itemLists = publicationJsonLd.flatMap((object) =>
   findTypedObjects(object, "ItemList"),
 );
-if (itemLists.length !== 1) {
-  report(`publications/index.html: expected exactly one JSON-LD ItemList, found ${itemLists.length}`);
-} else {
+if (itemLists.length !== Number(sourcePublications.length > 0)) {
+  report("publications/index.html: JSON-LD ItemList must follow the presence of publication entries");
+} else if (itemLists.length) {
   const itemList = itemLists[0];
   if (itemList.numberOfItems !== sourcePublications.length) {
     report(
@@ -1613,12 +1151,12 @@ if (itemLists.length !== 1) {
     );
   } else {
     const structuredTitles = itemList.itemListElement.map((item) => item.name);
-    if (!structuredTitles.includes(knownPublicationTitle)) {
-      report("publications/index.html: known title is missing from JSON-LD ItemList");
+    if (JSON.stringify(structuredTitles) !== JSON.stringify(expectedPublicationOrder.map((id) => sourcePublications.find((paper) => paper.id === id).title))) {
+      report("publications/index.html: JSON-LD titles must match the ordered publication records");
     }
     if (
       itemList.itemListElement.some((item) =>
-        JSON.stringify(item).toLowerCase().includes(correctionDoi),
+        correctionDois.some((doi) => JSON.stringify(item).toLowerCase().includes(doi)),
       )
     ) {
       report("publications/index.html: Author Correction must not be an ItemList entry");
@@ -1640,7 +1178,7 @@ const encodedDomain = Buffer.from(emailDomain, "utf8").toString("base64");
 if (decodedAllHtml.includes(publicEmail)) {
   report(`public contact email is exposed in plain text: ${publicEmail}`);
 }
-for (const route of ["/", "/contact/"]) {
+for (const route of ["index.html", join("contact", "index.html")]) {
   const html = htmlByRoute.get(route);
   if (!html) continue;
   if (!html.includes(`data-email-user="${encodedUser}"`) ||
@@ -1651,10 +1189,10 @@ for (const route of ["/", "/contact/"]) {
 if (!decodedAllHtml.includes(scholarUrl)) {
   report("the exact researcher-supplied Google Scholar URL is missing");
 }
-const scholarAnchor = decodedAllHtml.match(
-  /<a\b[^>]*href="https:\/\/scholar\.google\.com\/citations\?hl=en&user=Yo-IDJwAAAAJ&view_op=list_works&sortby=pubdate"[^>]*>[\s\S]*?<\/a>/i,
-)?.[0];
-if (!scholarAnchor || !/<svg\b/i.test(scholarAnchor)) {
+const scholarAnchors = [...decodedAllHtml.matchAll(
+  /<a\b[^>]*href="([^"]+)"[^>]*>[\s\S]*?<\/a>/gi,
+)].filter((match) => match[1] === scholarUrl);
+if (!scholarAnchors.some((match) => /<svg\b/i.test(match[0]))) {
   report("Google Scholar must be an icon-and-text link using the supplied URL");
 }
 
@@ -1670,6 +1208,24 @@ if (/\bfirst-listed author\b/i.test(visibleAllHtml)) {
 
 validateResearchFigures(researchHtml);
 validateResearchPublicationReferences(researchHtml);
+
+for (const group of sourceResearchGroups.filter((group) => group.story)) {
+  const { story } = group;
+  const route = join("research", story.id, "index.html");
+  const storyHtml = htmlByRoute.get(route);
+  if (!storyHtml) {
+    report(`Research note is missing: ${route}`);
+    continue;
+  }
+  validateResearchFigureSelection(storyHtml, [...(story.photoFigureIds ?? []), story.paperFigureId].filter(Boolean), route);
+  if (!researchHtml.includes(`href="${basePath}research/${story.id}/"`) ||
+      !storyHtml.includes(`href="${basePath}research/#${group.id}"`)) {
+    report(`${route}: the research note and its parent studies need links in both directions`);
+  }
+  if (![story.title, ...story.paragraphs].every((text) => decodeHtml(storyHtml).includes(text))) {
+    report(`${route}: the research note must retain its configured title and full text`);
+  }
+}
 
 const notFoundHtml = htmlByRoute.get("404.html") ?? "";
 const notFoundCanonicalTags = openingTags(notFoundHtml, "link").filter(
@@ -1708,6 +1264,62 @@ if (!(await exists(robotsFile))) {
   }
 }
 
+const newsRssFile = join(distDir, "news", "rss.xml");
+if (!(await exists(newsRssFile))) {
+  report("news/rss.xml is missing");
+} else {
+  const rss = await readFile(newsRssFile, "utf8");
+  const newsSourceDir = resolve("src/content/news");
+  const newsSources = await Promise.all(
+    (await readdir(newsSourceDir).catch((error) => { if (error.code === "ENOENT") return []; throw error; })).filter((name) => name.endsWith(".md"))
+      .map(async (name) => {
+        const source = await readFile(join(newsSourceDir, name), "utf8");
+        const frontmatter = source.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/)?.[1];
+        return { id: name.slice(0, -3), data: parseYaml(frontmatter ?? "") };
+      }),
+  );
+  const publishedNews = newsSources.filter(({ data }) => !data.draft);
+  const newsSourceCount = publishedNews.length;
+  const itemLinks = [...rss.matchAll(/<link>([^<]+)<\/link>/g)].map(
+    (match) => match[1],
+  );
+  // The channel's own <link> is the first match; the rest are per-item.
+  const [channelLink, ...articleLinks] = itemLinks;
+  if (!channelLink?.startsWith(publicBase)) {
+    report(`news/rss.xml channel link must start with ${publicBase}`);
+  }
+  if (articleLinks.length !== newsSourceCount) {
+    report(
+      `news/rss.xml has ${articleLinks.length} item(s) but src/content/news has ${newsSourceCount}`,
+    );
+  }
+  if (articleLinks.some((link) => !link.startsWith(`${publicBase}news/`))) {
+    report("news/rss.xml has an item link missing the public base path");
+  }
+  for (const { id, data } of newsSources) {
+    if (data.publicationId && !sourcePublications.some((paper) => paper.id === referenceId(data.publicationId))) {
+      report(`News ${id}: remove its link to the deleted publication (including drafts)`);
+    }
+    for (const image of data.figures ?? []) {
+      const path = resolve("public", image.src.replace(/^[/]+/, ""));
+      if (!path.startsWith(resolve("public/images") + sep) || !(await exists(path))) report(`News ${id}: choose an existing public image`);
+    }
+    const route = join(distDir, "news", id, "index.html");
+    const inFeed = articleLinks.includes(`${publicBase}news/${id}/`);
+    if (data.draft && ((await exists(route)) || inFeed)) {
+      report(`news/${id}: a draft must not generate a public page or RSS entry`);
+    } else if (!data.draft && (!(await exists(route)) || !inFeed)) {
+      report(`news/${id}: a published update must have a page and RSS entry`);
+    }
+  }
+  const itemTitles = [
+    ...rss.matchAll(/<item>[\s\S]*?<title>([^<]*)<\/title>/g),
+  ].map((match) => match[1].trim());
+  if (itemTitles.length !== articleLinks.length || itemTitles.some((title) => !title)) {
+    report("news/rss.xml has an item with a missing or empty title");
+  }
+}
+
 if (warnings.length > 0) {
   console.warn(
     `Design audit advisory (${warnings.length} item${warnings.length === 1 ? "" : "s"}; non-blocking):`,
@@ -1722,10 +1334,10 @@ if (errors.length > 0) {
   for (const error of errors) {
     console.error(`- ${error}`);
   }
-  process.exit(1);
+  process.exitCode = 1;
 }
 
-console.log(
+if (errors.length === 0) console.log(
   `Build validation passed: ${[
     `${htmlFiles.length} HTML pages`,
     `${sourcePublications.length} source/rendered/JSON-LD publications`,

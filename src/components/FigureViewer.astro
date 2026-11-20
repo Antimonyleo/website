@@ -1,0 +1,103 @@
+---
+import type { CollectionEntry } from "astro:content";
+import type { ResearchFigureData } from "../data/research";
+import { imageAttributes } from "../lib/images";
+import { withBase } from "../lib/urls";
+
+interface Props {
+  figure: ResearchFigureData;
+  publication: CollectionEntry<"publications">;
+  sizes?: string;
+  eager?: boolean;
+}
+
+const {
+  figure,
+  publication,
+  sizes = "(max-width: 640px) calc(100vw - 40px), (max-width: 1100px) 43vw, 458px",
+  eager = true,
+} = Astro.props;
+const attributes = await imageAttributes(figure.src);
+const dialogId = `figure-viewer-${figure.id}`;
+---
+
+<a
+  class="figure-viewer-trigger"
+  href={withBase(figure.src)}
+  target="_blank"
+  rel="noopener noreferrer"
+  data-figure-dialog={dialogId}
+>
+  <img
+    {...attributes}
+    sizes={sizes}
+    alt={figure.alt}
+    loading={eager ? "eager" : "lazy"}
+    decoding="async"
+  />
+  <span class="figure-viewer-action">
+    Enlarge figure<span class="sr-only"> from {publication.data.title}</span>
+    <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M7 17 17 7M7 7h10v10" />
+    </svg>
+  </span>
+</a>
+
+<dialog id={dialogId} class="figure-dialog" aria-labelledby={`${dialogId}-title`}>
+  <div class="figure-dialog-heading">
+    <h2 id={`${dialogId}-title`}>{publication.data.title}</h2>
+    <form method="dialog">
+      <button class="figure-dialog-close" autofocus>
+        Close
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+          <path d="m6 6 12 12M6 18 18 6" />
+        </svg>
+      </button>
+    </form>
+  </div>
+  <figure>
+    <img {...attributes} sizes="(max-width: 700px) 90vw, 1000px" alt={figure.alt} loading="lazy" decoding="async" />
+    <figcaption>
+      <p>{figure.captionLabel && <strong>{figure.captionLabel} </strong>}{figure.caption}</p>
+      {figure.credit && <p>{figure.credit}</p>}
+      <a href={publication.data.url} target="_blank" rel="noopener noreferrer">
+        {publication.data.venue} · {publication.data.year}{figure.source?.locator && ` · ${figure.source.locator}`}
+        <span class="sr-only"> — source paper (opens in a new tab)</span>
+      </a>
+      <a href={withBase(figure.src)} target="_blank" rel="noopener noreferrer">Full-resolution image<span class="sr-only"> (opens in a new tab)</span></a>
+    </figcaption>
+  </figure>
+</dialog>
+
+<script>
+  document.querySelectorAll<HTMLAnchorElement>("[data-figure-dialog]").forEach((trigger) => {
+    const dialog = document.getElementById(trigger.dataset.figureDialog ?? "");
+    if (!(dialog instanceof HTMLDialogElement) || typeof dialog.showModal !== "function") return;
+    trigger.setAttribute("aria-haspopup", "dialog");
+    trigger.addEventListener("click", (event) => {
+      // Preserve ordinary link behavior for modifier clicks and browsers without dialogs.
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      event.preventDefault();
+      dialog.showModal();
+    });
+    dialog.addEventListener("close", () => trigger.focus({ preventScroll: true }));
+    dialog.addEventListener("keydown", (event) => {
+      if (event.key !== "Tab") return;
+      const controls = [...dialog.querySelectorAll<HTMLElement>("button:not([disabled]), a[href]")];
+      const first = controls[0];
+      const last = controls.at(-1);
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last?.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first?.focus();
+      }
+    });
+    dialog.addEventListener("click", (event) => {
+      if (event.target !== dialog) return;
+      const bounds = dialog.getBoundingClientRect();
+      if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) dialog.close();
+    });
+  });
+</script>

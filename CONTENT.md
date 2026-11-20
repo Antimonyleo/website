@@ -1,246 +1,211 @@
-# Content maintenance
+# Managing the website
 
-A practical guide to routine public-site updates. Structural design decisions
-and their rationale are recorded in [DECISIONS.md](DECISIONS.md).
+Use [Pages CMS](https://app.pagescms.org) for browser editing. It saves files to
+GitHub; there is no separate content database or public `/admin` route.
+The configuration is prepared locally. Hosted authorization and a signed-in
+save still need the owner before routine use.
 
-## Sources of truth
+## What the editor covers
 
-| Content | Edit |
-| ------- | ---- |
-| Identity, affiliation, contact, and biography | `src/content/people/hao-liu.md` |
-| News posts | `src/content/news/*.md` |
-| Publications, authorship, and review status | `src/data/publications.json` |
-| Research groups, publication references, and figures | `src/data/research.ts` |
-| Appointments, methods, and presentations | `src/content/experience/hao-liu.md` |
+| Area | What you can manage |
+| --- | --- |
+| Profile and portrait | Name, role, affiliations, biography, contact links; replace or remove the portrait |
+| Website and contact page | Site/search title and description, homepage heading, News/Contact search descriptions |
+| Experience | Add, remove, and reorder appointments, education, presentations, advisors and capabilities; attach figures to timeline entries or presentations |
+| Publications | Add, edit, or delete whole papers, including title, author order, contribution marks, venue, year, type, DOI, summary, homepage selection, figures and corrections |
+| Research page | Introduction, add/remove/reorder themes, supporting papers, figure selections, expandable notes, earlier work and directions |
+| Research figure library | Add, replace or delete figure records with an uploaded image, caption, description, credit and source paper |
+| News | Add, edit or delete updates; date, summary, formatted body, related paper, figures and Draft switch |
 
-Keep facts in these files and render them from components. Do not copy the same
-claim into several pages.
+Profile, site settings and Experience are fixed-page forms. The entries *inside*
+their lists can be added or removed; deleting the essential page files themselves
+is disabled. This is content editing, not a page-layout/code editor. The site
+remains personal; no fictional group members or recruiting sections were added.
 
-## News
+## One-time activation (owner)
 
-### Local editor (recommended)
+1. Review and push the entire migration together: content records, forms,
+   templates, image handling, validation and deployment workflow. Push only
+   with approval. The remote retains its old behavior until these changes land.
+2. Follow the [official setup guide](https://pagescms.org/docs/quick-start/).
+   Sign in with GitHub and install the app for **Antimonyleo/website only**.
+   Do not put credentials in `.pages.yml`.
+3. Create/select a review branch such as `content/trial` from that revision,
+   then open it in Pages CMS. Verify the repository and branch before saving.
+4. Test a no-op save, a new temporary publication with a figure, a linked News
+   update, and removal/undo on that branch. Review the diff and passing checks
+   before adopting the hosted editor. Automatic filename fields may be added
+   to older entries; their existing filenames and public IDs must not change.
 
-Open the repository in Visual Studio Code and install its recommended **Front
-Matter CMS** extension. The shared `frontmatter.json` configuration exposes only
-the News folder and gives every entry the same required headline, date, and
-summary fields, a dropdown of existing publications, and an optional repeatable
-figure form. Git actions are disabled in the editor, so saving changes only
-updates local files.
+Local checks exercise schema compatibility and Astro builds, not a real
+authenticated hosted save. There is no hosted branch-preview URL configured.
+A maintainer currently checks the rendered branch with `npm run dev` at
+`/website/`. Restart the local server after changing figure-library files.
 
-Open the News dashboard with `Alt+D` on Linux/Windows or `Option+D` on macOS.
-Choose **Create content**, select **News**, enter the headline, and complete the
-metadata form. Write the full note in the Markdown editor; its formatting
-buttons cover headings, links, emphasis, quotes, and lists. Select **Start
-server** and **Open preview** to see the actual local News page before
-publishing.
+## Everyday editing
 
-To add a figure, first open the Front Matter **Media** dashboard and drag a WebP
-file into `public/images/news/`, or reuse an approved image already under
-`public/images/publications/` or `public/images/research/`. Then add a
-**Figures** block to the News entry and choose the image. Alt text, caption, and
-credit are required together; add the DOI or canonical public URL when the
-image comes from a paper. The first figure becomes the thumbnail on the News
-listing, while every figure appears with its caption in the full note. A News
-entry may contain at most three figures.
+1. Choose the area and open an entry, or choose **Add** for a publication,
+   figure or News update. Repeated fields have their own add/remove controls.
+2. Type into the labeled fields. Use the formatting toolbar for News text,
+   the date picker for dates and the image picker for uploads.
+3. Select related papers by title and figures by caption. You never need to
+   maintain a separate list of IDs or edit configuration when adding a paper.
+4. Save on the review branch. **Save commits to GitHub; it does not publish.**
+5. Review checks and the rendered pages; merge approved changes.
+6. With publication approval, open GitHub **Actions → Validate and publish
+   website → Run workflow → main**. The checks run again before deployment.
 
-Finish by running `npm run images` after a new upload, then `npm test`, reviewing
-the diff, and committing the entry, source image, responsive variants, and
-image manifest together. The editor accepts WebP only, and the test fails when
-a wide image is missing its responsive copies.
+The new workflow validates pushes and merges without deploying. Publication is
+a separate manual action. GitHub repository access—not hidden fields in the
+editor—is the security boundary.
 
-The editor configuration intentionally does not manage the rest of the
-website. When adding a publication to
-`src/data/publications.json`, also add its stable ID and title to the
-`publicationId` choices in `frontmatter.json`; `npm test` checks that the two
-lists remain synchronized.
-
-### Editing Markdown directly
-
-Each file in `src/content/news/` is one post. The filename becomes the public
-URL, so use a short, lowercase, hyphenated name such as
-`conference-update.md`. The front matter controls the listing; the Markdown
-below it is the post itself:
-
-```md
----
-title: "A short, specific headline"
-date: "2026-08-09"
-summary: "One sentence shown on the Home and News pages."
-publicationId: "tetrahedral-lattices-2026"
-figures:
-  - fieldGroup: "newsFigure"
-    src: "/images/news/open-lattice.webp"
-    alt: "A descriptive account of the visible structure and its important features."
-    caption: "A concise explanation of why this figure supports the news update."
-    credit: "Liu et al., ChemRxiv (2026)"
-    sourceUrl: "https://doi.org/10.26434/chemrxiv.15004426/v1"
----
-
-Write one or more short paragraphs here.
-```
-
-For a paper announcement, set `publicationId` to the stable ID already in
-`src/data/publications.json`. The site then supplies the citation, DOI, image,
-venue, and review status; do not copy those facts into the news front matter.
-For a public update that is not tied to a paper, omit `publicationId`.
-Figures are optional; omit the complete `figures` block when none is needed.
-Never copy an image from `files/` into a News entry.
-
-Without Front Matter CMS, copy a recent file in `src/content/news/`, rename it,
-edit the four fields and body, then commit the change. Keep `date` in
-`YYYY-MM-DD` format and use the date of the public event or announcement. Run
-`npm test` before publishing. Never use news posts for unpublished results or
-material from `files/`.
+To undo an edit or deletion, revert its content commit on the review branch
+and run checks again. Do not reset unrelated work.
 
 ## Publications
 
-- Keep the top-level records newest to oldest and retain each stable `id`.
-- Store the bare DOI in `doi`; set `url` to exactly `https://doi.org/{doi}`.
-- State `recordStatus` explicitly. A preprint remains marked not peer reviewed
-  even when `manuscriptStatus` is `Submitted` or `In revision`.
-- Add contribution labels only when an approved public source supports them.
-- Keep corrections inside the related article with `counted: false`; do not add
-  them as separate publications.
+Enter the title, authors in the public byline order, year, venue, publication
+type, DOI and one accurate summary sentence. Confirm the source-check date.
+Paste either a bare DOI or its full DOI link; the site builds citation links
+and review-status metadata automatically. Years are sorted automatically.
 
-### Editing with autocomplete
+For confirmed journal acceptance before publication, enter the journal in
+**Accepted in**. Keep the public preprint's venue, year, DOI and type until the
+final journal citation exists. The site shows the acceptance and labels the
+link as a preprint; copied citations and BibTeX retain the preprint record with
+an acceptance note. Changing the type to a published article clears this
+interim state automatically.
 
-`src/data/publications.schema.json` describes every field, its allowed values,
-and what it does. `.vscode/settings.json` maps it onto `publications.json`, so
-in VS Code — or in the browser by pressing `.` on the GitHub repo, which opens
-the same editor — you get field autocomplete, dropdowns for enums like
-`recordStatus`, hover documentation, and red underlines on mistakes before you
-ever run a build.
+Use **Show on homepage** to select a paper. **Homepage position** is optional:
+smaller numbers appear first, with year/order/ID used for ties. Turning the
+checkbox off is enough; no hidden field needs clearing. **Order within a year**
+is also optional.
 
-Keep the schema in step with `src/content.config.ts` when fields change. The Zod
-schema is the authority; the JSON Schema exists to make editing comfortable.
+The first homepage paper uses its first matching public paper figure from the
+figure library when available. Its title links to Research; **Inspect image**
+opens the complete caption, source citation and full-resolution image link.
+Without JavaScript it opens the original image directly. The remaining selected
+papers stay compact. Changing the first paper or its figure record updates Home
+automatically.
 
-### Add a publication
+The summary is visible immediately below the title. Optional **Figures** appear
+behind a compact “View figures” disclosure. **Related-news image** is a separate
+optional thumbnail used by announcements; existing thumbnails were preserved.
 
-The fastest route is the generator, which pulls title, venue, year, pages, and
-the full author list from Crossref and inserts the record in the right place:
+Only select equal-contribution/corresponding-author marks when the public
+paper explicitly supports them. Include every coauthor sharing those marks.
+An evidence link can point to a public source; leaving it blank uses the paper
+DOI. Validation cannot decide whether a scientific claim is true: a person
+must check the public source before approving publication.
 
-```bash
-npm run add-pub -- 10.1021/acsnano.4c10796
-npm run add-pub -- 10.26434/chemrxiv-2025-abcde --status "In revision"
-```
+Keep corrections inside the parent paper using **Corrections**, not as separate
+publication entries. When a preprint becomes a journal article, edit the same
+entry: update its type, DOI, venue, year, pages and public authorship evidence.
+The website derives the matching status and omits obsolete submission labels;
+no filename or ID change is needed.
 
-It leaves three things for you: the one-sentence `summary`, any `contributions`
-marks, and `topics`. Then run `npm test`. If Crossref has no record for the DOI,
-or the byline differs from the published version, fall back to the manual steps
-below — the schema is the real gate either way.
+## Figures and uploads
 
-1. Append one complete record to `src/data/publications.json` in newest-to-oldest
-   order. Do not renumber or reuse an existing `id`.
-2. Copy the public author order exactly. Add contribution metadata only from an
-   approved public source.
-3. Set the publication type, review status, DOI URL, provenance source, and
-   `sourceCheckedAt` together.
-4. Reference the stable publication ID from `src/data/research.ts` only when the
-   work supports the public research narrative.
-5. Run `npm test`, then inspect the Publications page at the target viewports.
+Use **Upload or choose image**. PNG, JPEG, WebP, AVIF and TIFF are accepted.
+New uploads get generated names to avoid replacing an unrelated file.
+Existing originals remain intact. The build detects dimensions, honors photo
+orientation, and creates responsive WebP copies automatically; you do not have
+to convert images, enter paths, enter dimensions, or run an image command.
 
-### Promote a preprint to a journal article
+Supply an image description for screen readers, a caption explaining the
+evidence, and credit/source information. Figure-library records can point to a
+paper selected by title. For original photographs, identify the photographer.
 
-Treat this as one atomic update. Do not leave a journal venue paired with a
-preprint warning or an obsolete preprint DOI.
+Research uses the shared figure library. News, publication and Experience
+entries can carry their own figure lists. Remove a figure from its entry to
+stop displaying it. Removing an attachment or figure record does not delete
+its original file, which may still be used elsewhere. Delete an unused original
+separately in Media only after checking its uses.
 
-1. Confirm the final public record and byline from the publisher.
-2. Keep the existing stable `id`; update `kind` and `recordStatus` to their
-   published values.
-3. Remove `manuscriptStatus`.
-4. Update `venue`, `year`, and `volumePages` from the final citation.
-5. Replace `doi` and `url` with the journal DOI and exact `https://doi.org/{doi}`
-   URL.
-6. Recheck author order and every contribution mark against the final article.
-7. Update the canonical provenance label, URL, and `sourceCheckedAt` date.
-8. Review `summary`, `significance`, homepage selection text, and research-page
-   references for language that still describes the work as a preprint.
-9. Run `npm test`; verify that no preprint or manuscript-status label remains
-   beside the journal citation.
+On Research, each selected figure sits beside the paper chosen in its source
+field. Figures without a matching paper stay with their research theme. Full
+captions and credits are available under **Figure notes**, and clicking the
+image opens the original at full size. Field-note photographs appear on the
+note's own page, reached through a one-line link beneath its parent studies.
 
-## Research and figures
+If an entry or image is still referenced elsewhere, remove those references
+first. The checks reject dangling links; they do not silently delete citations
+or change scientific content to make a deletion succeed.
 
-Research groups in `src/data/research.ts` should reference publications by
-their existing `publicationId` fields; they should not duplicate citation
-metadata. Every referenced ID must exist in `src/data/publications.json`.
+The initial implementation supports raster image uploads, not arbitrary
+document/vector uploads. Use only public images with clear reuse permission.
+Do not upload private slides, research material or application documents.
 
-Give each figure a unique, local, kebab-case ID. Keep its image under
-`public/images/` (`public/images/research/` for new research-specific assets)
-and provide descriptive alt text, a concise caption, and a public source or an
-explicit original-photo credit. Preserve the same figure ID in the rendered
-`data-research-figure` attribute so validation can connect source data with the
-built page.
+## News drafts and privacy
 
-Use authentic figures that are already public and approved for reuse. Material
-found in `files/` or in a presentation is not public merely because it appears
-in a slide deck. Match any proposed slide-derived asset to the public paper or
-preprint before copying it into `public/`.
+New News entries start with **Draft** enabled. Drafts are excluded from the
+website, RSS and sitemap. Turn Draft off on the review branch when it is ready
+for rendered-page review; this still does not publish it.
 
-### Publication thumbnails
+**Draft does not mean private.** GitHub files and uploaded media can be public
+before website publication. Never put confidential material in the repository.
 
-Thumbnails in `public/images/publications/` are all **900 × 600 WebP**, one
-legible panel per paper on a white plate with a 26px margin. Crop to a single
-panel — a whole multi-panel journal figure is unreadable at the size it is
-displayed and turns the list into grey noise. If a paper has no usable panel,
-leave `image` off the record entirely: the row renders in a compact text-only
-layout instead of inventing a decorative placeholder.
+## Maintainer reference
 
-Never re-crop a figure that carries a burned-in scale bar unless you know the
-calibration; rescale the existing crop instead, so the bar stays true.
+| Source of truth | Location |
+| --- | --- |
+| Profile | `src/content/people/hao-liu.md` |
+| Experience | `src/content/experience/hao-liu.md` |
+| Publications | `src/content/publications/*.json` |
+| Research figure library | `src/content/figures/*.json` |
+| Research page | `src/data/research.json` |
+| News | `src/content/news/*.md` |
+| Site/contact copy | `src/data/site.json` |
+| Browser forms | `.pages.yml` |
 
-### After adding or replacing any image
+The former publication array was migrated without changing scientific
+metadata. Each paper's filename now supplies its stable ID. New CMS entries
+use automatic filenames; legacy filenames are retained. Reference fields store
+filenames; the site accepts legacy IDs too. `src/lib/content-source.ts`
+normalizes derived publication fields. `src/config.ts` retains navigation and
+exports the editable site settings. `research.ts` is a typed rendering adapter.
 
-```bash
-npm run images
-```
+Replacement saves (`merge: false`) are intentional: clearing an optional image,
+note or list must not merge the old value back in. Every stored field is
+represented in the form; `validate-editor-config.mjs` checks coverage.
+When adding a stored field, add its form definition in the same change.
 
-This writes narrower copies (`name.w600.webp`, `name.w900.webp`) beside every
-image wider than 800px and refreshes `src/data/image-variants.json`, which the
-layouts read to build `srcset`. Commit the variants and the manifest together
-with the image. `npm test` fails if they are missing or stale, because without
-them a phone downloads the full-size file.
+Front Matter remains an optional *local* editor for Markdown content. Its
+obsolete publication/research data forms were retired to avoid two incompatible
+editing interfaces. Pages CMS is the complete non-coding workflow. The local
+DOI helper still works: `npm run add-pub -- <doi>` creates an individual record
+from Crossref; check the byline and write its summary before publication.
 
-## Identity, position, and presentations
+`npm run build` and `npm run dev` prepare images automatically. Generated CMS
+copies live in ignored `public/images/processed/`; the image manifest is rebuilt.
+The older committed WebP variants remain supported.
+Builds force a fresh content sync so deleting the last entry also clears
+Astro's cached collection; empty collections are supported.
 
-Update public identity, biography, affiliation, and contact details in
-`src/content/people/hao-liu.md`. Update appointments, methods, and talks in
-`src/content/experience/hao-liu.md`. A position change normally requires both
-files so the short public identity and detailed experience remain consistent.
+Run `npm test` before release. It covers build/data/privacy integrity, isolated
+content add/edit/delete and rollback exercises, image conversion, draft/reference
+safety, accessibility, performance and 390/834/1440px layouts. Use
+`npm run maintenance` for advisory source-age, preprint-status and DOI reminders;
+`-- --offline` skips network DOI checks.
 
-Maintain `presentations` in `src/content/experience/hao-liu.md`, newest first.
-List only public events and finalized titles. The Experience page intentionally
-shows a concise selection rather than reproducing a CV.
-
-## Verification
-
-Run the complete release gate after content changes:
-
-```bash
-npm test
-```
-
-For local review, run `npm run dev` and open `/website/`. Content validation is
-offline and deterministic; it does not query DOI registries, publication
-indexes, or other network services.
-
-Run the advisory maintenance report periodically and before a larger content
-update:
-
-```bash
-npm run maintenance
-```
-
-It reports old provenance dates, current public preprints that deserve a manual
-status check, and missing local research images. Findings do not fail the
-command; factual review still requires a person and a public source.
+Works can have an optional **Short display title** for Research.
+Keep the exact paper title in **Title** for Home, Publications and accessible citation
+links. Research uses **Significance** as the short explanation beside each
+study, falling back to its summary when empty. Research entries supply the
+verified authorship role. Group order and paper order control the study rows;
+group IDs stay available as link destinations. Earlier work and directions
+appear in expandable rows below the studies. An **Optional linked note** adds
+a one-line hook below its group's studies; **One-line link text** controls the
+hook, and its title, paragraphs, photographs and sources fill a separate page.
+Experience supports appointment highlights, education advisors, and a visible
+methods-and-tools list. Keep highlights factual and supported by the public
+record or the owner's approved CV information.
 
 ## Privacy boundary
 
-- Treat `files/` as private source material.
-- Do not publish or link the current CV, research statements, private figures,
-  unpublished project details, local paths, or target journals.
-- Do not add awards, PI language, group recruiting, or hiring claims without
-  explicit approval.
-- Keep future-research language broad and scoop-safe.
-- Use publisher figures only when reuse rights are clear; otherwise use
-  original or explicitly approved visuals.
+- Treat `files/` as private; never publish/link the current CV, research
+  statements, private figures, unpublished details, local paths or unconfirmed target journals.
+- Keep future research broad and scoop-safe.
+- Use approved public sources for publication status, authorship and scientific claims.
+  The owner may explicitly confirm and authorize an acceptance announcement.
+- Add awards, group/PI claims or recruiting content only with explicit approval.

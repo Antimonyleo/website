@@ -1,0 +1,44 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { researchFigures, type ResearchFigureData, type ResearchStoryData } from "../data/research";
+import ResearchFigure from "./ResearchFigure.astro";
+
+interface Props {
+  story: ResearchStoryData;
+  publicationsById: Map<string, CollectionEntry<"publications">>;
+}
+
+const { story, publicationsById } = Astro.props;
+const sourcePublication = (figure: ResearchFigureData) =>
+  figure.source ? publicationsById.get(figure.source.publicationId) : undefined;
+---
+
+<article class="research-story shell" aria-labelledby="research-story-title">
+  <div class="research-story-layout">
+    <div class="research-story-copy">
+      {story.paragraphs.map((paragraph) => <p>{paragraph}</p>)}
+      <p class="research-story-sources">
+        Historical context:{" "}
+        {story.historicalSources.map((source, index, sources) => (
+          <>
+            {index > 0 && (index === sources.length - 1 ? ", and " : ", ")}
+            <a href={source.href} target="_blank" rel="noopener noreferrer">
+              {source.label}<span class="sr-only"> (opens in a new tab)</span>
+            </a>
+          </>
+        ))}.
+      </p>
+    </div>
+    <div class="research-story-visuals">
+      <div class="research-story-photos">
+        {story.photoFigureIds.map((figureId) => {
+          const figure = researchFigures[figureId];
+          return <ResearchFigure figure={figure} sourcePublication={sourcePublication(figure)} />;
+        })}
+      </div>
+      {story.paperFigureId && (
+        <ResearchFigure figure={researchFigures[story.paperFigureId]} sourcePublication={sourcePublication(researchFigures[story.paperFigureId])} />
+      )}
+    </div>
+  </div>
+</article>

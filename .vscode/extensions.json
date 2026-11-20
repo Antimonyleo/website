@@ -1,6 +1,11 @@
 {
   "recommendations": [
     "astro-build.astro-vscode",
-    "eliostruyf.vscode-front-matter"
+    "eliostruyf.vscode-front-matter",
+    "usernamehw.errorlens",
+    "streetsidesoftware.code-spell-checker",
+    "gruntfuggly.todo-tree",
+    "eamodio.gitlens",
+    "github.vscode-pull-request-github"
   ]
 }

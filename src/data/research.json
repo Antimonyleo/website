@@ -1,0 +1,120 @@
+{
+  "intro": {
+    "title": "Research"
+  },
+  "directions": {
+    "eyebrow": "Directions",
+    "title": "Philosophy and vision",
+    "paragraphs": [
+      "I treat self-assembly as a design problem: start from a target structure and encode it in the interactions between DNA building blocks.",
+      "Longer term, I want to move from structure to function: positioning functional components and carrying DNA-designed geometry into durable materials with optical and transport properties. I also see AI tools, working with simulation and experiment, shortening the design–build–test cycle toward automated laboratory workflows."
+    ],
+    "figureId": "research-method-schematic.json"
+  },
+  "methods": {
+    "title": "Methods and workflow",
+    "paragraphs": [
+      "A design is first tested in coarse-grained simulation to find the competing structures that could also form, then built and characterized in the lab; each experiment feeds back into the next model."
+    ]
+  },
+  "groups": [
+    {
+      "id": "open-crystal-lattices",
+      "index": "01",
+      "label": "Open crystal lattices",
+      "title": "Selecting crystal topology by interaction design",
+      "description": "Computationally designed interactions select the topology of DNA-origami crystals, with structures verified by scattering and microscopy.",
+      "publications": [
+        {
+          "publicationId": "pyrochlore-2024.json",
+          "role": "First author"
+        }
+      ],
+      "figureIds": [
+        "pyrochlore-published-evidence.json"
+      ]
+    },
+    {
+      "id": "finite-assemblies",
+      "index": "02",
+      "label": "Finite 3D assemblies",
+      "title": "Designing objects from programmable cubes",
+      "description": "DNA-origami cubes carry designed interaction rules that direct them into finite 3D objects and extended lattices. Inverse design selects the intended structures while accounting for competing assemblies.",
+      "publications": [
+        {
+          "publicationId": "polycubes-2025.json",
+          "role": "Co-first and co-corresponding author"
+        }
+      ],
+      "collaborations": [
+        {
+          "publicationId": "meta-dna-2020.json",
+          "label": "hierarchical meta-DNA assembly"
+        },
+        {
+          "publicationId": "hairygami-2024.json",
+          "label": "conformational change in DNA nanostructures"
+        }
+      ],
+      "figureIds": [
+        "polycubes-public-evidence.json"
+      ]
+    },
+    {
+      "id": "lattice-selection",
+      "index": "03",
+      "label": "Lattice selection",
+      "title": "One building block, three lattices",
+      "description": "One tetrahedral building block forms cubic diamond, hexagonal diamond, or ice 0 when only its four sticky ends change. Calculations on idealized high-refractive-index versions of these lattices explore their photonic potential.",
+      "publications": [
+        {
+          "publicationId": "tetrahedral-lattices-2026.json",
+          "role": "First and co-corresponding author"
+        }
+      ],
+      "figureIds": [
+        "hexagonal-diamond-public-evidence.json"
+      ],
+      "story": {
+        "id": "hexagonal-diamond-story",
+        "eyebrow": "Field note",
+        "title": "A hexagonal diamond connection",
+        "description": "Hexagonal diamond: from DNA lattices to Meteor Crater",
+        "paragraphs": [
+          "In 1967, a hexagonal polymorph of diamond was described in shock-transformed graphite inclusions from the Canyon Diablo iron meteorite, the body that formed Arizona’s Meteor Crater. Whether those grains are a distinct hexagonal phase or stacking-disordered cubic diamond has been debated, and the interpretation refined, ever since.",
+          "I visited the crater after leading a study that reports selective assembly of the same diamond network at the colloidal scale. The shared problem is polytype selection, not composition: cubic and hexagonal diamond differ only in stacking sequence, which is exactly what makes it hard to show that one has formed rather than the other. The meteoritic case is a long-running example of that difficulty in shock-transformed carbon; the laboratory crystal is assembled from DNA-origami tetrahedra, where the stacking is set by design and read out by scattering."
+        ],
+        "photoFigureIds": [
+          "meteor-crater-field-photo.json",
+          "canyon-diablo-specimen.json"
+        ],
+        "historicalSources": [
+          {
+            "label": "Frondel & Marvin, Nature 1967",
+            "href": "https://doi.org/10.1038/214587a0"
+          },
+          {
+            "label": "Hanneman et al., Science 1967",
+            "href": "https://doi.org/10.1126/science.155.3765.995"
+          },
+          {
+            "label": "Németh et al., Phil. Trans. R. Soc. A 2023",
+            "href": "https://doi.org/10.1098/rsta.2022.0344"
+          }
+        ]
+      }
+    }
+  ],
+  "foundations": {
+    "eyebrow": "Earlier work",
+    "title": "Molecular programming foundations",
+    "paragraphs": [
+      "Work on RNA and RNA:DNA strand displacement tested how toehold length, substrate-end placement, and mismatch position affect reaction kinetics. It established an experimental foundation for reasoning about sequence, dynamics, and off-target behavior.",
+      "I also contributed to a localized DNA reaction network that implemented state transitions with temporal resolution."
+    ],
+    "publicationIds": [
+      "rna-strand-displacement-2021.json",
+      "finite-state-machine-2022.json"
+    ]
+  }
+}

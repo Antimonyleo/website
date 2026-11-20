@@ -1,17 +1,22 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Publications",
-  "description": "Public publication record. Mirrors the Zod schema in src/content.config.ts — npm test is the authority; this file exists to give editors autocomplete and inline validation.",
-  "type": "array",
-  "items": { "$ref": "#/definitions/publication" },
+  "title": "Publication entry",
+  "description": "Editor entry; derived DOI links, status and profile membership are normalized by the site. npm test validates relationships.",
   "definitions": {
     "contribution": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["role", "basis", "sourceUrl"],
+      "required": [
+        "role",
+        "basis",
+        "sourceUrl"
+      ],
       "properties": {
         "role": {
-          "enum": ["equal-contribution", "corresponding-author"],
+          "enum": [
+            "equal-contribution",
+            "corresponding-author"
+          ],
           "description": "Renders as † (equal contribution) or * (corresponding author)."
         },
         "basis": {
@@ -32,14 +37,24 @@
     "author": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["name"],
+      "required": [
+        "name"
+      ],
       "properties": {
-        "name": { "type": "string", "description": "Exactly as printed in the public byline." },
-        "memberId": { "const": "hao-liu", "description": "Set only on Hao Liu; drives the bold name." },
+        "name": {
+          "type": "string",
+          "description": "Exactly as printed in the public byline."
+        },
+        "memberId": {
+          "const": "hao-liu",
+          "description": "Set only on Hao Liu; drives the bold name."
+        },
         "contributions": {
           "type": "array",
           "minItems": 1,
-          "items": { "$ref": "#/definitions/contribution" }
+          "items": {
+            "$ref": "#/definitions/contribution"
+          }
         }
       }
     },
@@ -47,9 +62,14 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
-        "id", "title", "authors", "memberIds", "year", "venue",
-        "kind", "recordStatus", "doi", "url", "featured", "summary",
-        "topics", "provenance"
+        "title",
+        "authors",
+        "year",
+        "venue",
+        "kind",
+        "doi",
+        "summary",
+        "provenance"
       ],
       "properties": {
         "id": {
@@ -57,34 +77,72 @@
           "pattern": "^[a-z0-9-]+$",
           "description": "Stable slug. Never change or reuse — research.ts references it."
         },
-        "title": { "type": "string" },
+        "title": {
+          "type": "string"
+        },
+        "shortTitle": {
+          "type": "string",
+          "description": "Optional plain-language title for Research; Home and Publications use the full article title."
+        },
         "authors": {
           "type": "array",
           "minItems": 1,
-          "items": { "$ref": "#/definitions/author" },
+          "items": {
+            "$ref": "#/definitions/author"
+          },
           "description": "Public author order, exactly."
         },
         "memberIds": {
           "type": "array",
-          "items": { "const": "hao-liu" }
+          "items": {
+            "const": "hao-liu"
+          }
         },
-        "year": { "type": "integer", "minimum": 2000, "maximum": 2100 },
-        "venue": { "type": "string" },
+        "year": {
+          "type": "integer",
+          "minimum": 2000,
+          "maximum": 2100
+        },
+        "venue": {
+          "type": "string"
+        },
         "volumePages": {
           "type": "string",
           "minLength": 1,
           "description": "Required for article and commentary; must be absent for preprint."
         },
-        "kind": { "enum": ["article", "commentary", "preprint"] },
+        "kind": {
+          "enum": [
+            "article",
+            "commentary",
+            "preprint"
+          ]
+        },
         "recordStatus": {
-          "enum": ["peer-reviewed", "editorial", "preprint-not-peer-reviewed"],
-          "description": "Must pair with kind: article/peer-reviewed, commentary/editorial, preprint/preprint-not-peer-reviewed."
+          "enum": [
+            "peer-reviewed",
+            "editorial",
+            "preprint-not-peer-reviewed",
+            "accepted"
+          ],
+          "description": "Derived from kind: article/peer-reviewed, commentary/editorial, preprint/preprint-not-peer-reviewed; a preprint with acceptedIn has status accepted."
+        },
+        "acceptedIn": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Confirmed accepting journal while the linked record is still a preprint. Keep the preprint venue, year and DOI until the final journal record is available."
         },
         "manuscriptStatus": {
-          "enum": ["Submitted", "In revision"],
+          "enum": [
+            "Submitted",
+            "In revision"
+          ],
           "description": "Preprints only."
         },
-        "doi": { "type": "string", "pattern": "^10\\." },
+        "doi": {
+          "type": "string",
+          "description": "DOI or full DOI URL."
+        },
         "url": {
           "type": "string",
           "pattern": "^https://doi\\.org/10\\.",
@@ -94,9 +152,16 @@
           "type": "boolean",
           "description": "True puts it in the homepage selected list; then selectedOrder is required."
         },
-        "selectedOrder": { "type": "integer", "minimum": 1 },
+        "selectedOrder": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Optional homepage position."
+        },
         "researchStoryId": {
-          "enum": ["rna-strand-displacement", "programmable-assembly"],
+          "enum": [
+            "rna-strand-displacement",
+            "programmable-assembly"
+          ],
           "description": "Adds the 'Related research' link."
         },
         "summary": {
@@ -104,38 +169,81 @@
           "minLength": 20,
           "description": "One sentence, your own words, saying what this paper established."
         },
-        "significance": { "type": "string" },
-        "topics": { "type": "array", "items": { "type": "string" } },
+        "significance": {
+          "type": "string"
+        },
+        "topics": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
         "relatedItems": {
           "type": "array",
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["relation", "title", "year", "venue", "volumePages", "doi", "url", "counted"],
+            "required": [
+              "relation",
+              "title",
+              "year",
+              "venue",
+              "volumePages",
+              "doi",
+              "url",
+              "counted"
+            ],
             "properties": {
-              "relation": { "const": "author-correction" },
-              "title": { "type": "string" },
-              "year": { "type": "integer" },
-              "venue": { "type": "string" },
-              "volumePages": { "type": "string" },
-              "doi": { "type": "string" },
-              "url": { "type": "string", "format": "uri" },
-              "counted": { "const": false }
+              "relation": {
+                "const": "author-correction"
+              },
+              "title": {
+                "type": "string"
+              },
+              "year": {
+                "type": "integer"
+              },
+              "venue": {
+                "type": "string"
+              },
+              "volumePages": {
+                "type": "string"
+              },
+              "doi": {
+                "type": "string"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri"
+              },
+              "counted": {
+                "const": false
+              }
             }
           }
         },
         "provenance": {
           "type": "object",
           "additionalProperties": false,
-          "required": ["canonicalSource", "sourceCheckedAt"],
+          "required": [
+            "sourceCheckedAt"
+          ],
           "properties": {
             "canonicalSource": {
               "type": "object",
               "additionalProperties": false,
-              "required": ["label", "url"],
+              "required": [
+                "label",
+                "url"
+              ],
               "properties": {
-                "label": { "type": "string" },
-                "url": { "type": "string", "format": "uri" }
+                "label": {
+                  "type": "string"
+                },
+                "url": {
+                  "type": "string",
+                  "format": "uri"
+                }
               }
             },
             "sourceCheckedAt": {
@@ -144,8 +252,65 @@
               "description": "ISO date you last checked this record against the publisher."
             }
           }
+        },
+        "fileId": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Generated by Pages CMS; filenames supply stable record IDs."
+        },
+        "order": {
+          "type": "integer"
+        },
+        "figures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/figure"
+          }
+        },
+        "image": {
+          "type": "object",
+          "properties": {
+            "src": {
+              "type": "string"
+            },
+            "alt": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "src",
+            "alt"
+          ]
         }
       }
+    },
+    "figure": {
+      "type": "object",
+      "properties": {
+        "src": {
+          "type": "string"
+        },
+        "alt": {
+          "type": "string"
+        },
+        "caption": {
+          "type": "string"
+        },
+        "credit": {
+          "type": "string"
+        },
+        "sourceUrl": {
+          "type": "string",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "src",
+        "alt",
+        "caption",
+        "credit"
+      ]
     }
-  }
+  },
+  "$ref": "#/definitions/publication"
 }

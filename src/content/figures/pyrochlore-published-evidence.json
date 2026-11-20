@@ -1,0 +1,13 @@
+{
+  "id": "pyrochlore-published-evidence",
+  "kind": "paper-figure",
+  "src": "images/research/pyrochlore-crystal.webp",
+  "width": 1200,
+  "height": 900,
+  "alt": "Scanning electron micrograph of a faceted, silica-preserved DNA-origami pyrochlore crystal about ten micrometers across, its surface showing the ordered pore pattern of the underlying lattice.",
+  "caption": "Silica-preserved DNA-origami pyrochlore crystal imaged by scanning electron microscopy; the faceted habit and ordered surface pores follow the designed lattice. Topology and long-range order are established in the linked paper by small-angle X-ray scattering, following interaction design and coarse-grained modeling.",
+  "source": {
+    "publicationId": "pyrochlore-2024.json",
+    "showDoi": true
+  }
+}

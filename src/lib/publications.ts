@@ -22,12 +22,13 @@ interface PublicationCitationData {
   venue: string;
   volumePages?: string;
   doi: string;
+  acceptedIn?: string;
 }
 
 interface BibtexPublication extends PublicationCitationData {
   id: string;
   kind: "article" | "commentary" | "preprint";
-  recordStatus: "peer-reviewed" | "editorial" | "preprint-not-peer-reviewed";
+  recordStatus: "peer-reviewed" | "editorial" | "preprint-not-peer-reviewed" | "accepted";
   url: string;
 }
 
@@ -37,7 +38,8 @@ export function formatCitation(publication: PublicationCitationData) {
     ? `${publication.venue}, ${publication.volumePages}`
     : publication.venue;
 
-  return `${authors} (${publication.year}). ${publication.title}. ${venue}. https://doi.org/${publication.doi}`;
+  const acceptance = publication.acceptedIn ? ` Accepted in ${publication.acceptedIn}.` : "";
+  return `${authors} (${publication.year}). ${publication.title}. ${venue}.${acceptance} https://doi.org/${publication.doi}`;
 }
 
 function escapeBibtex(value: string) {
@@ -91,7 +93,9 @@ export function formatBibtex(publication: BibtexPublication) {
     bibtexField("url", publication.url),
   );
 
-  if (publication.recordStatus === "preprint-not-peer-reviewed") {
+  if (publication.acceptedIn) {
+    fields.push(bibtexField("note", `Preprint; accepted in ${publication.acceptedIn}`));
+  } else if (publication.recordStatus === "preprint-not-peer-reviewed") {
     fields.push(bibtexField("note", "Preprint; not peer reviewed"));
   } else if (publication.recordStatus === "editorial") {
     fields.push(bibtexField("note", "Commentary"));

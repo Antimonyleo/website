@@ -14,6 +14,21 @@
       "sourceFingerprint": "9416eb35298a70053b20f7482e9faa367459597cb410799e1206ee4fc9607e19"
     }
   ],
+  "images/hao-liu-portrait.webp": [
+    {
+      "src": "images/hao-liu-portrait.w600.webp",
+      "width": 600
+    },
+    {
+      "src": "images/hao-liu-portrait.w900.webp",
+      "width": 900
+    },
+    {
+      "src": "images/hao-liu-portrait.webp",
+      "width": 1254,
+      "sourceFingerprint": "7d9dddfdfe6538b3a08af4aba6d892e983ee9cabe11cfab1403810f9f45de504"
+    }
+  ],
   "images/publications/dna-origami-tessellations-2023.webp": [
     {
       "src": "images/publications/dna-origami-tessellations-2023.w600.webp",
@@ -208,6 +223,17 @@
       "src": "images/research/pyrochlore-crystal.webp",
       "width": 1200,
       "sourceFingerprint": "38d4164337cb9d7055ffb3e04aeb239b42cf5ad449423962db7b20dd5eba7a01"
+    }
+  ],
+  "images/research/research-method-schematic.webp": [
+    {
+      "src": "images/research/research-method-schematic.w600.webp",
+      "width": 600
+    },
+    {
+      "src": "images/research/research-method-schematic.webp",
+      "width": 836,
+      "sourceFingerprint": "9c4a9f02551c4bf5aaa56bbeed61a4e746b6342f8d800bc0f7a9470f947c8763"
     }
   ]
 }

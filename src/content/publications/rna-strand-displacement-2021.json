@@ -1,0 +1,62 @@
+{
+  "id": "rna-strand-displacement-2021",
+  "title": "Kinetics of RNA and RNA:DNA Hybrid Strand Displacement",
+  "authors": [
+    {
+      "name": "Hao Liu",
+      "memberId": "hao-liu"
+    },
+    {
+      "name": "Fan Hong"
+    },
+    {
+      "name": "Francesca Smith"
+    },
+    {
+      "name": "John Goertz"
+    },
+    {
+      "name": "Thomas Ouldridge"
+    },
+    {
+      "name": "Molly M. Stevens"
+    },
+    {
+      "name": "Hao Yan"
+    },
+    {
+      "name": "Petr Šulc"
+    }
+  ],
+  "memberIds": [
+    "hao-liu"
+  ],
+  "year": 2021,
+  "venue": "ACS Synthetic Biology",
+  "volumePages": "10, 3066–3073",
+  "kind": "article",
+  "recordStatus": "peer-reviewed",
+  "doi": "10.1021/acssynbio.1c00336",
+  "url": "https://doi.org/10.1021/acssynbio.1c00336",
+  "featured": false,
+  "researchStoryId": "rna-strand-displacement",
+  "summary": "Toehold length, substrate-end placement, and mismatch position are shown to tune the kinetics of RNA:RNA and RNA:DNA hybrid strand displacement.",
+  "significance": "It supplies experimentally grounded design guidance for tuning RNA:RNA strand-displacement kinetics through toehold length, substrate-end placement, and mismatch position.",
+  "topics": [
+    "RNA",
+    "kinetics",
+    "strand displacement"
+  ],
+  "provenance": {
+    "canonicalSource": {
+      "label": "Publisher DOI record",
+      "url": "https://doi.org/10.1021/acssynbio.1c00336"
+    },
+    "sourceCheckedAt": "2026-07-29"
+  },
+  "image": {
+    "src": "images/publications/rna-strand-displacement-2021.webp",
+    "alt": "Strand-displacement kinetics for RNA and RNA:DNA hybrid systems across toehold length, substrate-end placement, and mismatch position."
+  },
+  "order": 11
+}

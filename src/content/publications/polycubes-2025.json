@@ -1,0 +1,121 @@
+{
+  "id": "polycubes-2025",
+  "title": "Universal 3D Nanoscale Assembly with DNA Polycubes",
+  "authors": [
+    {
+      "name": "Thong Diep",
+      "contributions": [
+        {
+          "role": "equal-contribution",
+          "basis": "explicit-equal-contribution-note",
+          "sourceUrl": "https://doi.org/10.26434/chemrxiv-2025-qbk3f"
+        }
+      ]
+    },
+    {
+      "name": "Hao Liu",
+      "memberId": "hao-liu",
+      "contributions": [
+        {
+          "role": "equal-contribution",
+          "basis": "explicit-equal-contribution-note",
+          "sourceUrl": "https://doi.org/10.26434/chemrxiv-2025-qbk3f"
+        },
+        {
+          "role": "corresponding-author",
+          "basis": "explicit-corresponding-author-note",
+          "sourceUrl": "https://doi.org/10.26434/chemrxiv-2025-qbk3f"
+        }
+      ]
+    },
+    {
+      "name": "Joshua Evans"
+    },
+    {
+      "name": "Michael Matthies"
+    },
+    {
+      "name": "Matthew Sample"
+    },
+    {
+      "name": "Subhajit Roy"
+    },
+    {
+      "name": "Daniel Podbielski"
+    },
+    {
+      "name": "Sneha Vaidyanathan"
+    },
+    {
+      "name": "Dewight Williams"
+    },
+    {
+      "name": "Kyoungdu Kim"
+    },
+    {
+      "name": "Lukáš Kroc"
+    },
+    {
+      "name": "Haozhi Wang"
+    },
+    {
+      "name": "Yonggang Ke"
+    },
+    {
+      "name": "Joshua Hihath"
+    },
+    {
+      "name": "Hao Yan",
+      "contributions": [
+        {
+          "role": "corresponding-author",
+          "basis": "explicit-corresponding-author-note",
+          "sourceUrl": "https://doi.org/10.26434/chemrxiv-2025-qbk3f"
+        }
+      ]
+    },
+    {
+      "name": "Petr Šulc",
+      "contributions": [
+        {
+          "role": "corresponding-author",
+          "basis": "explicit-corresponding-author-note",
+          "sourceUrl": "https://doi.org/10.26434/chemrxiv-2025-qbk3f"
+        }
+      ]
+    }
+  ],
+  "memberIds": [
+    "hao-liu"
+  ],
+  "year": 2025,
+  "venue": "ChemRxiv",
+  "kind": "preprint",
+  "recordStatus": "accepted",
+  "acceptedIn": "Science Robotics",
+  "doi": "10.26434/chemrxiv-2025-qbk3f",
+  "url": "https://doi.org/10.26434/chemrxiv-2025-qbk3f",
+  "featured": true,
+  "selectedOrder": 3,
+  "researchStoryId": "programmable-assembly",
+  "summary": "An inverse-design platform programs DNA-origami cubes to form finite 3D objects and extended lattices while designing against competing assemblies.",
+  "significance": "Inverse design assigns interaction rules to a minimal, target-specific set of DNA-origami cubes that build finite objects and extended lattices while accounting for competing assemblies. The figure follows three targets from shape and cube design through oxDNA simulation to electron microscopy.",
+  "topics": [
+    "finite assembly",
+    "inverse design",
+    "DNA origami"
+  ],
+  "provenance": {
+    "canonicalSource": {
+      "label": "ChemRxiv DOI record",
+      "url": "https://doi.org/10.26434/chemrxiv-2025-qbk3f"
+    },
+    "sourceCheckedAt": "2026-07-29"
+  },
+  "image": {
+    "src": "images/publications/polycubes-2025.webp",
+    "alt": "Target geometry, interaction design, oxDNA model, and experimental reconstruction of DNA polycubes."
+  },
+  "order": 2,
+  "shortTitle": "Building 3D structures from DNA cubes"
+}

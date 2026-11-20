@@ -1,0 +1,59 @@
+{
+  "id": "finite-state-machine-2022",
+  "title": "A localized DNA finite-state machine with temporal resolution",
+  "authors": [
+    {
+      "name": "Lan Liu"
+    },
+    {
+      "name": "Fan Hong"
+    },
+    {
+      "name": "Hao Liu",
+      "memberId": "hao-liu"
+    },
+    {
+      "name": "Xu Zhou"
+    },
+    {
+      "name": "Shuoxing Jiang"
+    },
+    {
+      "name": "Petr Šulc"
+    },
+    {
+      "name": "Jian-Hui Jiang"
+    },
+    {
+      "name": "Hao Yan"
+    }
+  ],
+  "memberIds": [
+    "hao-liu"
+  ],
+  "year": 2022,
+  "venue": "Science Advances",
+  "volumePages": "8, eabm9530",
+  "kind": "article",
+  "recordStatus": "peer-reviewed",
+  "doi": "10.1126/sciadv.abm9530",
+  "url": "https://doi.org/10.1126/sciadv.abm9530",
+  "featured": false,
+  "summary": "A localized DNA reaction system implements state transitions with temporal resolution.",
+  "topics": [
+    "molecular programming",
+    "DNA circuits"
+  ],
+  "provenance": {
+    "canonicalSource": {
+      "label": "Publisher DOI record",
+      "url": "https://doi.org/10.1126/sciadv.abm9530"
+    },
+    "sourceCheckedAt": "2026-07-29"
+  },
+  "image": {
+    "src": "images/publications/finite-state-machine-2022.webp",
+    "alt": "Design, implementation, and fluorescence readout of a localized DNA reaction network."
+  },
+  "order": 10
+}

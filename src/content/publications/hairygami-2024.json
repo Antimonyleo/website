@@ -1,0 +1,50 @@
+{
+  "id": "hairygami-2024",
+  "title": "Hairygami: Analysis of DNA Nanostructures’ Conformational Change Driven by Functionalizable Overhangs",
+  "authors": [
+    {
+      "name": "Matthew Sample"
+    },
+    {
+      "name": "Hao Liu",
+      "memberId": "hao-liu"
+    },
+    {
+      "name": "Thong Diep"
+    },
+    {
+      "name": "Michael Matthies"
+    },
+    {
+      "name": "Petr Šulc"
+    }
+  ],
+  "memberIds": [
+    "hao-liu"
+  ],
+  "year": 2024,
+  "venue": "ACS Nano",
+  "volumePages": "18, 30004–30016",
+  "kind": "article",
+  "recordStatus": "peer-reviewed",
+  "doi": "10.1021/acsnano.4c10796",
+  "url": "https://doi.org/10.1021/acsnano.4c10796",
+  "featured": false,
+  "summary": "Coarse-grained simulations show how functionalizable single-stranded overhangs drive conformational change in DNA nanostructures.",
+  "topics": [
+    "simulation",
+    "DNA nanostructures"
+  ],
+  "provenance": {
+    "canonicalSource": {
+      "label": "Publisher DOI record",
+      "url": "https://doi.org/10.1021/acsnano.4c10796"
+    },
+    "sourceCheckedAt": "2026-07-29"
+  },
+  "image": {
+    "src": "images/publications/hairygami-2024.webp",
+    "alt": "Free-energy profiles and simulated structures for DNA nanostructures at increasing overhang length."
+  },
+  "order": 5
+}

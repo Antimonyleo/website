@@ -2,104 +2,94 @@
 import { getEntry } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PageIntro from "../../components/PageIntro.astro";
-import SectionHeading from "../../components/SectionHeading.astro";
+import ContentFigure from "../../components/ContentFigure.astro";
 import { getPublicPerson } from "../../lib/person";
 
 const person = await getPublicPerson();
 const experience = await getEntry("experience", "hao-liu");
-if (!experience) {
-  throw new Error("Required experience entry 'hao-liu' was not found.");
-}
+if (!experience) throw new Error("Required experience entry 'hao-liu' was not found.");
 const data = experience.data;
-const timeline = [
-  ...data.appointments.map((item) => ({
-    period: item.period,
-    title: item.title,
-    institution: item.institution,
-    detail: item.detail,
-    advisors: item.advisors,
-  })),
-  ...data.education.map((item) => ({
-    period: item.period,
-    title: item.degree,
-    institution: item.institution,
-    detail: item.detail,
-    advisors: undefined,
-  })),
-];
 ---
 
-<BaseLayout
-  title={`Experience — ${person.name}`}
-  description={`Research experience, education, and selected presentations by ${person.name}.`}
-  pageType="ProfilePage"
->
-  <PageIntro
-    eyebrow="Background"
-    title="Experience"
-    description="Research training across molecular modeling, nucleic acid self-assembly, and structural characterization."
-  />
+<BaseLayout title={`Experience — ${person.name}`} description={data.summary} pageType="ProfilePage" pageClass="experience-page">
+  <PageIntro title="Experience" />
 
-  <section class="section shell" aria-labelledby="training-title">
-    <SectionHeading
-      eyebrow="Career"
-      title="Appointments and education"
-      headingId="training-title"
-    />
+  {data.appointments.length > 0 && <section class="section shell" aria-labelledby="appointments-title">
+    <h2 id="appointments-title">Research appointments</h2>
     <ol class="timeline">
-      {
-        timeline.map((item) => (
-          <li>
-            <div class="timeline-date">{item.period}</div>
-            <div>
-              <h3>{item.title}</h3>
-              <p>{item.institution}</p>
-              <p class="timeline-note">{item.detail}</p>
-              {
-                item.advisors && (
-                  <p class="timeline-advisors">
-                    Advisors:{" "}
-                    {item.advisors.map((advisor, index) => (
-                      <>
-                        {index > 0 && " and "}
-                        <a
-                          href={advisor.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {advisor.name}
-                          <span class="sr-only">
-                            {" "}(ASU profile opens in a new tab)
-                          </span>
-                        </a>
-                      </>
-                    ))}
-                  </p>
-                )
-              }
-            </div>
-          </li>
-        ))
-      }
+      {data.appointments.map((item) => (
+        <li>
+          <div class="timeline-date">{item.period}</div>
+          <div>
+            <h3>{item.title}</h3>
+            <p>{item.institution}</p>
+            <p class="timeline-note">{item.detail}</p>
+            {item.highlights && item.highlights.length > 0 && <ul class="experience-highlights">
+              {item.highlights.map((highlight) => <li>{highlight}</li>)}
+            </ul>}
+            {item.advisors && item.advisors.length > 0 && <p class="timeline-advisors">
+              Advisors: {item.advisors.map((advisor, index) => (
+                <>{index > 0 && " and "}<a href={advisor.url}>{advisor.name}</a></>
+              ))}
+            </p>}
+            {item.figures?.map((figure) => <ContentFigure figure={figure} />)}
+          </div>
+        </li>
+      ))}
     </ol>
-  </section>
+  </section>}
 
+  {data.education.length > 0 && <section class="section shell" aria-labelledby="education-title">
+    <h2 id="education-title">Education</h2>
+    <ol class="timeline">
+      {data.education.map((item) => (
+        <li>
+          <div class="timeline-date">{item.period}</div>
+          <div>
+            <h3>{item.degree}</h3>
+            <p>{item.institution}</p>
+            <p class="timeline-note">{item.detail}</p>
+            {item.advisors && item.advisors.length > 0 && <p class="timeline-advisors">
+              {item.advisors.length === 1 ? "Advisor: " : "Advisors: "}
+              {item.advisors.map((advisor, index) => (
+                <>{index > 0 && " and "}{advisor.url ? <a href={advisor.url}>{advisor.name}</a> : advisor.name}</>
+              ))}
+            </p>}
+            {item.figures?.map((figure) => <ContentFigure figure={figure} />)}
+          </div>
+        </li>
+      ))}
+    </ol>
+  </section>}
 
-  <section class="section shell talks-section" aria-labelledby="talks-title">
-    <SectionHeading
-      eyebrow="Research communication"
-      title="Selected presentations"
-      headingId="talks-title"
-    />
-    <ul class="talk-list">
-      {
-        data.presentations.map((presentation) => (
-          <li>
-            <span>{presentation.year}</span>
-            <p>{presentation.venue} — {presentation.title}</p>
-          </li>
-        ))
-      }
+  {data.honors.length > 0 && <section class="section shell honors-section" aria-labelledby="honors-title">
+    <h2 id="honors-title">Honors and awards</h2>
+    <ul class="talk-list honors-list">
+      {data.honors.map((honor) => (
+        <li>
+          <span>{honor.year}</span>
+          <div>
+            <h3>{honor.title}</h3>
+            <p>{honor.organization}</p>
+          </div>
+        </li>
+      ))}
     </ul>
-  </section>
+  </section>}
+
+  {data.presentations.length > 0 && <section class="section shell talks-section" aria-labelledby="talks-title">
+    <h2 id="talks-title">Selected presentations</h2>
+    <ul class="talk-list">
+      {data.presentations.map((presentation) => (
+        <li>
+          <span>{presentation.year}</span>
+          <div>
+            <h3>{presentation.venue}</h3>
+            <p>{presentation.title}</p>
+            {presentation.figures?.map((figure) => <ContentFigure figure={figure} />)}
+          </div>
+        </li>
+      ))}
+    </ul>
+  </section>}
 </BaseLayout>

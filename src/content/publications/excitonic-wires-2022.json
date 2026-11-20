@@ -1,0 +1,71 @@
+{
+  "id": "excitonic-wires-2022",
+  "title": "DNA-templated programmable excitonic wires for micron-scale exciton transport",
+  "authors": [
+    {
+      "name": "Xu Zhou"
+    },
+    {
+      "name": "Hao Liu",
+      "memberId": "hao-liu"
+    },
+    {
+      "name": "Franky Djutanta"
+    },
+    {
+      "name": "Deeksha Satyabola"
+    },
+    {
+      "name": "Shuoxing Jiang"
+    },
+    {
+      "name": "Xiaodong Qi"
+    },
+    {
+      "name": "Lu Yu"
+    },
+    {
+      "name": "Su Lin"
+    },
+    {
+      "name": "Rizal F. Hariadi"
+    },
+    {
+      "name": "Yan Liu"
+    },
+    {
+      "name": "Neal W. Woodbury"
+    },
+    {
+      "name": "Hao Yan"
+    }
+  ],
+  "memberIds": [
+    "hao-liu"
+  ],
+  "year": 2022,
+  "venue": "Chem",
+  "volumePages": "8, 2442–2459",
+  "kind": "article",
+  "recordStatus": "peer-reviewed",
+  "doi": "10.1016/j.chempr.2022.05.017",
+  "url": "https://doi.org/10.1016/j.chempr.2022.05.017",
+  "featured": false,
+  "summary": "A four-helix-bundle DNA origami templates K21 dye aggregates into excitonic wires.",
+  "topics": [
+    "exciton transport",
+    "DNA templating"
+  ],
+  "provenance": {
+    "canonicalSource": {
+      "label": "Publisher DOI record",
+      "url": "https://doi.org/10.1016/j.chempr.2022.05.017"
+    },
+    "sourceCheckedAt": "2026-07-29"
+  },
+  "image": {
+    "src": "images/publications/excitonic-wires-2022.webp",
+    "alt": "Natural light-harvesting scaffold alongside the DNA-templated excitonic wire and its spectra."
+  },
+  "order": 9
+}

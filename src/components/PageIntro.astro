@@ -1,15 +1,15 @@
 ---
 interface Props {
-  eyebrow: string;
   title: string;
-  description: string;
+  description?: string;
+  date?: string;
 }
 
-const { eyebrow, title, description } = Astro.props;
+const { title, description, date } = Astro.props;
 ---
 
 <header class="page-intro shell">
-  <p class="eyebrow">{eyebrow}</p>
   <h1>{title}</h1>
-  <p class="page-intro-description">{description}</p>
+  {date && <p class="page-date">{date}</p>}
+  {description && <p class="page-intro-description">{description}</p>}
 </header>

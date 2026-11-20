@@ -19,6 +19,7 @@ export async function GET() {
         doi: publication.data.doi,
         kind: publication.data.kind,
         recordStatus: publication.data.recordStatus,
+        acceptedIn: publication.data.acceptedIn,
         url: publication.data.url,
       }),
     )

@@ -1,0 +1,95 @@
+{
+  "id": "meta-dna-2020",
+  "title": "Meta-DNA structures",
+  "authors": [
+    {
+      "name": "Guangbao Yao"
+    },
+    {
+      "name": "Fei Zhang"
+    },
+    {
+      "name": "Fei Wang"
+    },
+    {
+      "name": "Tianhuan Peng"
+    },
+    {
+      "name": "Hao Liu",
+      "memberId": "hao-liu"
+    },
+    {
+      "name": "Erik Poppleton"
+    },
+    {
+      "name": "Petr Šulc"
+    },
+    {
+      "name": "Shuoxing Jiang"
+    },
+    {
+      "name": "Lan Liu"
+    },
+    {
+      "name": "Chen Gong"
+    },
+    {
+      "name": "Xinxin Jing"
+    },
+    {
+      "name": "Xiaoguo Liu"
+    },
+    {
+      "name": "Lihua Wang"
+    },
+    {
+      "name": "Yan Liu"
+    },
+    {
+      "name": "Chunhai Fan"
+    },
+    {
+      "name": "Hao Yan"
+    }
+  ],
+  "memberIds": [
+    "hao-liu"
+  ],
+  "year": 2020,
+  "venue": "Nature Chemistry",
+  "volumePages": "12, 1067–1075",
+  "kind": "article",
+  "recordStatus": "peer-reviewed",
+  "doi": "10.1038/s41557-020-0539-8",
+  "url": "https://doi.org/10.1038/s41557-020-0539-8",
+  "featured": false,
+  "summary": "DNA-origami units act as higher-order analogues of atoms and bonds, enabling hierarchical assembly into larger structures.",
+  "topics": [
+    "hierarchical assembly",
+    "DNA origami"
+  ],
+  "relatedItems": [
+    {
+      "relation": "author-correction",
+      "title": "Author Correction: Meta-DNA structures",
+      "year": 2021,
+      "venue": "Nature Chemistry",
+      "volumePages": "13, 614",
+      "doi": "10.1038/s41557-020-00611-z",
+      "url": "https://doi.org/10.1038/s41557-020-00611-z",
+      "counted": false
+    }
+  ],
+  "provenance": {
+    "canonicalSource": {
+      "label": "Publisher DOI record",
+      "url": "https://doi.org/10.1038/s41557-020-0539-8"
+    },
+    "sourceCheckedAt": "2026-07-29"
+  },
+  "image": {
+    "src": "images/publications/meta-dna-2020.webp",
+    "alt": "Library of DNA-origami shapes built from meta-DNA units, with gel and electron-microscopy characterization."
+  },
+  "order": 12
+}

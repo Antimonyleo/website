@@ -1,0 +1,46 @@
+{
+  "id": "oxatub4arene-2017",
+  "title": "H₂S-Responsive Lower Critical Solution Temperature of the Host–Guest Complex Based on Oxatub[4]arene with Tri(ethylene oxide) Moieties",
+  "authors": [
+    {
+      "name": "Liu-Pan Yang"
+    },
+    {
+      "name": "Hao Liu",
+      "memberId": "hao-liu"
+    },
+    {
+      "name": "Song-Bo Lu"
+    },
+    {
+      "name": "Fei Jia"
+    },
+    {
+      "name": "Wei Jiang"
+    }
+  ],
+  "memberIds": [
+    "hao-liu"
+  ],
+  "year": 2017,
+  "venue": "Organic Letters",
+  "volumePages": "19, 1212–1215",
+  "kind": "article",
+  "recordStatus": "peer-reviewed",
+  "doi": "10.1021/acs.orglett.7b00181",
+  "url": "https://doi.org/10.1021/acs.orglett.7b00181",
+  "featured": false,
+  "summary": "An oxatub[4]arene host–guest complex shows H₂S-responsive lower critical solution temperature behavior.",
+  "topics": [
+    "supramolecular chemistry",
+    "host–guest chemistry"
+  ],
+  "provenance": {
+    "canonicalSource": {
+      "label": "Publisher DOI record",
+      "url": "https://doi.org/10.1021/acs.orglett.7b00181"
+    },
+    "sourceCheckedAt": "2026-07-29"
+  },
+  "order": 13
+}

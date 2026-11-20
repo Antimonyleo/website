@@ -1,0 +1,15 @@
+---
+import { imageAttributes } from "../lib/images";
+interface Props {
+  figure: { src: string; alt: string; caption?: string; credit?: string; sourceUrl?: string };
+}
+const { figure } = Astro.props;
+const attributes = await imageAttributes(figure.src);
+---
+<figure class="content-figure">
+  <img {...attributes} alt={figure.alt} sizes="(max-width: 900px) 92vw, 720px" loading="lazy" decoding="async" />
+  {(figure.caption || figure.credit) && <figcaption>
+    {figure.caption && <span>{figure.caption}</span>}
+    {figure.credit && (figure.sourceUrl ? <a href={figure.sourceUrl} target="_blank" rel="noopener noreferrer">{figure.credit}<span class="sr-only"> (opens in a new tab)</span></a> : <span>{figure.credit}</span>)}
+  </figcaption>}
+</figure>

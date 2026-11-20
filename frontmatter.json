@@ -8,12 +8,41 @@
       "path": "[[workspace]]/src/content/news",
       "excludeSubdir": true,
       "previewPath": "website/news",
-      "contentTypes": ["default"]
+      "contentTypes": [
+        "news"
+      ]
+    },
+    {
+      "title": "People",
+      "path": "[[workspace]]/src/content/people",
+      "excludeSubdir": true,
+      "previewPath": "website",
+      "contentTypes": [
+        "person"
+      ]
+    },
+    {
+      "title": "Experience",
+      "path": "[[workspace]]/src/content/experience",
+      "excludeSubdir": true,
+      "previewPath": "website/experience",
+      "contentTypes": [
+        "experience"
+      ]
+    }
+  ],
+  "frontMatter.content.sorting": [
+    {
+      "id": "PublishedDesc",
+      "title": "Published (newest first)",
+      "name": "date",
+      "order": "desc",
+      "type": "date"
     }
   ],
   "frontMatter.content.defaultSorting": "PublishedDesc",
   "frontMatter.content.hideFm": true,
-  "frontMatter.content.hideFmMessage": "Use the News metadata form to edit these fields.",
+  "frontMatter.content.hideFmMessage": "Use the metadata form to edit these fields.",
   "frontMatter.content.wysiwyg": true,
   "frontMatter.content.publicFolder": "public",
   "frontMatter.contentHealth.enabled": false,
@@ -26,7 +55,46 @@
   "frontMatter.file.slugSeparator": "-",
   "frontMatter.git.enabled": false,
   "frontMatter.copilot.enabled": false,
-  "frontMatter.media.supportedMimeTypes": ["image/webp"],
+  "frontMatter.media.supportedMimeTypes": [
+    "image/webp",
+    "image/png",
+    "image/jpeg",
+    "image/avif",
+    "image/tiff"
+  ],
+  "frontMatter.data.files": [],
+  "frontMatter.custom.scripts": [
+    {
+      "id": "run-full-release-gate",
+      "title": "Run full release gate (npm test)",
+      "script": "./.frontmatter/config/custom/scripts/run-test.sh",
+      "command": "bash",
+      "type": "content",
+      "bulk": false,
+      "output": "editor",
+      "outputType": "text"
+    },
+    {
+      "id": "check-research-source",
+      "title": "Check research.json (fast)",
+      "script": "./.frontmatter/config/custom/scripts/check-research.sh",
+      "command": "bash",
+      "type": "content",
+      "bulk": false,
+      "output": "notification",
+      "outputType": "text"
+    },
+    {
+      "id": "build-image-variants",
+      "title": "Generate responsive image variants",
+      "script": "./.frontmatter/config/custom/scripts/build-images.sh",
+      "command": "bash",
+      "type": "mediaFolder",
+      "bulk": false,
+      "output": "notification",
+      "outputType": "text"
+    }
+  ],
   "frontMatter.taxonomy.fieldGroups": [
     {
       "id": "newsFigure",
@@ -37,7 +105,7 @@
           "name": "src",
           "type": "image",
           "required": true,
-          "description": "Choose or upload a WebP file under public/images; put new News images in public/images/news."
+          "description": "Choose a public image; ordinary PNG/JPEG/WebP images are prepared automatically during the build."
         },
         {
           "title": "Alt text",
@@ -69,11 +137,171 @@
           "description": "For a published figure, link to the DOI or canonical public source."
         }
       ]
+    },
+    {
+      "id": "experienceAdvisor",
+      "labelField": "name",
+      "fields": [
+        {
+          "title": "Name",
+          "name": "name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "title": "URL",
+          "name": "url",
+          "type": "string",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "experienceAppointment",
+      "labelField": "title",
+      "fields": [
+        {
+          "title": "Period",
+          "name": "period",
+          "type": "string",
+          "required": true,
+          "description": "e.g. \"2023–present\"."
+        },
+        {
+          "title": "Title",
+          "name": "title",
+          "type": "string",
+          "required": true
+        },
+        {
+          "title": "Institution",
+          "name": "institution",
+          "type": "string",
+          "required": true
+        },
+        {
+          "title": "Detail",
+          "name": "detail",
+          "type": "string",
+          "single": false,
+          "required": true
+        },
+        {
+          "title": "Advisors",
+          "name": "advisors",
+          "type": "block",
+          "fieldGroup": [
+            "experienceAdvisor"
+          ],
+          "required": false,
+          "description": "Optional."
+        }
+      ]
+    },
+    {
+      "id": "experienceEducation",
+      "labelField": "degree",
+      "fields": [
+        {
+          "title": "Period",
+          "name": "period",
+          "type": "string",
+          "required": true
+        },
+        {
+          "title": "Degree",
+          "name": "degree",
+          "type": "string",
+          "required": true
+        },
+        {
+          "title": "Institution",
+          "name": "institution",
+          "type": "string",
+          "required": true
+        },
+        {
+          "title": "Detail",
+          "name": "detail",
+          "type": "string",
+          "single": false,
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "experienceCapability",
+      "labelField": "title",
+      "fields": [
+        {
+          "title": "Title",
+          "name": "title",
+          "type": "string",
+          "required": true
+        },
+        {
+          "title": "Items",
+          "name": "items",
+          "type": "list",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "experiencePresentation",
+      "labelField": "title",
+      "fields": [
+        {
+          "title": "Year",
+          "name": "year",
+          "type": "number",
+          "required": true
+        },
+        {
+          "title": "Venue",
+          "name": "venue",
+          "type": "string",
+          "required": true
+        },
+        {
+          "title": "Title",
+          "name": "title",
+          "type": "string",
+          "required": true
+        }
+      ]
+    },
+    {
+      "id": "experienceProvenance",
+      "fields": [
+        {
+          "title": "Source (do not change)",
+          "name": "source",
+          "type": "string",
+          "required": true,
+          "description": "Fixed value: \"CV supplied privately by Hao Liu\". Changing this text breaks the build."
+        },
+        {
+          "title": "Publication policy (do not change)",
+          "name": "publicationPolicy",
+          "type": "string",
+          "required": true,
+          "description": "Fixed value: \"Extracted factual information only; do not publish or link the CV\". Changing this text breaks the build."
+        },
+        {
+          "title": "Last checked",
+          "name": "sourceCheckedAt",
+          "type": "datetime",
+          "dateFormat": "yyyy-MM-dd",
+          "required": true,
+          "description": "Update whenever you reverify appointments, education, or presentations against the private CV."
+        }
+      ]
     }
   ],
   "frontMatter.taxonomy.contentTypes": [
     {
-      "name": "default",
+      "name": "news",
       "pageBundle": false,
       "clearEmpty": true,
       "fields": [
@@ -96,6 +324,13 @@
           "description": "Use the date of the public announcement or event."
         },
         {
+          "title": "Draft (excluded from website and RSS)",
+          "name": "draft",
+          "type": "boolean",
+          "default": true,
+          "description": "Turn off only when the public update is approved for release. Drafts in a public repository are not private."
+        },
+        {
           "title": "One-sentence summary",
           "name": "summary",
           "type": "string",
@@ -105,75 +340,140 @@
         {
           "title": "Related publication",
           "name": "publicationId",
-          "type": "choice",
+          "type": "string",
           "required": false,
-          "description": "Choose a paper only when the announcement is about it. The site supplies its citation and DOI.",
-          "choices": [
-            {
-              "id": "",
-              "title": "No related publication"
-            },
-            {
-              "id": "tetrahedral-lattices-2026",
-              "title": "2026 · Programmable selection of tetrahedral crystal lattices from a single nanoscale scaffold"
-            },
-            {
-              "id": "polycubes-2025",
-              "title": "2025 · Universal 3D Nanoscale Assembly with DNA Polycubes"
-            },
-            {
-              "id": "nanoparticle-patterns-2025",
-              "title": "2025 · Programming precise nanoparticle patterns"
-            },
-            {
-              "id": "pyrochlore-2024",
-              "title": "2024 · Inverse design of a pyrochlore lattice of DNA origami through model-driven experiments"
-            },
-            {
-              "id": "hairygami-2024",
-              "title": "2024 · Hairygami: Analysis of DNA Nanostructures’ Conformational Change Driven by Functionalizable Overhangs"
-            },
-            {
-              "id": "dna-origami-tessellations-2023",
-              "title": "2023 · DNA Origami Tessellations"
-            },
-            {
-              "id": "synthetic-antibody-2023",
-              "title": "2023 · IgG-inspired, multivalent protein-DNA nanostructures for high-affinity, tunable, and reversible binding to biomolecular targets"
-            },
-            {
-              "id": "excitonic-networks-2022",
-              "title": "2022 · Two-Dimensional Excitonic Networks Directed by DNA Templates as an Efficient Model Light-Harvesting and Energy Transfer System"
-            },
-            {
-              "id": "excitonic-wires-2022",
-              "title": "2022 · DNA-templated programmable excitonic wires for micron-scale exciton transport"
-            },
-            {
-              "id": "finite-state-machine-2022",
-              "title": "2022 · A localized DNA finite-state machine with temporal resolution"
-            },
-            {
-              "id": "rna-strand-displacement-2021",
-              "title": "2021 · Kinetics of RNA and RNA:DNA Hybrid Strand Displacement"
-            },
-            {
-              "id": "meta-dna-2020",
-              "title": "2020 · Meta-DNA structures"
-            },
-            {
-              "id": "oxatub4arene-2017",
-              "title": "2017 · H₂S-Responsive Lower Critical Solution Temperature of the Host–Guest Complex Based on Oxatub[4]arene with Tri(ethylene oxide) Moieties"
-            }
-          ]
+          "description": "Advanced local editing only: publication filename. Use Pages CMS to choose by title."
         },
         {
           "title": "Figures",
           "name": "figures",
           "type": "block",
-          "fieldGroup": ["newsFigure"],
+          "fieldGroup": [
+            "newsFigure"
+          ],
           "required": false,
           "description": "Optional. Add a complete block for each figure; the first becomes the News listing thumbnail."
+        }
+      ]
+    },
+    {
+      "name": "person",
+      "pageBundle": false,
+      "clearEmpty": true,
+      "fields": [
+        {
+          "title": "Name",
+          "name": "name",
+          "type": "string",
+          "required": true
+        },
+        {
+          "title": "Degree",
+          "name": "degree",
+          "type": "string",
+          "required": true,
+          "description": "e.g. \"Ph.D.\""
+        },
+        {
+          "title": "Role",
+          "name": "role",
+          "type": "string",
+          "required": true
+        },
+        {
+          "title": "Organizations",
+          "name": "organizations",
+          "type": "list",
+          "required": true
+        },
+        {
+          "title": "Location",
+          "name": "location",
+          "type": "string",
+          "required": true
+        },
+        {
+          "title": "Email",
+          "name": "email",
+          "type": "string",
+          "required": true
+        },
+        {
+          "title": "ORCID URL",
+          "name": "orcid",
+          "type": "string",
+          "required": true
+        },
+        {
+          "title": "Google Scholar URL",
+          "name": "scholar",
+          "type": "string",
+          "required": true
+        },
+        {
+          "title": "Biography paragraphs",
+          "name": "bio",
+          "type": "list",
+          "required": true,
+          "description": "1 to 4 short paragraphs, each its own list item."
+        }
+      ]
+    },
+    {
+      "name": "experience",
+      "pageBundle": false,
+      "clearEmpty": true,
+      "fields": [
+        {
+          "title": "Summary",
+          "name": "summary",
+          "type": "string",
+          "single": false,
+          "required": true
+        },
+        {
+          "title": "Appointments",
+          "name": "appointments",
+          "type": "block",
+          "fieldGroup": [
+            "experienceAppointment"
+          ],
+          "required": true
+        },
+        {
+          "title": "Education",
+          "name": "education",
+          "type": "block",
+          "fieldGroup": [
+            "experienceEducation"
+          ],
+          "required": true
+        },
+        {
+          "title": "Capabilities",
+          "name": "capabilities",
+          "type": "block",
+          "fieldGroup": [
+            "experienceCapability"
+          ],
+          "required": true
+        },
+        {
+          "title": "Presentations",
+          "name": "presentations",
+          "type": "block",
+          "fieldGroup": [
+            "experiencePresentation"
+          ],
+          "required": true,
+          "description": "Newest first. Public events and finalized titles only."
+        },
+        {
+          "title": "Provenance",
+          "name": "provenance",
+          "type": "fields",
+          "fieldGroup": "experienceProvenance",
+          "required": true
         }
       ]
     }

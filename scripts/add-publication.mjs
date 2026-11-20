@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Draft a publications.json record from a DOI.
+// Draft a publication entry from a DOI.
 //
 //   npm run add-pub -- 10.1021/acsnano.4c10796
 //   npm run add-pub -- 10.26434/chemrxiv-2025-abcde --status "In revision"
@@ -8,9 +8,10 @@
 // with a TODO summary, because the one-sentence summary is yours to write.
 // Always run `npm test` afterwards — the schema is the real gate.
 
-import { readFileSync, writeFileSync } from "node:fs";
+import { writeFileSync } from "node:fs";
+import { readPublications } from "../src/lib/content-source.ts";
 
-const DATA = new URL("../src/data/publications.json", import.meta.url);
+const DATA = new URL("../src/content/publications/", import.meta.url);
 const ME = "Hao Liu";
 const MEMBER_ID = "hao-liu";
 
@@ -75,18 +76,13 @@ const record = {
   },
 };
 
-const file = JSON.parse(readFileSync(DATA, "utf8"));
-const list = Array.isArray(file) ? file : file.publications;
+const list = readPublications();
 
 if (list.some((p) => p.doi === record.doi)) {
   console.error(`Already present: ${record.doi}`);
   process.exit(1);
 }
-let at = list.findIndex((p) => p.year < record.year);
-if (at === -1) at = list.length;
-list.splice(at, 0, record);
-
-writeFileSync(DATA, `${JSON.stringify(file, null, 2)}\n`);
+writeFileSync(new URL(`${record.id}.json`, DATA), `${JSON.stringify(record, null, 2)}\n`, { flag: "wx" });
 
 console.log(`Added "${record.title.slice(0, 60)}" as ${record.id}`);
 console.log(`  ${record.kind} · ${record.venue} · ${record.year}${record.volumePages ? ` · ${record.volumePages}` : ""}`);
